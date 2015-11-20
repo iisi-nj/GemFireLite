@@ -1,0 +1,257 @@
+#parse("common/header.xhtml")
+<link rel="stylesheet" href="${rc.contextPath}/css/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="${rc.contextPath}/js/jquery.ztree.core-3.5.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/js/jquery.ztree.excheck-3.5.min.js"></script>
+  <!-- content start -->
+  <div class="admin-content">
+
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">服务列表</strong> / <small>services</small></div>
+    </div>
+    <div class="am-g">
+      <div class="am-u-sm-12 am-u-md-6">
+        <div class="am-btn-toolbar">
+          <div class="am-btn-group am-btn-group-xs am-padding">
+            <button type="button" id="button_start_id" class="am-btn am-btn-default"><span class="am-icon-refresh"></span> 启动刷新</button>
+            <button type="button" id="button_stop_id" class="am-btn am-btn-default"><span class="am-icon-remove"></span> 停止刷新</button>
+           <!--  <button type="button" class="am-btn am-btn-default"><span class="am-icon-archive"></span> 审核</button>
+            <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button> -->
+            <div id="running" style="margin-left: 10px" class="am-icon-spinner am-icon-spin"/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="am-g">
+      <div class="am-u-sm-12">
+        <form class="am-form">
+          <table id="serviceTable" class="am-table am-table-bordered am-table-striped am-table-hover table-main">
+            <thead>
+              <tr>
+                <th>serviceName</th>
+                <th>tps</th>
+                <th>maxCost</th>
+                <th>lastCost</th>
+                <th>totalCost</th>
+                <th>totalCount</th>
+                <th>firstAt</th>
+                <th>lastAt</th>
+                <th>recentHistory</th>
+                <th>maxHistory</th>
+                <th>设置</th>
+              </tr>
+          </thead>
+          <tbody>
+          #foreach ( $item in $list)
+            <tr>
+              <td>$!{item.serviceName}</td>
+              <td>$!{item.tps}</td>
+              <td>$!{item.maxCost}</td>
+              <td>$!{item.lastCost}</td>
+              <td>$!{item.totalCost}</td>
+              <td>$!{item.totalCount}</td>
+              <td>#if($item.firstAt>0)$!dateTool.format('yyyy-MM-dd HH:mm:ss:SSS',$!{item.firstAt})#else $!{item.firstAt} #end</td>
+              <td>#if($item.lastAt>0)$!dateTool.format('yyyy-MM-dd HH:mm:ss:SSS',$!{item.lastAt})#else $!{item.lastAt} #end</td>
+              <td><a href="javascript:popOperation('$!{item.serviceName}','getRecentHistory',$!{item.recentHistorySize});" class="am-icon-search"/></td>
+              <td><a href="javascript:popOperation('$!{item.serviceName}','getMaxHistory',$!{item.maxHistorySize});" class="am-icon-search"/></td>
+              <td><a href="javascript:popSetting('$!{item.serviceName}','$!{item.moduleName}');" class="am-icon-gear"/></td>              
+            </tr>
+          #end
+          </tbody>
+        </table>
+<div class="am-cf" style="display: none">
+  共 15 条记录
+  <div class="am-fr">
+    <ul class="am-pagination">
+      <li class="am-disabled"><a href="#">«</a></li>
+      <li class="am-active"><a href="#">1</a></li>
+      <li><a href="#">2</a></li>
+      <li><a href="#">3</a></li>
+      <li><a href="#">4</a></li>
+      <li><a href="#">5</a></li>
+      <li><a href="#">»</a></li>
+    </ul>
+  </div>
+</div>
+          <hr />
+          <p style="color: red">$!{msg}</p>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+<div class="am-popup" id="my-popup" style="width: 900px">
+  <div class="am-popup-inner" style="width: 100%">
+    <div class="am-popup-hd">
+      <h4 class="am-popup-title">选择需要检测的CheckPoint</h4>
+      <span data-am-modal-close class="am-close">&times;</span>
+    </div>
+    <div class="am-popup-bd">
+		<ul id="treeDemo" class="ztree"></ul>
+		<button type="button" id="save_btn" onclick="save();" class="am-btn am-btn-primary am-btn-xs">确定添加</button>
+    </div>
+  </div>
+</div>
+  <script type="text/javascript">
+  //定时刷新数据
+  var timer=null;
+  var rgb=null;
+  $(document).ready(function (){
+	  
+	  $("#button_start_id").click(function () {
+		  timer = setInterval("startRequest()", 3000);
+		  $("#running").attr("class","am-icon-spinner am-icon-spin");
+     });
+	  
+	  $("#button_stop_id").click(function () {
+		  clearInterval(timer);
+		  rgb = $("#serviceTable tbody tr").css("color");
+		  $("#serviceTable tbody tr").css("color","red");
+		  $("#running").attr("class","am-icon-spinner");
+     });
+	  
+        timer = setInterval("startRequest()", 3000);
+    });
+    function startRequest() {  
+        $.ajax({  
+            url: "${rc.contextPath}/service/api",  
+            type: 'GET',  
+            data: {},  
+            success: function (objson) {
+            	if(objson == '')
+            	{
+            	  clearInterval(timer);
+            	  $("#running").attr("class","am-icon-spinner");
+            	}
+            	//清空所有行
+            	 var obj = eval(objson);
+            	 var html = "";
+                $.each(obj, function (index) {
+                	var v = obj[index];
+                	//添加一行
+                	var str = "<tr><td>"+v.serviceName+"</td>";
+                	str+="<td>"+v.tps+"</td>";
+                	str+="<td>"+v.maxCost+"</td>";
+                	str+="<td>"+v.lastCost+"</td>";
+                	str+="<td>"+v.totalCost+"</td>";
+                	str+="<td>"+v.totalCount+"</td>";
+                	str+="<td>"+v.firstAt+"</td>";
+                	str+="<td>"+v.lastAt+"</td>";
+                	str+="<td><a href=\"javascript:popOperation('"+v.serviceName+"','getRecentHistory',"+v.recentHistorySize+");\" class=\"am-icon-search\"/></td>";
+                	str+="<td><a href=\"javascript:popOperation('"+v.serviceName+"','getMaxHistory',"+v.maxHistorySize+");\" class=\"am-icon-search\"/></td>";
+                	str+="<td><a href=\"javascript:popSetting('"+v.serviceName+"','"+v.moduleName+"');\" class=\"am-icon-gear\"/></td></tr>";
+                    html+=str;
+                });  
+                $('#serviceTable tbody').html(html);
+            }  
+        });  
+    } 
+  
+  function popOperation(name,operation,size)
+  {
+	  if("getRecentHistory" == operation)
+		window.location.href = "${rc.contextPath}/service/recent?name="+name+"&operation="+operation+"&size="+size;
+	  else
+		window.location.href = "${rc.contextPath}/service/max?name="+name+"&operation="+operation+"&size="+size;
+  }
+  
+  function popSetting(serviceName,moduleName)
+  {
+	  $.ajax({  
+          url: "${rc.contextPath}/service/funclist",  
+          type: 'GET',  
+          data: {'serviceName':serviceName,'moduleName':moduleName},
+          dataType: "json",
+          success: function (nodes) {
+        	var zNodes = eval(nodes);
+          	inittree(zNodes);
+          }  
+      });
+	  $('#my-popup').modal({
+	        relatedTarget: this	        
+	      }); 
+  }
+  
+  function inittree(zNodes)
+  {
+	  var setting = {
+		check: {enable: true},
+		data: {simpleData: {enable: true}}
+	  };
+	  
+	  $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+		type = { "Y":"s", "N":"s"};
+		zTree.setting.check.chkboxType = type;
+  }
+  
+  function save()
+  {
+	  var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+	  var nodes = zTree.getCheckedNodes(true);
+	  //将选择的数据进行转化
+	  var names='';
+	  var moduleName = '';
+	  var serviceName = '';
+	  $.each(nodes, function (index)
+	  {
+		   var node = nodes[index];
+		   names+=node['class']+","+node['method']+','+node['desc']+'#';
+		   moduleName = node['moduleName'];
+		   serviceName = node['serviceName'];
+	  });
+	  $.ajax({  
+          url: "${rc.contextPath}/service/funcsave",  
+          type: 'POST',  
+          data: {'nodes':names,'moduleName':moduleName,'serviceName':serviceName},
+          dataType: "json",
+          success: function (data) {
+        	if(data)
+            {
+        		alert('设置成功');
+        		$('.am-close').click();
+        	}
+        	else
+        	alert('设置失败');
+          }  
+      });
+  }
+  
+  function open(checkPoints,id)
+  {
+	//判断当前的css状态
+	var a = $("#"+id+" a");
+	var cls = a.attr('class');
+	//如果是已经打开的
+	if(cls == "am-icon-toggle-down")
+	{
+		a.attr("class","am-icon-toggle-right");  //将按钮css改变
+		//清掉打开的
+		$("#table1 tbody tr[name=open]").remove();
+	}
+	else
+    {
+		//清掉打开的
+		$("#table1 tbody tr[name=open]").remove();
+		//将按钮还原
+		$("#table1 tbody tr a").attr("class","am-icon-toggle-right");
+		//设置打开按钮
+		a.attr("class","am-icon-toggle-down");  //将按钮css改变
+		
+		//解析
+		var arr = checkPoints.split(",");
+		var tr = "<tr name=\"open\"><td colspan=7><table class=\"am-table am-table-bordered am-success\"><tr><th>className</th><th>checkPoint</th><th>cost</th></tr>"
+	    $.each(arr, function(index,c){
+	    	//对c进行解析
+	    	var c_arr = c.split("&");
+	    	if(c_arr.length == 3)
+	    	tr+="<tr class=am-success><td>"+c_arr[0]+"</td><td>"+c_arr[1]+"</td><td>"+c_arr[2]+"</td></tr>";
+		});
+		tr+="</table></td></tr>";
+	    //在选择行下面添加新行
+	    $(tr).insertAfter($("#"+id));
+    }
+  }
+  </script>
+  <!-- content end -->
+#parse("common/footer.xhtml")

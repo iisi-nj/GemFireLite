@@ -1,0 +1,2090 @@
+// START:file
+group IndexCode;
+
+rangeKeyFile(packageName, indexName, attr) ::= <<
+package <packageName>;
+
+import gemlite.core.annotations.domain.AutoSerialize;
+
+import org.apache.commons.lang.builder.CompareToBuilder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
+@AutoSerialize
+public class <indexName>Key implements Comparable
+{
+	public static java.util.Set\<String\> getKeyFieldNames()
+	{
+		java.util.Set\<String\> keyFieldNames = new java.util.HashSet\<String\>();
+		keyFieldNames.add("<attr>");
+		
+		return keyFieldNames;
+	}
+
+  	public Object <attr>;
+  	  	
+	@Override
+  	public int hashCode()
+  	{
+ 		return new HashCodeBuilder(1, 31).
+ 		append(<attr>).
+		toHashCode(); 	
+  	}
+  	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+	  	<indexName>Key other = (<indexName>Key) obj;
+	  	
+	  	return new EqualsBuilder()
+                 .append(<attr>, other.<attr>)<\n>
+                 .isEquals();
+	}
+  	
+	@Override
+	public String toString()
+	{
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("<attr>", <attr>)
+                .toString();
+	}
+	
+	@Override
+	public int compareTo(Object o)
+	{
+		if(this == o)
+			return 0;
+		if(o == null)
+			return 1;
+		CompareToBuilder cb = new CompareToBuilder();
+		<indexName>Key other = (<indexName>Key)o;
+		cb.append(<attr>, other.<attr>);
+		return cb.toComparison();
+	}
+}
+>>
+
+keyFile(packageName, indexName, attrList, lastParam, udfName) ::= <<
+package <packageName>;
+
+import gemlite.core.annotations.domain.AutoSerialize;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
+@AutoSerialize
+public class <indexName>Key
+{
+	public static java.util.Set\<String\> getKeyFieldNames()
+	{
+		java.util.Set\<String\> keyFieldNames = new java.util.HashSet\<String\>();
+		<attrList : {attrItem | keyFieldNames.add("<attrItem>");<\n>}>
+		keyFieldNames.add("<lastParam>");
+		
+		return keyFieldNames;
+	}
+	
+	<attrList : {attrItem | public Object <attrItem>;<\n>}>
+  	public Object <lastParam>;
+  	  	
+	@Override
+  	public int hashCode()
+  	{
+ 		return new HashCodeBuilder(1, 31).
+ 		<attrList: {attrItem |append(<attrItem>).<\n>}>
+ 		append(<lastParam>).
+		toHashCode(); 	
+  	}
+  	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+	  	<indexName>Key other = (<indexName>Key) obj;
+	  	
+	  	return new EqualsBuilder()
+                 <attrList: {attrItem |.append(<attrItem>, other.<attrItem>)<\n>}>
+                 .append(<lastParam>, other.<lastParam>)<\n>
+                 .isEquals();
+	}
+  	
+	@Override
+	public String toString()
+	{
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				<attrList: {attrItem |.append("<attrItem>", <attrItem>)<\n>}>
+                .append("<lastParam>", <lastParam>)
+                .toString();
+	}
+}
+
+>>
+
+
+//START: sortedKeyOnlyComparatorTest
+sortedKeyOnlyComparatorTest(indexName, keyClass, orderItemList) ::= <<
+class <indexName>TestComparator implements Comparator\<<keyClass>\>
+{
+		@Override
+    	public int compare(<keyClass> o1, <keyClass> o2)
+    	{
+    		CompareToBuilder cb = new CompareToBuilder();
+    					
+     	   	<getFromKey(orderItemList=orderItemList)>
+    	}
+}
+>>
+//END: sortedKeyOnlyComparatorTest
+
+//START: sortedValueComparatorTest
+sortedValueComparatorTest(indexName, regionName, keyClass, valueClass, orderItemList) ::= <<
+class <indexName>TestComparator implements Comparator\<<keyClass>\>
+{
+	private ConcurrentHashMap\<<keyClass>, <valueClass>\> cache = new ConcurrentHashMap\<\>();
+	public void addValue(<keyClass> key, <valueClass> value)
+	{
+		cache.put(key, value);
+	}
+	public void removeValue(<keyClass> key)
+	{
+		if(cache != null)
+			cache.remove(key);
+	}
+	
+	@Override
+	public int compare(<keyClass> o1, <keyClass> o2)
+	{
+    
+		CompareToBuilder cb = new CompareToBuilder();
+		<getFromValueTest(regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList)>
+		
+	}
+	
+}
+>>
+//END: sortedValueComparatorTest
+
+//START: sortedComparatorTest
+sortedComparatorTest(indexName, regionName, keyClass, valueClass, orderItemList, keyOnly) ::= <<
+<if(keyOnly)> <sortedKeyOnlyComparatorTest(indexName=indexName, keyClass=keyClass, orderItemList=orderItemList)>
+<else> <sortedValueComparatorTest(indexName=indexName, regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList)>
+<endif>
+>>
+//END: sortedComparatorTest
+
+testClassFile(packageName, indexName, indexOrder, regionName, keyClass, valueClass, attrList, lastParam, udfName, orderItemList, keyOnly) ::= <<
+package <packageName>;
+
+import gemlite.core.internal.support.annotations.IndexRegion;
+import gemlite.core.internal.domain.DomainRegistry;
+import gemlite.core.internal.domain.IMapperTool;
+import gemlite.core.internal.index.ITestIndexTool;
+import gemlite.core.internal.index.BenchmarkLocalCache;
+
+import java.util.Comparator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import com.gemstone.gemfire.internal.concurrent.ConcurrentHashSet;
+import org.apache.commons.lang.builder.CompareToBuilder;
+
+
+<if(orderItemList)> <sortedComparatorTest(indexName=indexName, regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList, keyOnly=keyOnly)>
+<endif>
+
+@SuppressWarnings({"unchecked","rawtypes", "unused"})
+@IndexRegion(regionName = "<regionName>", indexName = "<indexName>", orderNo=<indexOrder>, test=true)
+public class <indexName>Test implements ITestIndexTool\<<keyClass>, <valueClass>\>
+{
+<testMapMethod(indexName=indexName, keyClass=keyClass)>
+
+<if(orderItemList)> <sortedSetMethodTest(regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList, keyOnly=keyOnly)>
+<else> <setMethod(keyClass=keyClass)>
+<endif>
+
+<indexWithInsertTest(indexName=indexName, keyClass=keyClass, valueClass=valueClass, regionName=regionName, attrList=attrList, lastParam=lastParam, udfName=udfName, oriParamList=oriParamList, oriLastParam=oriLastParam)>
+
+<indexWithRemoveTest(keyOnly=keyOnly, indexName=indexName, keyClass=keyClass, valueClass=valueClass, regionName=regionName, attrList=attrList, lastParam=lastParam, udfName=udfName, oriParamList=oriParamList, oriLastParam=oriLastParam, orderItemList=orderItemList)>
+
+<afterInsertTest(keyClass=keyClass, valueClass=valueClass)>
+
+<afterDeleteTest(keyClass=keyClass, valueClass=valueClass)>
+
+<afterUpdateTest(keyClass=keyClass, valueClass=valueClass)>
+}
+>>
+
+//START: testMapMethod
+testMapMethod(indexName, keyClass) ::= <<
+	@Override
+	public Map\<Object, Set\<<keyClass>\>\> getCachedMap()
+	{
+		String indexName = "<indexName>";
+		Map\<Object, Set\<<keyClass>\>\> map = (Map\<Object, Set\<<keyClass>\>\>) BenchmarkLocalCache.getIndexCache(indexName);
+		if (map == null)
+		{
+			map = new ConcurrentHashMap\<Object, Set\<<keyClass>\>\>();
+			BenchmarkLocalCache.setIndexCache(indexName, map);
+		}
+					
+		return map;
+	}
+>>
+//END: testMapMethod
+
+//START: afterInsertTest
+afterInsertTest(keyClass, valueClass) ::= <<
+	@Override
+	public void afterInsert(<valueClass> oldVale, <valueClass> newValue)
+	{
+		Map\<Object, Set\<<keyClass>\>\> map = getCachedMap();
+		indexWithInsert(map, newValue);
+	}
+>>
+//END: afterInsertTest 
+
+//START: afterDeleteTest  
+afterDeleteTest(keyClass, valueClass) ::= <<
+	@Override
+	public void afterDelete(<valueClass> oldVale, <valueClass> newValue)
+	{
+		Map\<Object, Set\<<keyClass>\>\> map = getCachedMap();
+		indexWithRemove(map, oldVale);
+	}
+>>
+//END: afterDeleteTest
+
+//START: afterUpdateTest  
+afterUpdateTest(keyClass, valueClass) ::= <<
+	@Override
+	public void afterUpdate(<valueClass> oldVale, <valueClass> newValue)
+	{
+		Map\<Object, Set\<<keyClass>\>\> map = getCachedMap();
+		indexWithRemove(map, oldVale);
+		indexWithInsert(map, newValue);
+	}
+>>
+//END: afterUpdateTest
+
+//START: indexWithInsertTest
+indexWithInsertTest(indexName, keyClass, valueClass, regionName, attrList, lastParam, udfName, oriParamList, oriLastParam) ::= <<
+	private void indexWithInsert(Map\<Object, Set\<<keyClass>\>\> map, <valueClass> value)
+	{
+		IMapperTool\<<keyClass>, <valueClass>\> tool = DomainRegistry.getMapperTool("<regionName>");
+		<if(udfName)> <udfKeyCode(attrList=attrList, lastParam=lastParam, udfName=udfName)>
+		<else> <mapKeyCode(indexName=indexName, attrList=attrList, lastParam=lastParam, oriParamList=oriParamList, oriLastParam=oriLastParam)>
+		<endif>
+		Set\<<keyClass>\> set = getSet(map, key);
+		<keyClass> k = (<keyClass>)tool.value2Key(value);
+		set.add(k);
+	}
+>>
+//END: indexWithInsertTest
+
+//START: indexWithRemoveTest
+indexWithRemoveTest(keyOnly, indexName, keyClass, valueClass, regionName, attrList, lastParam, udfName, oriParamList, oriLastParam, orderItemList) ::= <<
+	private void indexWithRemove(Map\<Object, Set\<<keyClass>\>\> map, <valueClass> value)
+	{
+		IMapperTool\<<keyClass>, <valueClass>\> tool = DomainRegistry.getMapperTool("<regionName>");
+		<if(udfName)> <udfKeyCode(attrList=attrList, lastParam=lastParam, udfName=udfName)>
+		<else> <mapKeyCode(indexName=indexName, attrList=attrList, lastParam=lastParam, oriParamList=oriParamList, oriLastParam=oriLastParam)>
+		<endif>
+		Set\<<keyClass>\> set = getSet(map, key);
+		if(set != null)
+		{
+			<keyClass> k = (<keyClass>)tool.value2Key(value);
+			<if(orderItemList)><if(!keyOnly)> comp.addValue(k, value); <endif><endif>
+			set.remove(k);
+			<if(orderItemList)><if(!keyOnly)> comp.removeValue(k); <endif><endif>
+		}
+	}
+>>
+//END: indexWithRemoveTest
+
+//START: sortedKeyOnlyComparator
+sortedKeyOnlyComparator(indexName, keyClass, orderItemList) ::= <<
+class <indexName>Comparator implements Comparator\<<keyClass>\>
+{
+		@Override
+    	public int compare(<keyClass> o1, <keyClass> o2)
+    	{
+    		CompareToBuilder cb = new CompareToBuilder();
+    					
+     	   	<getFromKey(orderItemList=orderItemList)>
+    	}
+}
+>>
+//END: sortedKeyOnlyComparator
+
+//START: sortedValueComparator
+sortedValueComparator(indexName, regionName, keyClass, valueClass, orderItemList) ::= <<
+class <indexName>Comparator implements Comparator\<<keyClass>\>
+{
+	private ConcurrentHashMap\<<keyClass>, <valueClass>\> cache = new ConcurrentHashMap\<\>();
+	public void addValue(<keyClass> key, <valueClass> value)
+	{
+		cache.put(key, value);
+	}
+	public void removeValue(<keyClass> key)
+	{
+		if(cache != null)
+			cache.remove(key);
+	}
+	
+	@Override
+	public int compare(<keyClass> o1, <keyClass> o2)
+	{
+    
+		CompareToBuilder cb = new CompareToBuilder();
+		<getFromValue(regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList)>
+		
+	}
+	
+}
+>>
+//END: sortedValueComparator
+
+//START: sortedComparator
+sortedComparator(indexName, regionName, keyClass, valueClass, orderItemList, keyOnly) ::= <<
+<if(keyOnly)> <sortedKeyOnlyComparator(indexName=indexName, keyClass=keyClass, orderItemList=orderItemList)>
+<else> <sortedValueComparator(indexName=indexName, regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList)>
+<endif>
+>>
+//END: sortedComparator
+
+classFile(packageName, indexName, indexOrder, regionName, keyClass, valueClass, attrList, lastParam, udfName, oriParamList, oriLastParam, orderItemList, keyOnly) ::= <<
+package <packageName>;
+
+import java.lang.ref.WeakReference;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import org.apache.commons.lang.builder.CompareToBuilder;
+
+import com.gemstone.gemfire.cache.CacheFactory;
+import com.gemstone.gemfire.cache.Region;
+import com.gemstone.gemfire.cache.partition.PartitionRegionHelper;
+import com.gemstone.gemfire.internal.concurrent.ConcurrentHashSet;
+
+import gemlite.core.internal.support.annotations.IndexRegion;
+import gemlite.core.api.index.IndexEntrySet;
+import gemlite.core.api.index.IndexActionCallback;
+import gemlite.core.internal.domain.DomainRegistry;
+import gemlite.core.internal.domain.IMapperTool;
+import gemlite.core.internal.support.events.SimpleEntryEvent;
+import gemlite.core.internal.index.AbstractIndexTool;
+import gemlite.core.internal.index.LocalIndexCache;
+import gemlite.core.internal.measurement.index.AbstractIndexStatItem;
+import gemlite.core.internal.measurement.index.IndexMeasureHelper;
+import gemlite.core.internal.measurement.index.AbstractIndexStat;
+
+import gemlite.core.internal.view.bean.ViewItem;
+import gemlite.core.internal.view.trigger.ViewTool;
+import gemlite.core.annotations.view.EventStatus;
+import gemlite.core.util.LogUtil;
+
+<if(orderItemList)> <sortedComparator(indexName=indexName, regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList, keyOnly=keyOnly)>
+<endif>
+
+@SuppressWarnings({"unchecked","rawtypes", "unused"})
+@IndexRegion(regionName = "<regionName>", indexName = "<indexName>", orderNo=<indexOrder>)
+public class <indexName> extends AbstractIndexTool\<<keyClass>, <valueClass>\>
+{
+<getIndexData(keyClass=keyClass, attrList=oriParamList, lastParam=oriLastParam, udfName=udfName)>
+<mapMethod(indexName=indexName, keyClass=keyClass)>
+
+<if(orderItemList)> <sortedSetMethod(regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList, keyOnly=keyOnly)>
+<else> <setMethod(keyClass=keyClass)>
+<endif>
+
+<indexWithInsert(indexName=indexName, keyClass=keyClass, valueClass=valueClass, regionName=regionName, attrList=attrList, lastParam=lastParam, udfName=udfName, oriParamList=oriParamList, oriLastParam=oriLastParam)>
+
+<indexWithRemove(keyOnly=keyOnly, indexName=indexName, keyClass=keyClass, valueClass=valueClass, regionName=regionName, attrList=attrList, lastParam=lastParam, udfName=udfName, oriParamList=oriParamList, oriLastParam=oriLastParam, orderItemList=orderItemList)>
+
+<fullCreate(regionName=regionName, keyClass=keyClass, valueClass=valueClass)> 
+
+<clear(keyClass=keyClass)>
+
+<afterInsert(keyClass=keyClass, valueClass=valueClass)>
+
+<afterDelete(keyClass=keyClass, valueClass=valueClass)>
+
+<afterUpdate(keyClass=keyClass, valueClass=valueClass)>
+
+<afterBucketCreated(regionName=regionName, keyClass=keyClass, valueClass=valueClass)>
+
+<afterBucketRemoved(regionName=regionName, keyClass=keyClass, valueClass=valueClass)>
+
+<getKeyClass(indexName=indexName)>
+
+<getKeyFieldNames(indexName=indexName)>
+
+
+<indexChangeEvent(keyClass=keyClass, valueClass=valueClass)>
+
+<buketChangeEvent(keyClass=keyClass, valueClass=valueClass)>
+}
+>>
+
+//START: getIndexData
+getIndexData(keyClass, attrList, lastParam, udfName) ::=<<
+	public IndexEntrySet getIndex()
+	{
+	 	long l0 = System.currentTimeMillis();
+	    AbstractIndexStat ais = IndexMeasureHelper.getIndexStat("<indexName>");
+	    AbstractIndexStatItem aisi = new AbstractIndexStatItem();
+	    aisi.setRegionName("<regionName>");
+	    aisi.setIndexName("<indexName>");
+	    WeakReference\<Thread\> ref = new WeakReference\<Thread\>(Thread.currentThread());
+	    aisi.setThread(ref);
+	    aisi.setStart(l0);
+	    
+		final Map\<Object, Set\<<keyClass>\>\> map = getCachedMap();
+					
+		IndexEntrySet idxData = new IndexEntrySet\<Object, Set\<<keyClass>\>\>()
+		{
+			@Override
+			public Iterator\<Object\> getKeyIterator()
+			{
+				return map.keySet().iterator();
+			}
+
+			@Override
+			public Iterator\<Set\<<keyClass>\>\> getValueIterator()
+			{
+				return map.values().iterator();
+			}
+
+			@Override
+			public Set\<<keyClass>\> getValue(Object key)
+			{
+				return map.get(key);
+			}
+			
+			@Override
+			public Set\<<keyClass>\> getValue(Object key,
+					IndexActionCallback\<Set\<<keyClass>\>\> callback)
+			{
+				Set\<<keyClass>\> value = map.get(key);
+				callback.doAction(value);
+				return value;
+			}
+
+			@Override
+			public Map\<Object, Set\<<keyClass>\>\> getValues(Collection\<Object\> keys)
+			{
+				Map\<Object, Set\<<keyClass>\>\> filterMap = new ConcurrentHashMap\<Object, Set\<<keyClass>\>\>();
+				for(Iterator\<Object\> it=keys.iterator(); it.hasNext();)
+				{
+					Object key = it.next();
+					filterMap.put(key, map.get(key));
+				}
+				
+				return filterMap;
+			}
+			
+			@Override
+			public Map\<Object, Set\<<keyClass>\>\> getValues
+			(
+					Collection\<Object\> keys,
+					IndexActionCallback\<Set\<<keyClass>\>\> callback)
+			{
+				Map\<Object, Set\<<keyClass>\>\> filterMap = new ConcurrentHashMap\<Object, Set\<<keyClass>\>\>();
+				for(Iterator\<Object\> it=keys.iterator(); it.hasNext();)
+				{
+					Object key = it.next();
+					Set\<<keyClass>\> value = filterMap.get(key);
+					callback.doAction(value);
+					filterMap.put(key, map.get(key));
+				}
+				
+				return filterMap;
+			}
+			
+			@Override
+			public Object mapperKey(Map\<String, Object\> map)
+			{
+				<if(udfName)> <udfMapperKey(attrList=attrList, lastParam=lastParam, udfName=udfName)>
+				<else> <mapperKey(indexName=indexName, attrList=attrList, lastParam=lastParam)>
+				<endif>
+			
+				return key;
+			}
+			
+			@Override
+			public Set\<<keyClass>\> getBetweenValue(Object fromKey,boolean fromInclusive,Object toKey,boolean toInclusive)
+			{
+				return new HashSet\<<keyClass>\>();
+			}
+			
+			@Override
+			public Set\<<keyClass>\> getLessValue(Object toKey, boolean inclusive)
+			{
+				return new HashSet\<<keyClass>\>();
+			}
+			
+			@Override
+			public Set\<<keyClass>\> getBiggerValue(Object fromKey, boolean inclusive)
+			{
+				return new HashSet\<<keyClass>\>();
+			}
+			
+			@Override
+			public Set\<<keyClass>\> getLikeValue(Object key)
+			{
+				return new HashSet\<<keyClass>\>();
+			}
+		};
+		
+		aisi.getThread().clear();
+		long l1 = System.currentTimeMillis();
+		aisi.setEnd(l1);
+		if(ais != null)
+		{
+			ais.incrTotalCount();
+			ais.incrTotalCost(l1-l0);
+		}
+		IndexMeasureHelper.getIndexDataEnd(aisi,l0,l1);
+		return idxData;
+	}
+>>
+//END: getIndexData
+
+//START: udfMapperKey
+udfMapperKey(attrList, lastParam, udfName) ::= <<
+	Object key = <udfName>(<attrList: {attrItem |map.get("<attrItem>"),}>map.get("<lastParam>"));
+>>
+//END: udfMapperKey
+
+//START:mapperKey
+mapperKey(indexName,attrList,lastParam) ::=<<
+	<indexName>Key key = new <indexName>Key();
+	<attrList: {attrItem|key.<attrItem>=map.get("<attrItem>");<\n>}>
+	key.<lastParam>=map.get("<lastParam>");
+>>
+//END:mapperKey
+
+//START: mapMethod
+mapMethod(indexName, keyClass) ::= <<
+	private Map\<Object, Set\<<keyClass>\>\> getCachedMap()
+	{
+		String indexName = "<indexName>";
+		Map\<Object, Set\<<keyClass>\>\> map = (Map\<Object, Set\<<keyClass>\>\>) LocalIndexCache.getIndexCache(indexName);
+		if (map == null)
+		{
+			map = new ConcurrentHashMap\<Object, Set\<<keyClass>\>\>();
+			LocalIndexCache.setIndexCache(indexName, map);
+		}
+					
+		return map;
+	}
+>>
+//END: mapMethod
+
+//START: setMethod
+setMethod(keyClass) ::= <<
+	private Set\<<keyClass>\> getSet(Map\<Object, Set\<<keyClass>\>\> map, Object key)
+	{
+		Set\<<keyClass>\> keys = map.get(key);
+		if(keys == null)
+		{
+			keys = new ConcurrentHashSet\<<keyClass>\>();
+			map.put(key, keys);
+		}
+	  
+		return keys;
+	}
+>>
+
+//END: setMethod
+
+//START: sortedSetMethod
+sortedSetMethod(regionName, keyClass, valueClass, orderItemList, keyOnly) ::= <<
+	private <indexName>Comparator comp = new <indexName>Comparator();
+	private Set\<<keyClass>\> getSet(Map\<Object, Set\<<keyClass>\>\> map, Object key)
+	{
+		Set\<<keyClass>\> keys = map.get(key);
+		if (keys == null)
+		{
+			keys = new ConcurrentSkipListSet\<<keyClass>\>(comp);
+      
+			map.put(key, keys);
+ 		}
+		
+		return keys;
+	}
+>>
+//END: sortedSetMethod
+
+//START: sortedSetMethodTest
+sortedSetMethodTest(regionName, keyClass, valueClass, orderItemList, keyOnly) ::= <<
+	private <indexName>Comparator comp = new <indexName>Comparator();
+	private Set\<<keyClass>\> getSet(Map\<Object, Set\<<keyClass>\>\> map, Object key)
+	{
+		Set\<<keyClass>\> keys = map.get(key);
+		if (keys == null)
+		{
+			keys = new ConcurrentSkipListSet\<<keyClass>\>(comp);
+			map.put(key, keys);
+ 		}
+		
+		return keys;
+	}
+>>
+//END: sortedSetMethodTest
+
+//START: getFromKey
+getFromKey(orderItemList) ::= <<
+		cb<orderItemList:{orderItem |.append(
+		<if(orderItem.funcName)> <getFromKeyUDF(orderItem=orderItem)>
+		<else> <getFromKeyField(orderItem=orderItem)>
+		<endif>
+		)}>;
+		int result = cb.toComparison();
+		if(result == 0)
+		{
+			return o1.toString().compareTo(o2.toString());
+		}
+		else
+			return result;
+>>  
+//END: getFromKey
+
+//START: getFromKeyUDF
+getFromKeyUDF(orderItem) ::= <<
+		<if(orderItem.sort)>  (Comparable)<orderItem.funcName>(<orderItem.paramList: {paramItem |o1.get<paramItem>(),}>o1.get<orderItem.lastParam>()), 
+							  (Comparable)<orderItem.funcName>(<orderItem.paramList: {paramItem |o2.get<paramItem>(),}>o2.get<orderItem.lastParam>())
+		<else>	(Comparable)<orderItem.funcName>(<orderItem.paramList: {paramItem |o2.get<paramItem>(),}>o2.get<orderItem.lastParam>()), 
+				(Comparable)<orderItem.funcName>(<orderItem.paramList: {paramItem |o1.get<paramItem>(),}>o1.get<orderItem.lastParam>())
+		<endif>
+>>
+//END: getFromKeyUDF
+
+//START: getFromKeyField
+getFromKeyField(orderItem) ::= <<
+		<if(orderItem.sort)> o1.get<orderItem.lastParam>(), o2.get<orderItem.lastParam>()
+		<else>	 o2.get<orderItem.lastParam>(), o1.get<orderItem.lastParam>()
+		<endif>
+>>
+//END: getFromKeyField
+
+//START: getFromValue
+getFromValue(regionName, keyClass, valueClass, orderItemList) ::= <<
+		Region\<<keyClass>, <valueClass>\> r = CacheFactory.getAnyInstance().getRegion("<regionName>");
+		<valueClass> r1 = r.get(o1);
+		<valueClass> r2 = r.get(o2);
+       
+        if (r1==null)
+			r1 = cache.get(o1);
+          
+        if (r2==null)
+        	r2 = cache.get(o2);
+          
+		cb<orderItemList:{orderItem |.append(
+		<if(orderItem.funcName)> <getFromValueUDF(orderItem=orderItem)>
+		<else> <getFromValueField(orderItem=orderItem)>
+		<endif>
+		)}>;
+		
+		int result = cb.toComparison();
+		if(result == 0)
+		{
+			return o1.toString().compareTo(o2.toString());
+		}
+		else
+			return result;  
+>>
+//END: getFromValue
+
+//START: getFromValueTest
+getFromValueTest(regionName, keyClass, valueClass, orderItemList) ::= <<
+		Map\<<keyClass>, <valueClass>\> r = (Map\<<keyClass>, <valueClass>\>)BenchmarkLocalCache.getLocalCache("<regionName>");
+		<valueClass> r1 = r.get(o1);
+		<valueClass> r2 = r.get(o2);
+		 
+		 if (r1==null)
+			r1 = cache.get(o1);
+          
+        if (r2==null)
+        	r2 = cache.get(o2);
+		
+		cb<orderItemList:{orderItem |.append(
+		<if(orderItem.funcName)> <getFromValueUDF(orderItem=orderItem)>
+		<else> <getFromValueField(orderItem=orderItem)>
+		<endif>
+		)}>;
+		
+		int result = cb.toComparison();
+		if(result == 0)
+		{
+			return o1.toString().compareTo(o2.toString());
+		}
+		else
+			return result;  
+>>
+//END: getFromValueTest
+
+//START: getFromValueUDF
+getFromValueUDF(orderItem) ::= <<
+		<if(orderItem.sort)>  (Comparable)<orderItem.funcName>(<orderItem.paramList: {paramItem |r1.get<paramItem>(),}>r1.get<orderItem.lastParam>()), 
+							  (Comparable)<orderItem.funcName>(<orderItem.paramList: {paramItem |r2.get<paramItem>(),}>r2.get<orderItem.lastParam>())
+		<else>	(Comparable)<orderItem.funcName>(<orderItem.paramList: {paramItem |r2.get<paramItem>(),}>r2.get<orderItem.lastParam>()), 
+				(Comparable)<orderItem.funcName>(<orderItem.paramList: {paramItem |r1.get<paramItem>(),}>r1.get<orderItem.lastParam>())
+		<endif>
+>>
+//END: getFromValueUDF
+
+//START: getFromValueField
+getFromValueField(orderItem) ::= <<
+		<if(orderItem.sort)> r1.get<orderItem.lastParam>(), r2.get<orderItem.lastParam>()
+		<else>	 r2.get<orderItem.lastParam>(), r1.get<orderItem.lastParam>()
+		<endif>
+>>
+//END: getFromValueField
+
+//START: indexWithInsert 
+indexWithInsert(indexName, keyClass, valueClass, regionName, attrList, lastParam, udfName, oriParamList, oriLastParam) ::= <<
+	private void indexWithInsert(Map\<Object, Set\<<keyClass>\>\> map, <valueClass> value)
+	{
+		IMapperTool\<<keyClass>, <valueClass>\> tool = DomainRegistry.getMapperTool("<regionName>");
+		<if(udfName)> <udfKeyCode(attrList=attrList, lastParam=lastParam, udfName=udfName)>
+		<else> <mapKeyCode(indexName=indexName, attrList=attrList, lastParam=lastParam, oriParamList=oriParamList, oriLastParam=oriLastParam)>
+		<endif>
+		Set\<<keyClass>\> set = getSet(map, key);
+		<keyClass> k = (<keyClass>)tool.value2Key(value);
+		set.add(k);
+		
+		AbstractIndexStat ids = IndexMeasureHelper.getIndexStat("<indexName>");
+		ids.incrEntrySize();
+	}
+>>
+//END: indexWithInsert
+
+//START: mapKeyCode
+mapKeyCode(indexName, attrList, lastParam, oriParamList, oriLastParam) ::= <<
+		<indexName>Key key = new <indexName>Key();
+		<attrList,oriParamList: {attrItem, oriItem |key.<oriItem>=value.get<attrItem>();<\n>}>
+		key.<oriLastParam>=value.get<lastParam>();
+>>
+//END: MapKeyCode 
+
+//START: udfKeyCode
+udfKeyCode(attrList, lastParam, udfName) ::= <<
+		Object key = <udfName>(<attrList: {attrItem |value.get<attrItem>(),}>value.get<lastParam>());
+>>
+//END: udfKeyCode
+
+//START: indexWithRemove
+indexWithRemove(keyOnly, indexName, keyClass, valueClass, regionName, attrList, lastParam, udfName, oriParamList, oriLastParam, orderItemList) ::= <<
+	private void indexWithRemove(Map\<Object, Set\<<keyClass>\>\> map, <valueClass> value)
+	{
+		IMapperTool\<<keyClass>, <valueClass>\> tool = DomainRegistry.getMapperTool("<regionName>");
+		<if(udfName)> <udfKeyCode(attrList=attrList, lastParam=lastParam, udfName=udfName)>
+		<else> <mapKeyCode(indexName=indexName, attrList=attrList, lastParam=lastParam, oriParamList=oriParamList, oriLastParam=oriLastParam)>
+		<endif>
+		Set\<<keyClass>\> set = getSet(map, key);
+		
+		if(set != null)
+		{
+			<keyClass> k = (<keyClass>)tool.value2Key(value);
+			<if(orderItemList)><if(!keyOnly)> comp.addValue(k, value); <endif><endif>
+			set.remove(k);
+			<if(orderItemList)><if(!keyOnly)>comp.removeValue(k); <endif><endif>
+			
+			AbstractIndexStat ids = IndexMeasureHelper.getIndexStat("<indexName>");
+			ids.decrEntrySize();
+		}
+	}
+>>
+//END: indexWithRemove
+
+//START: fullCreate
+fullCreate(regionName, keyClass, valueClass) ::= <<
+	@Override
+	public void fullCreate()
+	{
+		Map\<Object, Set\<<keyClass>\>\> map  = getCachedMap();
+		map.clear();
+		Object[] arr = getLocalDataValues("<regionName>");
+		for (int i = 0; i \< arr.length; i++)
+		{
+			indexWithInsert(map, (<valueClass>)arr[i]);
+		}
+	}
+>>
+//END: fullCreate
+
+//START: clear
+clear(keyClass) ::= <<
+	@Override
+	public void clear()
+	{
+		Map\<Object, Set\<<keyClass>\>\> map  = getCachedMap();
+		if(map != null)
+			map.clear();
+	}
+>>
+//END: clear
+
+//START: afterInsert
+afterInsert(keyClass, valueClass) ::= <<
+	@Override
+	public void afterInsert(SimpleEntryEvent\<<keyClass>, <valueClass>\> e)
+	{
+		Map\<Object, Set\<<keyClass>\>\> map = getCachedMap();
+		indexWithInsert(map, e.getNewValue());
+		indexChangeEvent(e,EventStatus.AfterRegionCreate);
+	}
+>>
+//END: afterInsert 
+
+//START: afterDelete  
+afterDelete(keyClass, valueClass) ::= <<
+	@Override
+	public void afterDelete(SimpleEntryEvent\<<keyClass>, <valueClass>\> e)
+	{
+		Map\<Object, Set\<<keyClass>\>\> map = getCachedMap();
+		indexWithRemove(map, e.getOldValue());
+		indexChangeEvent(e,EventStatus.AfterRegionDestroy);
+	}
+>>
+//END: afterDelete
+
+//START: afterUpdate  
+afterUpdate(keyClass, valueClass) ::= <<
+	@Override
+	public void afterUpdate(SimpleEntryEvent\<<keyClass>, <valueClass>\> e)
+	{
+		Map\<Object, Set\<<keyClass>\>\> map = getCachedMap();
+		indexWithRemove(map, e.getOldValue());
+		indexWithInsert(map, e.getNewValue());
+		indexChangeEvent(e,EventStatus.AfterRegionUpdate);
+	}
+>>
+//END: afterUpdate
+
+//START:  afterBucketCreated
+afterBucketCreated(regionName, keyClass, valueClass) ::= <<
+	@Override
+	public void afterBucketCreated(int bucketId, Iterable\<<keyClass>\> keys)
+	{
+		Region\<<keyClass>, <valueClass>\> r = CacheFactory.getAnyInstance().getRegion("<regionName>");
+		r = PartitionRegionHelper.getLocalData(r);
+		Map\<Object, Set\<<keyClass>\>\> map = getCachedMap();
+		for (<keyClass> k : keys)
+		{
+			<valueClass> value = r.get(k);
+			indexWithInsert(map, value);
+		}
+		
+		buketChangeEvent(bucketId, keys, EventStatus.AfterBucketCreated);
+	}
+>>
+//END: afterBucketCreated
+
+//START: afterBucketRemoved  
+afterBucketRemoved(regionName, keyClass, valueClass) ::= <<
+	@Override
+	public void afterBucketRemoved(int bucketId, Iterable\<<keyClass>\> keys)
+	{
+		Region\<<keyClass>, <valueClass>\> r = CacheFactory.getAnyInstance().getRegion("<regionName>");
+		r = PartitionRegionHelper.getLocalData(r);
+		Map\<Object, Set\<<keyClass>\>\> map = getCachedMap();
+		for (<keyClass> k : keys)
+		{
+			<valueClass> value = r.get(k);
+			indexWithRemove(map, value);
+		}
+		
+		buketChangeEvent(bucketId, keys, EventStatus.AfterBucketRemoved);
+	}
+>>
+//END: afterBucketCreated
+
+//START: getKeyClass
+getKeyClass(indexName) ::= <<
+	@Override
+	public Class getKeyClass()
+	{	
+		return <indexName>Key.class;
+	}
+>>
+//END:getKeyClass
+
+//START: getKeyFieldNames
+getKeyFieldNames(indexName) ::= <<
+	@Override
+	public Set getKeyFieldNames() 
+	{
+		return <indexName>Key.getKeyFieldNames();
+	}
+>>
+//END: getKeyFieldNames
+
+//START: indexChangeEvent
+indexChangeEvent(keyClass, valueClass) ::= <<
+	public void indexChangeEvent(
+			SimpleEntryEvent\<<keyClass>, <valueClass>\> e, EventStatus status)
+	{
+		Map\<String, ViewItem\> viewsMap = getViewContext();
+		Iterator\<ViewItem\> iters = viewsMap.values().iterator();
+		while (iters.hasNext())
+		{
+			ViewItem viewItem = iters.next();
+			ViewTool\<<keyClass>, <valueClass>\> viewTool = (ViewTool\<<keyClass>, <valueClass>\>) viewItem
+					.getViewTool();
+
+			if (status == EventStatus.AfterRegionCreate)
+				viewTool.afterInsert(e);
+			else if (status == EventStatus.AfterRegionUpdate)
+				viewTool.afterUpdate(e);
+			else if (status == EventStatus.AfterRegionDestroy)
+				viewTool.afterDelete(e);
+		}
+	}
+	
+	>>
+	
+//END: indexChangeEvent
+	
+
+//START: buketChangeEvent
+buketChangeEvent(keyClass, valueClass) ::= <<
+	public void buketChangeEvent(int bucketId, Iterable\<<keyClass>\> keys, EventStatus status)
+	{
+		Map\<String, ViewItem\> viewsMap = getViewContext();
+		Iterator\<ViewItem\> iters = viewsMap.values().iterator();
+		while (iters.hasNext())
+		{
+			ViewItem viewItem = iters.next();
+			ViewTool\<<keyClass>, <valueClass>\> viewTool = (ViewTool\<<keyClass>, <valueClass>\>) viewItem
+					.getViewTool();
+
+			if (status == EventStatus.AfterBucketCreated)
+				viewTool.afterBucketCreated(bucketId, keys);
+			else if (status == EventStatus.AfterBucketRemoved)
+				viewTool.afterBucketRemoved(bucketId, keys);
+		}		
+
+	}
+	
+	>>
+//END: buketChangeEvent
+
+
+mappingRegionClassFile(packageName, indexName, indexOrder, regionName, keyClass, valueClass, oriNameList, nameList,
+  		               fromAttrList, fromLastParam, fromOriParamList, fromOriLastParam,
+  		               toAttrList, toLastParam, toOriParamList, toOriLastParam) ::= <<
+package <packageName>;
+
+import gemlite.core.internal.support.annotations.IndexRegion;
+import gemlite.core.api.index.IndexActionCallback;
+import gemlite.core.api.index.IndexEntrySet;
+import gemlite.core.internal.support.events.SimpleEntryEvent;
+import gemlite.core.internal.index.AbstractIndexTool;
+import gemlite.core.util.LogUtil;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+import com.gemstone.gemfire.cache.Cache;
+import com.gemstone.gemfire.cache.CacheFactory;
+import com.gemstone.gemfire.cache.EntryEvent;
+import com.gemstone.gemfire.cache.PartitionAttributes;
+import com.gemstone.gemfire.cache.PartitionAttributesFactory;
+import com.gemstone.gemfire.cache.Region;
+import com.gemstone.gemfire.cache.RegionAttributes;
+import com.gemstone.gemfire.cache.RegionExistsException;
+import com.gemstone.gemfire.cache.RegionFactory;
+import com.gemstone.gemfire.cache.RegionShortcut;
+import com.gemstone.gemfire.cache.partition.PartitionListenerAdapter;
+import com.gemstone.gemfire.cache.partition.PartitionRegionHelper;
+import com.gemstone.gemfire.cache.util.CacheListenerAdapter;
+
+import gemlite.core.internal.view.bean.ViewItem;
+import gemlite.core.internal.view.trigger.ViewTool;
+import gemlite.core.annotations.view.EventStatus;
+
+@IndexRegion(regionName = "<regionName>", indexName = "<indexName>", orderNo=<indexOrder>, isRegion=true)
+public class <indexName>Region extends AbstractIndexTool\<<keyClass>, <valueClass>\>
+{
+	private final static int TOTAL_NUM_BUCKETS = 479;
+	private static int regionBucketNum = 0;
+	
+	synchronized private static int getBucketsNum()
+	{
+		if(regionBucketNum == 0)
+		{
+			Cache cache = CacheFactory.getAnyInstance();
+			Region r = cache.getRegion("<regionName>");
+			RegionAttributes attr = r.getAttributes();
+			if(attr != null)
+			{
+				PartitionAttributes pa = attr.getPartitionAttributes();
+				if(pa != null)
+					regionBucketNum = pa.getTotalNumBuckets();
+			}
+		}
+		
+		return regionBucketNum;
+	}
+	
+	public final static int getBucketID(Object value)
+	{
+		if(value == null)
+			throw new gemlite.core.internal.support.GemliteException("Object can not be null!");
+		
+		int bucketId = getBucketsNum(); 
+		if(bucketId == 0)
+			throw new gemlite.core.internal.support.GemliteException("Region <regionName> can not have 0 bucket!");
+
+		return value.hashCode() % bucketId;
+	}
+	
+	@Override
+	public Region init()
+	{
+		String indexName = "<indexName>";
+		Cache cache = CacheFactory.getAnyInstance();
+		String regionName = indexName;
+		RegionFactory rf = cache.createRegionFactory(RegionShortcut.PARTITION);
+		PartitionAttributesFactory pa = new PartitionAttributesFactory();
+		pa.addPartitionListener(new <indexName>BucketChangeListener());
+		pa.setPartitionResolver(new <indexName>Resolver());
+		pa.setRecoveryDelay(0);
+		pa.setStartupRecoveryDelay(0);
+		pa.setTotalNumBuckets(TOTAL_NUM_BUCKETS);
+		rf.setPartitionAttributes(pa.create());
+		rf.addCacheListener(new <indexName>Listener());
+		Region region = null;
+		try
+		{
+			region = rf.create(regionName);
+		}
+		catch(RegionExistsException e)
+		{
+			region = cache.getRegion(regionName);
+		}
+		
+		return region;
+	}
+	
+	private Region\<Map\<String, Object\>, Map\<String, Object\>\> getMappingRegion()
+	{
+		String indexName = "<indexName>";
+		Cache cache = CacheFactory.getAnyInstance();
+		String regionName = indexName;
+		Region\<Map\<String, Object\>, Map\<String, Object\>\> region = cache.getRegion(regionName);
+		if (region == null)
+		{
+			try
+			{
+				region = init();
+			}
+			catch(RegionExistsException e)
+			{
+				region = cache.getRegion(regionName);
+			}
+		}
+		
+		return region;
+	}
+	
+	private void indexWithInsert(Region\<Map\<String, Object\>, Map\<String, Object\>\> region, <valueClass> value)
+	{
+		Map\<String, Object\> key1 = new HashMap\<String, Object\>();
+		
+		<oriNameList, nameList: {oriName, name |key1.put("<oriName>",value.get<name>());<\n>}>
+		<fromAttrList,fromOriParamList: {attrItem, oriItem |key1.put("<oriItem>", value.get<attrItem>());<\n>}>
+		key1.put("<fromOriLastParam>", value.get<fromLastParam>());
+		
+		Map\<String, Object\> key2 = new HashMap\<String, Object\>();
+		<toAttrList,toOriParamList: {attrItem, oriItem |key2.put("<oriItem>", value.get<attrItem>());<\n>}>
+		key2.put("<toOriLastParam>", value.get<toLastParam>());
+		
+		region.put(key1, key2);
+	}
+	
+	private void indexWithRemove(Region\<Map\<String, Object\>, Map\<String, Object\>\> region, <valueClass> value)
+	{
+		Map\<String, Object\> key1 = new HashMap\<String, Object\>();
+		<oriNameList, nameList: {oriName, name |key1.put("<oriName>",value.get<name>());<\n>}>
+		<fromAttrList,fromOriParamList: {attrItem, oriItem |key1.put("<oriItem>", value.get<attrItem>());<\n>}>
+		key1.put("<fromOriLastParam>", value.get<fromLastParam>());
+		
+		Map\<String, Object\> key2 = new HashMap\<String, Object\>();
+		<toAttrList,toOriParamList: {attrItem, oriItem |key2.put("<oriItem>", value.get<attrItem>());<\n>}>
+		key2.put("<toOriLastParam>", value.get<toLastParam>());
+		region.remove(key1, key2);
+	}
+	
+	@Override
+	public void fullCreate()
+	{
+		Region\<Map\<String, Object\>, Map\<String, Object\>\> region = getMappingRegion();
+		Cache c = CacheFactory.getAnyInstance();
+		if(c != null)
+		{
+			Region r = c.getRegion("<regionName>");
+			if(r != null)
+			{
+				r = PartitionRegionHelper.getLocalPrimaryData(r);
+				Object[] arr = r.values().toArray();
+				for (int i = 0; i \< arr.length; i++)
+				{
+					indexWithInsert(region, (<valueClass>)arr[i]);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void clear()
+	{
+		<indexName>LocalCache localTool = <indexName>LocalCache.getInstance();
+		localTool.clear();
+		localTool = null;
+		
+		Cache c = CacheFactory.getAnyInstance();
+		if(c !=  null)
+		{
+			Region\<Map\<String, Object\>, Map\<String, Object\>\> r = c.getRegion("<indexName>");
+			if(r != null)
+			{
+				r.close();
+			}
+		}	
+	}
+
+	@Override
+	public Class getKeyClass() 
+	{
+		return null;
+	}
+
+	@Override
+	public Set getKeyFieldNames() 
+	{
+		return null;
+	}
+	
+	@Override
+	public IndexEntrySet getIndex()
+	{
+		<indexName>LocalCache localTool = <indexName>LocalCache.getInstance();
+		final Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> map = localTool.getCachedMap();
+		IndexEntrySet\<Map\<String, Object\>, Set\<Integer\>\> idxData = new IndexEntrySet\<Map\<String, Object\>, Set\<Integer\>\>()
+		{
+			@Override
+			public Map\<String, Object\> mapperKey(Map\<String, Object\> map) 
+			{
+				Map\<String, Object\> key = new HashMap\<String, Object\>();
+				<fromOriParamList: {oriItem |key.put("<oriItem>", map.get("<oriItem>"));<\n>}>
+				key.put("<fromOriLastParam>", map.get("<fromOriLastParam>"));
+
+				return key;
+			}
+
+			@Override
+			public Iterator\<Map\<String, Object\>\> getKeyIterator()
+			{
+				return map.keySet().iterator();
+			}
+
+			@Override
+			public Iterator\<Set\<Integer\>\> getValueIterator()
+			{
+				Set\<Set\<Integer\>\> result = new HashSet\<Set\<Integer\>\>();
+				Collection\<Map\<Integer, AtomicLong\>\> c = map.values();
+				if(c != null)
+				{
+					for(Iterator\<Map\<Integer, AtomicLong\>\> it = c.iterator(); it.hasNext();)
+					{
+						Map\<Integer, AtomicLong\> value = it.next();
+						if(value != null)
+							result.add(value.keySet());
+					}
+				
+					return result.iterator();
+				}
+				
+				return null;
+			}
+	
+			@Override
+			public Set\<Integer\> getValue(Map\<String, Object\> key)
+			{
+				Map\<Integer, AtomicLong\> value = map.get(key);
+				if(value != null)
+					return value.keySet();
+				
+				return null;
+			}
+
+			@Override
+			public Set\<Integer\> getValue(Map\<String, Object\> key,
+					IndexActionCallback\<Set\<Integer\>\> callback)
+			{
+				return null;
+			}
+
+			@Override
+			public Map\<Map\<String, Object\>, Set\<Integer\>\> getValues(
+					Collection\<Map\<String, Object\>\> keys)
+			{
+				Map\<Map\<String, Object\>, Set\<Integer\>\> filterMap = new ConcurrentHashMap\<Map\<String, Object\>, Set\<Integer\>\>();
+				for(Iterator\<Map\<String, Object\>\> it=keys.iterator(); it.hasNext();)
+				{
+					Map\<String, Object\> key = it.next();
+					Map\<Integer, AtomicLong\> value = map.get(key);
+					if(value != null)
+						filterMap.put(key, value.keySet());
+				}
+	
+				return filterMap;
+			}
+
+			@Override
+			public Map\<Map\<String, Object\>, Set\<Integer\>\> getValues(
+					Collection\<Map\<String, Object\>\> keys,
+					IndexActionCallback\<Set\<Integer\>\> callback) 
+			{
+				return null;
+			}
+			
+			@Override
+			public Set\<Integer\> getBetweenValue(Map\<String, Object\> fromKey,boolean fromInclusive,Map\<String, Object\> toKey,boolean toInclusive)
+			{
+				return new HashSet\<Integer\>();
+			}
+			
+			@Override
+			public Set\<Integer\> getLessValue(Map\<String, Object\> toKey, boolean inclusive)
+			{
+				return new HashSet\<Integer\>();
+			}
+			
+			@Override
+			public Set\<Integer\> getBiggerValue(Map\<String, Object\> fromKey, boolean inclusive)
+			{
+				return new HashSet\<Integer\>();
+			}
+			
+			@Override
+			public Set\<Integer\> getLikeValue(Map\<String, Object\> key)
+			{
+				return new HashSet\<Integer\>();
+			}
+		};
+		
+		return idxData;
+	}
+
+	@Override
+	public void afterInsert(SimpleEntryEvent\<<keyClass>, <valueClass>\> e) 
+	{
+		Region\<Map\<String, Object\>, Map\<String, Object\>\> region = getMappingRegion();
+		indexWithInsert(region, e.getNewValue());
+		indexChangeEvent(e,EventStatus.AfterRegionCreate);
+	}
+
+	@Override
+	public void afterDelete(SimpleEntryEvent\<<keyClass>, <valueClass>\> e)
+	{
+		Region\<Map\<String, Object\>, Map\<String, Object\>\> region = getMappingRegion();
+		indexWithRemove(region, e.getOldValue());
+		indexChangeEvent(e,EventStatus.AfterRegionDestroy);
+	}
+
+	@Override
+	public void afterUpdate(SimpleEntryEvent\<<keyClass>, <valueClass>\> e)
+	{
+		Region\<Map\<String, Object\>, Map\<String, Object\>\> region = getMappingRegion();
+		if(isPKChange(e.getOldValue(), e.getNewValue()))
+		{
+			indexWithRemove(region, e.getOldValue());
+			indexWithInsert(region, e.getNewValue());
+		}
+		indexChangeEvent(e,EventStatus.AfterRegionUpdate);
+	}
+	
+	private boolean isPKChange(<valueClass> oldValue, <valueClass> newValue)
+	{
+		Map\<String, Object\> oldKey1 = new HashMap\<String, Object\>();
+		<oriNameList, nameList: {oriName, name |oldKey1.put("<oriName>",oldValue.get<name>());<\n>}>
+		<fromAttrList,fromOriParamList: {attrItem, oriItem |oldKey1.put("<oriItem>", oldValue.get<attrItem>());<\n>}>
+		oldKey1.put("<fromOriLastParam>", oldValue.get<fromLastParam>());
+		
+		Map\<String, Object\> newKey1 = new HashMap\<String, Object\>();
+		<oriNameList, nameList: {oriName, name |newKey1.put("<oriName>",newValue.get<name>());<\n>}>
+		<fromAttrList,fromOriParamList: {attrItem, oriItem |newKey1.put("<oriItem>", newValue.get<attrItem>());<\n>}>
+		newKey1.put("<fromOriLastParam>", newValue.get<fromLastParam>());	
+		
+		Map\<String, Object\> oldKey2 = new HashMap\<String, Object\>();
+		<toAttrList,toOriParamList: {attrItem, oriItem |oldKey2.put("<oriItem>", oldValue.get<attrItem>());<\n>}>
+		oldKey2.put("<toOriLastParam>", oldValue.get<toLastParam>());
+		
+		Map\<String, Object\> newKey2 = new HashMap\<String, Object\>();
+		<toAttrList,toOriParamList: {attrItem, oriItem |newKey2.put("<oriItem>", newValue.get<attrItem>());<\n>}>
+		newKey2.put("<toOriLastParam>", newValue.get<toLastParam>());
+	
+		if(oldKey1.equals(newKey1) && oldKey2.equals(newKey2))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public void afterBucketCreated(int bucketId, Iterable\<<keyClass>\> keys) 
+	{
+		buketChangeEvent(bucketId, keys, EventStatus.AfterBucketCreated);	
+	}
+
+	@Override
+	public void afterBucketRemoved(int bucketId, Iterable\<<keyClass>\> keys)
+	{
+		buketChangeEvent(bucketId, keys, EventStatus.AfterBucketRemoved);
+	}
+	
+	<indexChangeEvent(keyClass=keyClass, valueClass=valueClass)>
+
+    <buketChangeEvent(keyClass=keyClass, valueClass=valueClass)>
+}
+
+	class <indexName>Listener extends CacheListenerAdapter\<Map\<String, Object\>, Map\<String, Object\>\> 
+	{
+		
+		@Override
+		public void afterCreate(EntryEvent\<Map\<String, Object\>, Map\<String, Object\>\> event)
+		{
+			try
+			{
+				SimpleEntryEvent\<Map\<String, Object\>, Map\<String, Object\>\> sevent = new SimpleEntryEvent\<Map\<String, Object\>, Map\<String, Object\>\>(event);
+				<indexName>LocalCache localTool = <indexName>LocalCache.getInstance();
+				localTool.afterInsert(sevent);
+			}
+			catch (Exception e)
+			{
+				LogUtil.getMqSyncLog().error("region:"+event.getRegion().getName()+" key:"+event.getKey(),e);
+				throw new RuntimeException(e);
+			}
+		}
+		
+		@Override
+		public void afterDestroy(EntryEvent\<Map\<String, Object\>, Map\<String, Object\>\> event)
+		{
+			try
+			{
+				SimpleEntryEvent\<Map\<String, Object\>, Map\<String, Object\>\> sevent = new SimpleEntryEvent\<Map\<String, Object\>, Map\<String, Object\>\>(event);
+				<indexName>LocalCache localTool = <indexName>LocalCache.getInstance();
+				localTool.afterDelete(sevent);
+			}
+			catch (Exception e)
+			{
+				LogUtil.getMqSyncLog().error("region:"+event.getRegion().getName()+" key:"+event.getKey(),e);
+				throw new RuntimeException(e);
+			}
+		}
+		
+	}
+	
+	class <indexName>BucketChangeListener extends PartitionListenerAdapter 
+	{
+		@Override
+		public void afterBucketRemoved(int bucketId, Iterable keys)
+		{
+		    <indexName>LocalCache localTool = <indexName>LocalCache.getInstance();
+		    localTool.afterBucketRemoved(bucketId, keys);
+		  }
+		  
+		  @Override
+		  public void afterBucketCreated(int bucketId, Iterable keys)
+		  {
+			 <indexName>LocalCache localTool = <indexName>LocalCache.getInstance();
+			 localTool.afterBucketCreated(bucketId, keys);
+		  }
+	}
+	
+>>
+
+mappingLocalCacheClassFile(packageName, indexName, fromOriParamList, fromOriLastParam) ::= <<
+package <packageName>;
+
+import gemlite.core.internal.support.events.SimpleEntryEvent;
+import gemlite.core.internal.index.LocalIndexCache;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+import com.gemstone.gemfire.cache.CacheFactory;
+import com.gemstone.gemfire.cache.Region;
+
+public class <indexName>LocalCache
+{
+	public Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> getCachedMap()
+	{
+		String indexName = "<indexName>";
+		Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> map = (Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\>) LocalIndexCache.getIndexCache(indexName);
+		if (map == null)
+		{
+			map = new ConcurrentHashMap\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\>();
+			LocalIndexCache.setIndexCache(indexName, map);
+		}
+					
+		return map;
+	}
+
+ 
+	private Map\<Integer, AtomicLong\> getSet(Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> map, Map\<String, Object\> key)
+	{
+		Map\<Integer, AtomicLong\> keys = map.get(key);
+		if (keys == null)
+		{
+			keys = new ConcurrentHashMap\<Integer, AtomicLong\>();
+			map.put(key, keys);
+ 		}
+		
+		return keys;
+	}
+	
+	private void indexWithInsert(Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> map, 
+								 Map\<String, Object\> key, Map\<String, Object\> value)
+	{
+		Map\<Integer, AtomicLong\> set = getSet(map, key);
+		Integer bucketID;
+		if(value.size() == 1)
+			bucketID = <indexName>Region.getBucketID(value.values().iterator().next());
+		else
+			bucketID = <indexName>Region.getBucketID(value);
+			
+		AtomicLong counter = set.get(bucketID);
+		if(counter == null)
+		{
+			counter = new AtomicLong(1);
+			set.put(bucketID, counter);
+		}
+		else
+			counter.incrementAndGet();
+	}
+
+	private void indexWithRemove(Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> map, 
+								 Map\<String, Object\> key, Map\<String, Object\> value)
+	{
+		Map\<Integer, AtomicLong\> set = getSet(map, key);
+		Integer bucketID;
+		if(value.size() == 1)
+			bucketID = <indexName>Region.getBucketID(value.values().iterator().next());
+		else
+			bucketID = <indexName>Region.getBucketID(value);
+		AtomicLong counter = set.get(bucketID);
+		if(counter != null)
+		{
+			long result = counter.decrementAndGet();
+			if(result \<= 0)
+				set.remove(bucketID);
+		}
+	}
+
+	public void clear()
+	{
+		Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> map = getCachedMap();
+		if(map != null)
+			map.clear();
+	}
+
+	public void afterInsert(SimpleEntryEvent\<Map\<String, Object\>, Map\<String, Object\>\> e)
+	{
+		Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> map = getCachedMap();
+		Map\<String, Object\> key = new HashMap\<String, Object\>();
+		
+		<fromOriParamList: {oriItem |key.put("<oriItem>", e.getKey().get("<oriItem>"));<\n>}>
+		key.put("<fromOriLastParam>", e.getKey().get("<fromOriLastParam>"));
+		indexWithInsert(map, key, e.getNewValue());
+	}
+
+	public void afterDelete(SimpleEntryEvent\<Map\<String, Object\>, Map\<String, Object\>\> e)
+	{
+		Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> map = getCachedMap();
+		Map\<String, Object\> key = new HashMap\<String, Object\>();
+		
+		<fromOriParamList: {oriItem |key.put("<oriItem>", e.getKey().get("<oriItem>"));<\n>}>
+		key.put("<fromOriLastParam>", e.getKey().get("<fromOriLastParam>"));
+		indexWithRemove(map, key, e.getOldValue());
+	}
+
+	public void afterBucketCreated(int bucketId, Iterable\<Map\<String, Object\>\> keys)
+	{
+		Region\<Map\<String, Object\>, Map\<String, Object\>\> r = CacheFactory.getAnyInstance().getRegion("<indexName>");
+		Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> map = getCachedMap();
+		for(Map\<String, Object\> k : keys)
+		{
+			Map\<String, Object\> key = new HashMap\<String, Object\>();
+			<fromOriParamList: {oriItem |key.put("<oriItem>", k.get("<oriItem>"));<\n>}>
+			key.put("<fromOriLastParam>", k.get("<fromOriLastParam>"));
+			Map\<String, Object\> value = r.get(k);
+			indexWithInsert(map, key, value);
+		}
+	}
+
+	public void afterBucketRemoved(int bucketId, Iterable\<Map\<String, Object\>\> keys)
+	{
+		Region\<Map\<String, Object\>, Map\<String, Object\>\> r = CacheFactory.getAnyInstance().getRegion("<indexName>");
+		Map\<Map\<String, Object\>, Map\<Integer, AtomicLong\>\> map = getCachedMap();
+		for(Map\<String, Object\> k : keys)
+		{
+			Map\<String, Object\> key = new HashMap\<String, Object\>();
+			<fromOriParamList: {oriItem |key.put("<oriItem>", k.get("<oriItem>"));<\n>}>
+			key.put("<fromOriLastParam>", k.get("<fromOriLastParam>"));
+			Map\<String, Object\> value = r.get(k);
+			indexWithRemove(map, key, value);
+		}
+	}
+	
+	private static <indexName>LocalCache instance = new <indexName>LocalCache();
+	public static <indexName>LocalCache getInstance()
+	{
+		return instance;
+	}
+}              
+>>
+
+mappingRegionResolverClassFile(packageName, indexName, fromOriParamList, fromOriLastParam) ::= <<
+package <packageName>;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.HashMap;
+import com.gemstone.gemfire.cache.EntryOperation;
+import com.gemstone.gemfire.cache.PartitionResolver;
+
+public class <indexName>Resolver implements PartitionResolver\<Serializable,Serializable\>
+{
+	@Override
+	public void close() 
+	{
+			
+	}
+	
+	@Override
+	public Object getRoutingObject(EntryOperation\<Serializable, Serializable\> entryoperation)
+	{
+		Serializable key = entryoperation.getKey();
+		
+		if(key instanceof Map)
+		{
+			Map\<String, Object\> keyMap = (Map\<String, Object\>) key;
+			Map\<String, Object\> newMap = new HashMap\<String, Object\>();
+			<fromOriParamList: {oriItem |newMap.put("<oriItem>",keyMap.get("<oriItem>"));<\n>}>
+			newMap.put("<fromOriLastParam>",keyMap.get("<fromOriLastParam>"));
+				
+			if(newMap.size() == 1)
+				return newMap.values().iterator().next();
+			else
+				return newMap;
+		}
+		
+		return key;
+	}
+
+	@Override
+	public String getName() 
+	{
+		return this.getClass().getName();
+	}
+
+	}
+>>
+
+rangeClassFile(packageName, indexName, indexOrder, regionName, keyClass, valueClass, attr, oriAttr, orderItemList, keyOnly) ::= <<
+package <packageName>;
+
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.NavigableSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import org.apache.commons.lang.builder.CompareToBuilder;
+
+import com.gemstone.gemfire.cache.CacheFactory;
+import com.gemstone.gemfire.cache.Region;
+import com.gemstone.gemfire.cache.partition.PartitionRegionHelper;
+import java.util.concurrent.ConcurrentNavigableMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import com.gemstone.gemfire.internal.concurrent.ConcurrentHashSet;
+
+import gemlite.core.internal.support.annotations.IndexRegion;
+import gemlite.core.annotations.view.EventStatus;
+import gemlite.core.api.index.IndexEntrySet;
+import gemlite.core.api.index.IndexActionCallback;
+import gemlite.core.internal.domain.DomainRegistry;
+import gemlite.core.internal.domain.IMapperTool;
+import gemlite.core.internal.support.events.SimpleEntryEvent;
+import gemlite.core.internal.index.AbstractIndexTool;
+import gemlite.core.internal.index.LocalIndexCache;
+import gemlite.core.internal.index.compare.ComparatorImpl;
+import gemlite.core.internal.measurement.index.AbstractIndexStatItem;
+import gemlite.core.internal.measurement.index.IndexMeasureHelper;
+import gemlite.core.internal.measurement.index.AbstractIndexStat;
+import gemlite.core.internal.view.bean.ViewItem;
+import gemlite.core.internal.view.trigger.ViewTool;
+import gemlite.core.util.LogUtil;
+
+
+<if(orderItemList)> <sortedComparator(indexName=indexName, regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList, keyOnly=keyOnly)>
+<endif>
+
+@SuppressWarnings({"unchecked","rawtypes", "unused"})
+@IndexRegion(regionName = "<regionName>", indexName = "<indexName>", orderNo=<indexOrder>)
+public class <indexName> extends AbstractIndexTool\<<keyClass>, <valueClass>\>
+{
+<getRangeIndexData(keyClass=keyClass, attr=attr, orderItemList=orderItemList, keyOnly=keyOnly)>
+<rangeMapMethod(indexName=indexName, keyClass=keyClass)>
+
+<if(orderItemList)> <sortedSetMethod(regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList, keyOnly=keyOnly)>
+<else> <setMethod(keyClass=keyClass)>
+<endif>
+
+<rangeIndexWithInsert(indexName=indexName, keyClass=keyClass, valueClass=valueClass, regionName=regionName, attr=attr, oriAttr=oriAttr)>
+
+<rangeIndexWithRemove(keyOnly=keyOnly, indexName=indexName, keyClass=keyClass, valueClass=valueClass, regionName=regionName, attr=attr, oriAttr=oriAttr, orderItemList=orderItemList)>
+
+<fullCreate(regionName=regionName, keyClass=keyClass, valueClass=valueClass)> 
+
+<clear(keyClass=keyClass)>
+
+<afterInsert(keyClass=keyClass, valueClass=valueClass)>
+
+<afterDelete(keyClass=keyClass, valueClass=valueClass)>
+
+<afterUpdate(keyClass=keyClass, valueClass=valueClass)>
+
+<afterBucketCreated(regionName=regionName, keyClass=keyClass, valueClass=valueClass)>
+
+<afterBucketRemoved(regionName=regionName, keyClass=keyClass, valueClass=valueClass)>
+
+<getKeyClass(indexName=indexName)>
+
+<getKeyFieldNames(indexName=indexName)>
+
+<indexChangeEvent(keyClass=keyClass, valueClass=valueClass)>
+
+<buketChangeEvent(keyClass=keyClass, valueClass=valueClass)>
+}
+>>
+
+//START: getRangeIndexData
+getRangeIndexData(keyClass, attr, orderItemList, keyOnly) ::=<<
+	public IndexEntrySet getIndex()
+	{
+	 	long l0 = System.currentTimeMillis();
+	    AbstractIndexStat ais = IndexMeasureHelper.getIndexStat("<indexName>");
+	    AbstractIndexStatItem aisi = new AbstractIndexStatItem();
+	    aisi.setRegionName("<regionName>");
+	    aisi.setIndexName("<indexName>");
+	    WeakReference\<Thread\> ref = new WeakReference\<Thread\>(Thread.currentThread());
+	    aisi.setThread(ref);
+	    aisi.setStart(l0);
+	    
+		final Map\<Object, Set\<<keyClass>\>\> map = getCachedMap();
+					
+		IndexEntrySet idxData = new IndexEntrySet\<Object, Set\<<keyClass>\>\>()
+		{
+			@Override
+			public Iterator\<Object\> getKeyIterator()
+			{
+				return map.keySet().iterator();
+			}
+
+			@Override
+			public Iterator\<Set\<<keyClass>\>\> getValueIterator()
+			{
+				return map.values().iterator();
+			}
+
+			@Override
+			public Set\<<keyClass>\> getValue(Object key)
+			{
+				return map.get(key);
+			}
+			
+			@Override
+			public Set\<<keyClass>\> getValue(Object key,
+					IndexActionCallback\<Set\<<keyClass>\>\> callback)
+			{
+				Set\<<keyClass>\> value = map.get(key);
+				callback.doAction(value);
+				return value;
+			}
+
+			@Override
+			public Map\<Object, Set\<<keyClass>\>\> getValues(Collection\<Object\> keys)
+			{
+				Map\<Object, Set\<<keyClass>\>\> filterMap = new ConcurrentSkipListMap\<Object, Set\<<keyClass>\>\>();
+				for(Iterator\<Object\> it=keys.iterator(); it.hasNext();)
+				{
+					Object key = it.next();
+					filterMap.put(key, map.get(key));
+				}
+				
+				return filterMap;
+			}
+			
+			@Override
+			public Map\<Object, Set\<<keyClass>\>\> getValues
+			(
+					Collection\<Object\> keys,
+					IndexActionCallback\<Set\<<keyClass>\>\> callback)
+			{
+				Map\<Object, Set\<<keyClass>\>\> filterMap = new ConcurrentSkipListMap\<Object, Set\<<keyClass>\>\>();
+				for(Iterator\<Object\> it=keys.iterator(); it.hasNext();)
+				{
+					Object key = it.next();
+					Set\<<keyClass>\> value = filterMap.get(key);
+					callback.doAction(value);
+					filterMap.put(key, map.get(key));
+				}
+				
+				return filterMap;
+			}
+			
+			@Override
+			public Object mapperKey(Map\<String, Object\> map)
+			{
+				<indexName>Key key = new <indexName>Key();
+				key.<attr>=map.get("<attr>");
+				return key;
+			}
+			
+			@Override
+			public Set\<<keyClass>\> getBetweenValue(Object fromKey,boolean fromInclusive,Object toKey,boolean toInclusive)
+			{
+				try {
+				ConcurrentNavigableMap\<Object, Set\<<keyClass>\>\> subMap = ((ConcurrentSkipListMap)map).subMap(fromKey, fromInclusive, toKey, toInclusive);
+				return getSetValueByMap(subMap);
+				}
+				catch(Exception e)
+				{
+					LogUtil.getCoreLog().error("", e);
+					return new HashSet\<<keyClass>\>();
+				}
+			}
+			
+			@Override
+			public Set\<<keyClass>\> getLessValue(Object toKey, boolean inclusive)
+			{
+				try {
+				ConcurrentNavigableMap\<Object, Set\<<keyClass>\>\> headMap = ((ConcurrentSkipListMap)map).headMap(toKey, inclusive);
+				return getSetValueByMap(headMap);
+				}
+				catch(Exception e)
+				{
+					LogUtil.getCoreLog().error("", e);
+					return new HashSet\<<keyClass>\>();
+				}
+			}
+			
+			@Override
+			public Set\<<keyClass>\> getBiggerValue(Object fromKey, boolean inclusive)
+			{
+				try {
+				ConcurrentNavigableMap\<Object, Set\<<keyClass>\>\> tailMap = ((ConcurrentSkipListMap)map).tailMap(fromKey, inclusive);
+				return getSetValueByMap(tailMap);
+				}
+				catch(Exception e)
+				{
+					LogUtil.getCoreLog().error("", e);
+					return new HashSet\<<keyClass>\>();
+				}
+			}
+			
+			<if(orderItemList)> <getSortLikeValue(regionName=regionName, indexName=indexName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList, keyOnly=keyOnly)>
+			<else> <getLikeValue(keyClass=keyClass, indexName=indexName)>
+			<endif>
+			
+			<if(orderItemList)> <getSortSetValueByMap(regionName=regionName, keyClass=keyClass, valueClass=valueClass, orderItemList=orderItemList, keyOnly=keyOnly)>
+			<else> <getSetValueByMap()>
+			<endif>		
+		};
+		
+		aisi.getThread().clear();
+		long l1 = System.currentTimeMillis();
+		aisi.setEnd(l1);
+		if(ais != null)
+		{
+			ais.incrTotalCount();
+			ais.incrTotalCost(l1-l0);
+		}
+		IndexMeasureHelper.getIndexDataEnd(aisi,l0,l1);
+		return idxData;
+	}
+>>
+//END: getRangeIndexData
+
+//START: getSortLikeValue
+getSortLikeValue(regionName, indexName, keyClass, valueClass, orderItemList, keyOnly) ::= <<
+			@Override
+			public Set\<<keyClass>\> getLikeValue(Object key)
+			{
+				try 
+				{
+					ConcurrentNavigableMap\<Object, Set\<<keyClass>\>\> tailMap = ((ConcurrentSkipListMap)map).tailMap(key, true);
+					NavigableSet\<Object\> keySet = tailMap.navigableKeySet();
+					Iterator\<Object\> it = keySet.iterator();
+					Set result = new LinkedHashSet();
+					
+					Object[] mergeArr = new Object[0];
+					
+					while(it.hasNext())
+					{
+						Object startKey = it.next();
+						Object start = ((<indexName>Key)startKey).<attr>;
+						Object target = ((<indexName>Key)key).<attr>;
+						if((String.valueOf(start)).startsWith(String.valueOf(target)))
+						{
+							Set entry = tailMap.get(startKey);
+							Object[] arr = entry.toArray((Object[]) new Object[0]);
+							if (arr != null)
+							{
+								mergeArr = merge(mergeArr, arr, comp);
+							}
+						}
+						else
+							break;
+					}
+					result.addAll(Arrays.asList(mergeArr));
+					return result;
+				}
+				catch(Exception e)
+				{
+					LogUtil.getCoreLog().error("", e);
+					return new HashSet\<<keyClass>\>();
+				}
+			}
+>>
+//END: getSortLikeValue
+
+
+//START: getLikeValue
+getLikeValue(keyClass, indexName) ::= <<
+			@Override
+			public Set\<<keyClass>\> getLikeValue(Object key)
+			{
+				try 
+				{
+					ConcurrentNavigableMap\<Object, Set\<<keyClass>\>\> tailMap = ((ConcurrentSkipListMap)map).tailMap(key, true);
+					NavigableSet\<Object\> keySet = tailMap.navigableKeySet();
+					Iterator\<Object\> it = keySet.iterator();
+					Set result = new LinkedHashSet();
+					while(it.hasNext())
+					{
+						Object startKey = it.next();
+						Object start = ((<indexName>Key)startKey).<attr>;
+						Object target = ((<indexName>Key)key).<attr>;
+						if((String.valueOf(start)).startsWith(String.valueOf(target)))
+						{
+							result.addAll(tailMap.get(startKey));
+						}
+						else
+							break;
+					}
+					return result;
+				}
+				catch(Exception e)
+				{
+					LogUtil.getCoreLog().error("", e);
+					return new HashSet\<<keyClass>\>();
+				}
+			}
+>>
+//END: getLikeValue
+
+//START: getSortSetValueByMap
+getSortSetValueByMap(regionName, keyClass, valueClass, orderItemList, keyOnly) ::= <<
+			private \<T\> Set\<T\> getSetValueByMap(ConcurrentNavigableMap dataMap)
+			{
+				Set\<T\> rnResult = new LinkedHashSet\<T\>();
+				if (dataMap == null)
+					return rnResult;
+				Iterator\<Set\<T\>\> iters = dataMap.values().iterator();
+				
+				T[] mergeArr = (T[]) new Object[0];
+				
+				while (iters.hasNext())
+				{
+					Set\<T\> entry = iters.next();
+					T[] arr = entry.toArray((T[]) new Object[0]);
+					if (arr != null)
+					{
+						mergeArr = merge(mergeArr, arr, comp);
+					}
+				}
+				
+				rnResult.addAll(Arrays.asList(mergeArr));
+				return rnResult;
+			}
+			
+			private \<T\> void printArray(T[] arr)
+ 			{
+ 				for(int i=0; i\<arr.length; i++)
+ 				{
+ 					LogUtil.getCoreLog().error(arr[i].toString()+"\n");
+ 				}
+ 			}
+ 			
+			private \<T\> T[] merge(T[] arr1, T[] arr2, Comparator comparator)
+			{
+			    T[] result = (T[]) new Object[arr1.length + arr2.length];
+			    
+			    int j1 = 0; 
+			    int j2 = 0; 
+			    for (int i = 0; i \< result.length; i++)
+			    {
+				 	if (j1 \< arr1.length)
+			      	{
+			        	if (j2 \< arr2.length)
+			        	{
+			          		if (comparator.compare(arr1[j1], arr2[j2]) \< 0)
+			          		{
+			            		result[i] = arr1[j1++];
+			          		}
+			          		else
+			          		{
+			            		result[i] = arr2[j2++];
+			          		}
+			        	}
+			        	else
+			        	{
+			            	result[i] = arr1[j1++];
+			        	}
+			      	}
+			      	else
+			      	{
+			        	result[i] = arr2[j2++];
+			      	}
+			    }
+			    
+			    return result;
+			  }
+			
+>>
+//END: getSortSetValueByMap
+
+//START: getSetValueByMap
+getSetValueByMap() ::= <<
+			private \<T\> Set\<T\> getSetValueByMap(ConcurrentNavigableMap dataMap)
+			{
+				Set\<T\> result = new LinkedHashSet\<T\>();
+				if (dataMap == null)
+					return result;
+				Iterator\<Set\<T\>\> iters = dataMap.values().iterator();
+				while (iters.hasNext())
+				{
+					Set\<T\> entry = iters.next();
+					if (entry != null)
+					{
+						result.addAll(entry);
+					}
+				}
+				return result;
+			}
+>>
+//END: getSetValueByMap
+
+//START: rangeMapMethod
+rangeMapMethod(indexName, keyClass) ::= <<
+	private Map\<Object, Set\<<keyClass>\>\> getCachedMap()
+	{
+		String indexName = "<indexName>";
+		Map\<Object, Set\<<keyClass>\>\> map = (Map\<Object, Set\<<keyClass>\>\>) LocalIndexCache.getIndexCache(indexName);
+		if (map == null)
+		{
+			map = new ConcurrentSkipListMap\<Object, Set\<<keyClass>\>\>();
+			LocalIndexCache.setIndexCache(indexName, map);
+		}
+					
+		return map;
+	}
+>>
+//END: rangeMapMethod
+
+//START: rangeIndexWithInsert 
+rangeIndexWithInsert(indexName, keyClass, valueClass, regionName, attr, oriAttr) ::= <<
+	private void indexWithInsert(Map\<Object, Set\<<keyClass>\>\> map, <valueClass> value)
+	{
+		IMapperTool\<<keyClass>, <valueClass>\> tool = DomainRegistry.getMapperTool("<regionName>");
+		
+		<indexName>Key key = new <indexName>Key();
+		key.<attr>=value.get<oriAttr>();
+		
+		Set\<<keyClass>\> set = getSet(map, key);
+		<keyClass> k = (<keyClass>)tool.value2Key(value);
+		set.add(k);
+		
+		AbstractIndexStat ids = IndexMeasureHelper.getIndexStat("<indexName>");
+		ids.incrEntrySize();
+	}
+>>
+//END: rangeIndexWithInsert
+
+//START: rangeIndexWithRemove
+rangeIndexWithRemove(keyOnly, indexName, keyClass, valueClass, regionName, attr, oriAttr, orderItemList) ::= <<
+	private void indexWithRemove(Map\<Object, Set\<<keyClass>\>\> map, <valueClass> value)
+	{
+		IMapperTool\<<keyClass>, <valueClass>\> tool = DomainRegistry.getMapperTool("<regionName>");
+
+		<indexName>Key key = new <indexName>Key();
+		key.<attr>=value.get<oriAttr>();
+		
+		Set\<<keyClass>\> set = getSet(map, key);
+		if(set != null)
+		{
+			<keyClass> k = (<keyClass>)tool.value2Key(value);
+			<if(orderItemList)><if(!keyOnly)>comp.addValue(k, value);<endif><endif>
+			set.remove(k);
+			<if(orderItemList)><if(!keyOnly)>comp.removeValue(k);<endif><endif>
+						
+			AbstractIndexStat ids = IndexMeasureHelper.getIndexStat("<indexName>");
+			ids.decrEntrySize();
+		}
+	}
+>>
+//END: rangeIndexWithRemove

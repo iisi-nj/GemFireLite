@@ -1,0 +1,4 @@
+import --T file --f "file:D:/codes/gldoc/orderData/product.csv" --c "product_id,name,price" --region "product" --table "product"
+import --T file --f "file:D:/codes/gldoc/orderData/customer.csv" --c "name,id_num,telephone,sex,age" --region "customer" --table "customer"
+import --T file --f "file:D:/codes/gldoc/orderData/ordermain.csv" --c "sequence,name,id_num,orderdate" --region "ordermain" --table "ordermain"
+import --T file --f "file:D:/codes/gldoc/orderData/detail.csv" --c "sequence,product_id,ord_sequence,name,id_num,product_quantity" --region "detail" --table "detail"

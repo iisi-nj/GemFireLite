@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:gfe="http://www.springframework.org/schema/gemfire"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/gemfire http://www.springframework.org/schema/gemfire/spring-gemfire.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:property-placeholder
+		ignore-unresolvable="true" />
+		<bean class="gemlite.core.internal.support.events.DataStoreLifeCycleListener" />
+	<util:properties id="gemfireProperties" location="classpath:gemfire-${GF_VER}.properties"
+		local-override="true">
+		<prop key="statistic-archive-file">${GS_WORK}/locator/${NODE_NAME}/locator.gfs</prop>
+		<prop key="mcast-port">0</prop>
+		<prop key="locators">${LOCATORS}</prop>
+		<prop key="enable-cluster-configuration">false</prop>
+		<prop key="load-cluster-configuration-from-dir">false</prop>
+		<prop key="cluster-configuration-dir">${GS_WORK}/locator/config/${NODE_NAME}</prop>
+		<prop key="jmx-manager-start">false</prop>
+		<prop key="jmx-manager">false</prop>
+	</util:properties>
+
+	<bean id="locator" class="gemlite.core.internal.support.system.LocatorBean${GF6}"
+		init-method="startLocator" destroy-method="stopLocator">
+		<property name="prop" ref="gemfireProperties" />
+		<property name="port" value="${locatorPort}" />
+		<property name="throwOnBindFailure" value="true" />
+		<property name="log" value="${GS_WORK}/locator/${NODE_NAME}.log" />
+		<property name="state" value="${GS_WORK}/locator/${NODE_NAME}.state" />
+		<property name="bind" value="${BINDIP}" />
+
+	</bean>
+</beans>

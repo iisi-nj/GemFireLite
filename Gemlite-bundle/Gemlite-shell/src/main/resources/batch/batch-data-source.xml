@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<context:property-placeholder location="classpath:batch/batch-${config.db.database}.properties"
+	 system-properties-mode="OVERRIDE" ignore-unresolvable="true" />
+	 
+	<!-- Initialise the database before every test case: -->
+	<jdbc:initialize-database data-source="batchDataSource" enabled="true">
+		<jdbc:script location="${batch.drop.script}" />
+		<jdbc:script location="${batch.schema.script}" />
+	</jdbc:initialize-database>
+
+	<bean id="batchDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${config.db.dirver}" />
+		<property name="url" value="${config.db.url}" />
+		<property name="username" value="${config.db.username}" />
+		<property name="password" value="${config.db.password}" />
+		<property name="maxActive" value="${batch.jdbc.pool.size}" />
+		<property name="validationQuery" value="${batch.jdbc.validationQuery}" />
+		<property name="testWhileIdle" value="${batch.jdbc.testWhileIdle}" />
+	</bean>
+
+	<bean id="batchTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		lazy-init="true">
+		<property name="dataSource" ref="batchDataSource" />
+	</bean>
+
+
+	<bean id="sequenceIncrementerParent" class="${batch.database.incrementer.class}"
+		abstract="true">
+		<property name="dataSource" ref="batchDataSource" />
+	</bean>
+
+	<bean id="columnIncrementerParent" class="${batch.database.incrementer.class}"
+		abstract="true" parent="sequenceIncrementerParent">
+		<property name="columnName" value="ID" />
+	</bean>
+
+ 	<bean id="incrementerParent" parent="${batch.database.incrementer.parent}">
+		<property name="incrementerName" value="DUMMY" />
+	</bean> 
+
+ 	<bean id="lobHandler" class="${batch.lob.handler.class}" /> 
+</beans>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration>
+	<!-- Console -->
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS} %p ]%m%n" />
+		</layout>
+	</appender>
+
+	<!-- clientLog -->
+		<!-- appLog -->
+	<appender name="infoFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/web.log" />
+		<param name="Threshold" value="debug" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="0" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS}] %m%n" />
+		</layout>
+	</appender>
+	
+
+	
+	<logger name="gemlite.*" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="infoFile" />
+	</logger>
+	<logger name="org.springframework" additivity="false">
+		<level value="info" />
+		<appender-ref ref="infoFile" />
+	</logger>
+	
+	<!-- Logger -->
+	<!-- root -->
+	<root>
+		<priority value="info" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="infoFile"/>
+	</root>
+
+</log4j:configuration>  

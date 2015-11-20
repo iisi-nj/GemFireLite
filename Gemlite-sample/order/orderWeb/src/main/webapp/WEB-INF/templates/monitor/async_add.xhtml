@@ -1,0 +1,151 @@
+#parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+  <div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg"><a href="${rc.contextPath}/tools/region">Region</a></strong> / <small>数据修改</small></div>
+  </div>
+  <div class="am-tabs am-margin" data-am-tabs>
+    <ul class="am-tabs-nav am-nav am-nav-tabs">
+      <li class="am-active"><a href="#tab1">添加数据同步</a></li>
+    </ul>
+    <div class="am-tabs-bd">
+      <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+        <div class="am-u-md-12">
+        <div class="am-panel am-panel-default">
+        <form class="am-form" id="asyncform" method="POST">
+          <div class="am-panel-hd am-cf">基础配置</div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-async">
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+              RegionName :
+            </div>
+            <div class="am-u-sm-8 am-u-md-4">
+              <select name="region">
+              #foreach($item in $list)
+              <option $!{item.selected}>$!{item.name}</option>
+              #end
+              </select>
+            </div>
+            <div class="am-hide-sm-only am-u-md-6"> *必填</div>
+          </div>
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+              QueueId :
+            </div>
+            <div class="am-u-sm-8 am-u-md-4">
+              <input type="text" class="am-input-sm" name="queueId"/>
+            </div>
+            <div class="am-hide-sm-only am-u-md-6"> *必填</div>
+          </div>
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+              持久化 :
+            </div>
+            <div class="am-u-sm-8 am-u-md-4">
+              <input type="checkbox" class="am-input-sm" name="persistent" checked="checked"/>
+            </div>
+            <div class="am-hide-sm-only am-u-md-6"> *必填</div>
+          </div>
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+              持久化文件名 :
+            </div>
+            <div class="am-u-sm-8 am-u-md-4">
+              <input type="text" class="am-input-sm" name="diskstorename" value="async"/>
+            </div>
+            <div class="am-hide-sm-only am-u-md-6"> *必填 </div>
+          </div>
+          </div>
+          <div class="am-panel-hd am-cf">数据库配置</div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-db">
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+              driver :
+            </div>
+            <div class="am-u-sm-8 am-u-md-4">
+              <input type="text" class="am-input-sm" name="driver" value="com.mysql.jdbc.Driver"/>
+            </div>
+            <div class="am-hide-sm-only am-u-md-6"> *必填</div>
+          </div>
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+              url :
+            </div>
+            <div class="am-u-sm-8 am-u-md-4">
+              <input type="text" class="am-input-sm" name="url" value="jdbc:mysql://localhost:3306/back"/>
+            </div>
+            <div class="am-hide-sm-only am-u-md-6"> *必填</div>
+          </div>
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+             user :
+            </div>
+            <div class="am-u-sm-8 am-u-md-4">
+              <input type="text" class="am-input-sm" name="user" value="root"/>
+            </div>
+            <div class="am-hide-sm-only am-u-md-6"> *必填</div>
+          </div>
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+              password :
+            </div>
+            <div class="am-u-sm-8 am-u-md-4">
+              <input type="text" class="am-input-sm" name="password" value="windows"/>
+            </div>
+            <div class="am-hide-sm-only am-u-md-6"> *必填</div>
+          </div>
+          </div>
+          </form>
+        </div>
+     </div>
+     <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-4 am-text-right">
+               <button type="button" id="save_btn" onclick="save();" class="am-btn am-btn-primary am-btn-xs">创建数据同步</button>
+               <button type="button" id="back_btn" onclick="back();" class="am-btn am-btn-primary am-btn-xs">放弃创建</button>
+            </div>
+         </div>
+      <div class="am-g am-margin-top-sm">
+       <div class="am-u-sm-12 am-u-md-6">
+         <p style="color: red">$!{msg}</p>
+       </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+function save()
+{
+	$("#asyncform").ajaxSubmit({
+		type:'post',
+		url:"${rc.contextPath}/tools/async/add",
+		beforeSubmit: function(data) {
+			//设置loading状态
+			$("#save_btn").attr('disabled',"true");
+			$("#save_btn").html("<i class=\"am-icon-spinner am-icon-spin\"></i>创建中");
+		},
+		success:function(rs){
+			$("#save_btn").html("创建数据同步");
+			$("#save_btn").removeAttr("disabled");
+			if (rs) {
+				alert('创建成功!');
+				window.location.href='${rc.contextPath}/tools/async';
+			} else {
+				alert("error see log file");
+			}
+		},
+		error:function(XmlHttpRequest,textStatus,errorThrown){
+			alert("error see log file");
+			$("#save_btn").html("创建数据同步");
+			$("#save_btn").removeAttr("disabled");
+		}
+	});
+}
+
+function back()
+{
+	window.location.href='${rc.contextPath}/tools/async';
+}
+</script>
+<!-- content end -->
+  #parse("common/footer.xhtml")

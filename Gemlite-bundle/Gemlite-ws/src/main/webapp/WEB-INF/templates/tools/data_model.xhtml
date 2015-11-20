@@ -1,0 +1,117 @@
+#parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+	<div class="am-cf am-padding">
+		<div class="am-fl am-cf">
+			<strong class="am-text-primary am-text-lg">Data Model</strong> / <small>Database
+				Schema --> Gemlite Domain</small>
+		</div>
+	</div>
+
+	<form class="am-form am-form-horizontal" id="modelForm" method="POST">
+		<fieldset>
+			<legend>JDBC</legend>
+			<div class="am-form-group">
+				<label for="doc-driver-3" class="am-u-sm-2 am-form-label">driver</label>
+				<div class="am-u-sm-10">
+					<input name="driver" type="text" id="doc-driver-3"
+						value="$!{driver}" required="required" placeholder="org.h2.Driver">
+				</div>
+			</div>
+			<div class="am-form-group">
+				<label for="doc-url-3" class="am-u-sm-2 am-form-label">url</label>
+				<div class="am-u-sm-10">
+					<input name="url" type="text" id="doc-url-3" value="$!{url}"
+						required="required" placeholder="jdbc:h2:tcp://localhost/~/test">
+				</div>
+			</div>
+			<div class="am-form-group">
+				<label for="doc-user-3" class="am-u-sm-2 am-form-label">user</label>
+				<div class="am-u-sm-10">
+					<input name="user" type="text" id="doc-user-3" value="$!{user}"
+						required="required" placeholder="sa">
+				</div>
+			</div>
+			<div class="am-form-group">
+				<label for="doc-pwd-3" class="am-u-sm-2 am-form-label">password</label>
+				<div class="am-u-sm-10">
+					<input name="pwd" type="password" id="doc-pwd-3" value="$!{pwd}"
+						placeholder="">
+				</div>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Database</legend>
+			<div class="am-form-group">
+				<label for="doc-name-3" class="am-u-sm-2 am-form-label">name</label>
+				<div class="am-u-sm-10">
+					<input name="name" type="text" id="doc-name-3" value="$!{name}"
+						required="required"
+						placeholder="The database type. The format here is: gemlite.shell.codegen.util.[database].[database]Database">
+				</div>
+			</div>
+			<div class="am-form-group">
+				<label for="doc-inputSchema-3" class="am-u-sm-2 am-form-label">inputSchema</label>
+				<div class="am-u-sm-10">
+					<input name="inputSchema" type="text" id="doc-inputSchema-3"
+						value="$!{inputSchema}" required="required"
+						placeholder="The database schema (in your RDBMS this can be the owner, user, database name) to be generated">
+				</div>
+			</div>
+			<div class="am-form-group">
+				<label for="doc-includes-3" class="am-u-sm-2 am-form-label">includes</label>
+				<div class="am-u-sm-10">
+					<input name="includes" type="text" id="doc-includes-3"
+						value="$!{includes}"
+						placeholder="All tables that are generated from your schema (Use the pipe to separate several expressions)">
+				</div>
+			</div>
+			<div class="am-form-group">
+				<label for="doc-excludes-3" class="am-u-sm-2 am-form-label">excludes</label>
+				<div class="am-u-sm-10">
+					<input name="excludes" type="text" id="doc-excludes-3"
+						value="$!{excludes}"
+						placeholder="All tables that are excluded from your schema (Use the pipe to separate several expressions)">
+				</div>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Target</legend>
+			<div class="am-form-group">
+				<label for="doc-packageName-3" class="am-u-sm-2 am-form-label">packageName</label>
+				<div class="am-u-sm-10">
+					<input name="packageName" type="text" id="doc-packageName-3"
+						value="$!{packageName}" required="required"
+						placeholder="The destination package of your generated classes (within the destination directory)">
+				</div>
+			</div>
+			<div class="am-form-group">
+				<label for="doc-directory-3" class="am-u-sm-2 am-form-label">directory</label>
+				<div class="am-u-sm-10">
+					<input name="directory" type="url" id="doc-directory-3"
+						value="$!{directory}" required="required"
+						placeholder="The destination directory of your generated classes">
+				</div>
+			</div>
+		</fieldset>
+		<div class="am-g am-margin-top-sm">
+			<div class="am-u-sm-12 am-u-md-6">
+				<p style="color: red">$!{msg}</p>
+			</div>
+		</div>
+		<div class="am-margin">
+			<button type="submit" class="am-btn am-btn-primary am-btn-xs">Generate</button>
+			<button type="button" id="back_btn"
+				class="am-btn am-btn-primary am-btn-xs">Back</button>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+	$(function() {
+		$("#back_btn").click(function() {
+			window.location.href = '${rc.contextPath}/';
+		});
+	});
+</script>
+<!-- content end -->
+#parse("common/footer.xhtml")

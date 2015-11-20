@@ -1,0 +1,177 @@
+#parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+  <div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg"><a href="${rc.contextPath}/tools/region">Region</a></strong> / <small>数据修改</small></div>
+  </div>
+   <div class="am-u-md-12">
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-info'}">$!{region.get('regionName')} 基本信息<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-info">
+            <table id="serviceTable" class="am-table am-table-bordered am-table-striped am-table-hover table-main">
+            #foreach($key in ${region.keySet()})  
+              #if(${velocityCount}%4==1)
+              <tr>
+              #end
+              <td><strong>$!{key} : </strong> $!{region.get($key)}</td>
+              #if(${velocityCount}%4==0)
+              </tr>
+              #end
+            #end
+            
+            #if(${region.size()}%4>0)
+            #set($clos = 4-${region.size()}%4)
+              #foreach($i in [1..$clos] )
+              <td></td>
+              #end
+            #end
+            </tr>
+            </table>
+          </div>
+        </div>
+   </div>
+  <div class="am-tabs am-margin" data-am-tabs>
+    <ul class="am-tabs-nav am-nav am-nav-tabs">
+      <li class="am-active"><a href="#tab1">数据修改-输入Key值获取数据,并修改保存</a></li>
+    </ul>
+    <div class="am-tabs-bd">
+      <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+        <div class="am-u-md-12">
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-key'}">$!{region.get('keyClass')}<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-key">
+          <form class="am-form" id="keyform" method="POST">
+          <input type="hidden" name="regionName" value="${region.get('regionName')}"/>
+          #foreach($key in ${keys.keySet()})  
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+              $!{key} :
+            </div>
+            <div class="am-u-sm-8 am-u-md-4">
+              <input type="text" class="am-input-sm" name="$!{key}">
+            </div>
+            <div class="am-hide-sm-only am-u-md-6"> ${keys.get($key)}  *必填</div>
+          </div>
+          #end
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-4 am-text-right">
+             <button type="button" id="load_btn" class="am-btn am-btn-primary am-btn-xs" onclick="load()">获取数据</button>
+            </div>
+          </div>
+          </form>
+          </div>
+        </div>
+        
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-value'}">$!{region.get('valueClass')}<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-value">
+          <form class="am-form" id="valueform" method="POST">
+          <input type="hidden" name="regionName" value="${region.get('regionName')}"/>
+            #foreach($value in ${values.keySet()})  
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+              $!{value} : 
+            </div>
+            <div class="am-u-sm-8 am-u-md-4">
+              <input type="text" class="am-input-sm" name="$!{value}">
+            </div>
+            <div class="am-hide-sm-only am-u-md-6">${values.get($value)}</div>
+          </div>
+          #end
+          <div class="am-g am-margin-top">
+            <div class="am-u-sm-4 am-u-md-4 am-text-right">
+               <button type="button" id="save_btn" onclick="save();" class="am-btn am-btn-primary am-btn-xs">保存</button>
+               <button type="button" id="del_btn" onclick="del();" class="am-btn am-btn-primary am-btn-xs">删除</button>
+            </div>
+         </div>
+          </form>
+          </div>
+        </div>
+     </div>
+      <div class="am-g am-margin-top-sm">
+       <div class="am-u-sm-12 am-u-md-6">
+         <p style="color: red">$!{msg}</p>
+       </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+function load()
+{
+	$("#keyform").ajaxSubmit({
+		type:'post',
+		url:"${rc.contextPath}/tools/region/get",
+		beforeSubmit: function(data) {
+			//设置loading状态
+			$("#load_btn").html("<i class=\"am-icon-spinner am-icon-spin\"></i>加载中");
+		},
+		success:function(objson){
+			$("#load_btn").html("获取数据");
+			if (objson!='null') {
+				var obj = eval('('+objson+')');
+				$.each(obj,function(name,value) {
+				  $("#valueform input[name='"+name+"']").val(value);
+			   });
+			} else {
+				alert("no result");
+			}
+		},
+		error:function(XmlHttpRequest,textStatus,errorThrown){
+			$("#load_btn").html("获取数据");
+		}
+	});
+}
+
+function save()
+{
+	$("#valueform").ajaxSubmit({
+		type:'post',
+		url:"${rc.contextPath}/tools/region/save",
+		beforeSubmit: function(data) {
+			//设置loading状态
+			$("#save_btn").html("<i class=\"am-icon-spinner am-icon-spin\"></i>保存中");
+		},
+		success:function(rs){
+			$("#save_btn").html("保存");
+			if (rs) {
+				alert('保存成功!');
+			} else {
+				alert("error see log file");
+			}
+		},
+		error:function(XmlHttpRequest,textStatus,errorThrown){
+			$("#save_btn").html("保存");
+		}
+	});
+}
+
+function del()
+{
+	//判断key字段不能为空
+	$("#keyform").ajaxSubmit({
+		type:'post',
+		url:"${rc.contextPath}/tools/region/del",
+		beforeSubmit: function(data) {
+			//设置loading状态
+			$("#del_btn").html("<i class=\"am-icon-spinner am-icon-spin\"></i>删除中");
+		},
+		success:function(rs){
+			$("#del_btn").html("删除");
+			if (rs) {
+				//清空数据
+				$(":input[type=text]").val("");
+				alert('删除成功!');
+			} else {
+				alert("error see log file");
+			}
+		},
+		error:function(XmlHttpRequest,textStatus,errorThrown){
+			$("#del_btn").html("删除");
+		}
+	});
+}
+</script>
+<!-- content end -->
+  #parse("common/footer.xhtml")

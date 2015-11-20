@@ -1,0 +1,386 @@
+ #parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+
+	<div class="am-cf am-padding">
+		<div class="am-fl am-cf">
+			<strong class="am-text-primary am-text-lg">Tools</strong> / <small>Index
+				Management</small>
+		</div>
+	</div>
+	<div class="am-g">
+		<div class="am-u-sm-12 am-u-md-12">
+			<div class="am-btn-toolbar">
+				<div class="am-btn-group am-btn-group-xs am-padding">
+					<button type="button" name="create_btn"
+						class="am-btn am-btn-primary am-btn-xs">
+						<span class="am-icon-plus"></span> Create Index
+					</button>
+				</div>
+				<div class="am-padding">
+					&nbsp;&nbsp;&nbsp;
+					<textarea rows="1" cols="120" maxlength="1024" id="clause"
+						name="clause"
+						placeholder="Please input the created index's clause"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="am-g">
+		<div class="am-u-md-6">
+			#foreach($item in $left)
+			<div class="am-panel am-panel-default">
+				#foreach($key in ${item.keySet()})
+				<div class="am-panel-hd am-cf"
+					data-am-collapse="{target: '#collapse-panel-left-$!{velocityCount}'}">
+					Region $!{key} Index List<span class="am-icon-chevron-down am-fr"></span>
+				</div>
+				<div class="am-panel-bd am-collapse am-in"
+					id="collapse-panel-left-$!{velocityCount}">
+					<ul class="am-list admin-content-file">
+						<li>
+							<p>
+								<strong>Size : $!{item.get($key).size()}</strong>
+							</p>
+						</li> #foreach($index in ${item.get($key)})
+						<li>
+							<p>
+								$!{index} &nbsp;&nbsp;&nbsp;<a href="javascript:describe('$!{index}')" class="am-icon-search" title="Query Detail"></a>
+								&nbsp;&nbsp;&nbsp;<a href="javascript:drop('$!{index}')" class="am-icon-trash" title="Delete Index">Delete Index</a>
+								&nbsp;&nbsp;&nbsp;<a href="javascript:openQueryForm('$!{index}')" class="am-icon-search" title="Query Index">Query Index</a>
+							</p>
+						</li> #end
+					</ul>
+				</div>
+				#end
+			</div>
+			#end
+		</div>
+		<div class="am-u-md-6">
+			#foreach($item in $right)
+			<div class="am-panel am-panel-default">
+				#foreach($key in ${item.keySet()})
+				<div class="am-panel-hd am-cf"
+					data-am-collapse="{target: '#collapse-panel-left-$!{velocityCount}'}">
+					Region $!{key} Index List<span class="am-icon-chevron-down am-fr"></span>
+				</div>
+				<div class="am-panel-bd am-collapse am-in"
+					id="collapse-panel-left-$!{velocityCount}">
+					<ul class="am-list admin-content-file">
+						<li>
+							<p>
+								<strong>RegionName:</strong>$!{key}
+							</p>
+						</li> #foreach($index in ${item.get($key)})
+						<li>
+							<p>
+								$!{index} &nbsp;&nbsp;&nbsp;
+								<a href="javascript:describe('$!{index}')" class="am-icon-search" title="Query Detail"></a> 
+								&nbsp;&nbsp;&nbsp;<a href="javascript:drop('$!{index}')" class="am-icon-trash" title="Delete Index">Delete Index</a> 
+								&nbsp;&nbsp;&nbsp;<a href="javascript:openQueryForm('$!{index}')" class="am-icon-trash" title="Query Index">Query Index</a>
+							</p>
+						</li> #end
+					</ul>
+				</div>
+				#end
+			</div>
+			#end
+		</div>
+	</div>
+</div>
+<div class="am-popup" id="my-popup" style="width: 900px">
+	<div class="am-popup-inner" style="width: 100%">
+		<div class="am-popup-hd">
+			<h4 class="am-popup-title">Index Info</h4>
+			<span data-am-modal-close class="am-close">&times;</span>
+		</div>
+		<div class="am-popup-bd">
+			<table id="table1"
+				class="am-table am-table-bordered am-table-striped am-table-hover table-main">
+				<thead>
+					<tr>
+						<th>IP</th>
+						<th>indexName</th>
+						<th>regionName</th>
+						<th>regionType</th>
+						<th>entrySize</th>
+						<th>keyFields</th>
+						<th>valueFields</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div class="am-popup" id="indexQuery" style="width: 800px">
+	<div class="am-popup-inner" style="width: 100%">
+		<div class="am-popup-hd">
+			<h4 class="am-popup-title">Index Query</h4>
+			<span data-am-modal-close class="am-close">&times;</span>
+		</div>
+		<div class="am-popup-bd">
+			<form class="am-form am-form-horizontal" id="queryCondForm" method="POST">
+				<fieldset>
+					<legend>Query Condition</legend>
+					<div class="am-form-group">
+						<label for="doc-driver-3" class="am-u-sm-3 am-form-label">Index Name:</label>
+						<div class="am-u-sm-9">
+							<input id="indexName" name="indexName" type="text" readonly="readonly" value="${indexName}">
+							<input id="pageNum" type="hidden" value="${pageNum}">
+							<input id="pageMax" type="hidden" value="${pageMax}">
+						</div>
+					</div>
+					<div class="am-form-group">
+						<label for="doc-driver-3" class="am-u-sm-3 am-form-label">Data Types:</label>
+						<div class="am-u-sm-9">
+							<input name="paramsDatatype" type="text" id="paramsDatatype" readonly="readonly">
+						</div>
+					</div>
+					<div class="am-form-group">
+						<label for="doc-url-3" class="am-u-sm-3 am-form-label">Query Value:</label>
+						<div class="am-u-sm-9">
+							<input name="paramsValue" type="text" id="paramsValue"
+								value="$!{paramsValue}" required="required"
+								placeholder="Please input the parameter's value">
+						</div>
+					</div>
+					<div class="am-form-group">
+						<label for="doc-url-3" class="am-u-sm-3 am-form-label"></label>
+						<div class="am-u-sm-9" style="text-align:right">
+							<button type="button" name="queryIdxBtn" class="am-btn am-btn-primary am-btn-xs">  Query  </button>
+						</div>
+					</div>
+				</fieldset>
+				<fieldset>
+				<legend>Query Result</legend>
+			    <table id="queryResult" class="am-table am-table-bordered am-table-striped am-table-hover table-main">
+					<thead>
+						<tr>
+						    <th>IP</th>
+						    <th>Member ID</th>
+						    <th>Sequence</th>
+							<th>Values</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+				<div class="am-form-group">
+					<label class="am-u-sm-12  am-form-label" id="detail"></label>
+				</div>
+			</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="am-modal am-modal-confirm" tabindex="-1" id="my-confirm">
+	<div class="am-modal-dialog">
+		<div class="am-modal-hd">Warning</div>
+		<div class="am-modal-bd">Are you sure to delete this index?</div>
+		<div class="am-modal-footer">
+			<span class="am-modal-btn" data-am-modal-cancel>Cancel</span> <span
+				class="am-modal-btn" data-am-modal-confirm>OK</span>
+		</div>
+	</div>
+</div>
+<!-- content end -->
+#parse("common/footer.xhtml")
+<script type="text/javascript">
+	$(function() {
+		$(":button[name=create_btn]").click(function() {
+			var clause = $("#clause").val();
+			create(clause);
+		});
+		
+		$(":button[name=queryIdxBtn]").click(function() {
+			var indexName = $("#indexName").val();
+			var pageNum = $("#pageNum").val();
+			var paramsValue = $("#paramsValue").val();
+			queryIndex(indexName, pageNum, paramsValue);
+		});
+	});
+
+	function create(clause) {
+		$.ajax({
+					url : "${rc.contextPath}/tools/index/create/",
+					type : 'post',
+					data : {
+						"clause" : clause
+					},
+					success : function(obj) {
+						alert(obj);
+						window.location.href = window.location.href;
+					},
+					failure : function(o) {
+						alert('Create index failed. For further details, please check the log!');
+					}
+				});
+	}
+
+	function drop(indexName) {
+		$('#my-confirm').modal({
+			relatedTarget : this,
+			onConfirm : function(options) {
+				doDrop(indexName);
+			},
+			onCancel : function() {
+				return;
+			}
+		});
+	}
+
+	function doDrop(indexName) {
+		$.ajax({
+					url : "${rc.contextPath}/tools/index/drop/",
+					type : 'post',
+					data : {
+						"indexName" : indexName
+					},
+					success : function(obj) {
+						alert(obj);
+						window.location.href = window.location.href;
+					},
+					failure : function(o) {
+						alert('Delete index failed. For further details, please check the log!');
+					}
+				});
+	}
+
+	function describe(indexName) {
+		$.ajax({
+			url : "${rc.contextPath}/tools/index/describe/" + indexName,
+			type : 'GET',
+			data : {
+				"indexName" : indexName
+			},
+			success : function(obj) {
+				var html = "";
+				$.each(obj, function(index) {
+					var v = obj[index];
+					var str = "<tr><td>" + v.ipinfo + "</td>";
+					str += "<td>" + v.indexName + "</td>";
+					str += "<td>" + v.regionName + "</td>";
+					str += "<td>" + v.regionType + "</td>";
+					str += "<td>" + v.entrySize + "</td>";
+					str += "<td>";
+					var keys = v.keyFields;
+					$.each(keys, function(index, value) {
+						str += "[" + index + ":" + value + "]";
+					});
+					str += "</td>";
+					str += "<td>";
+					var values = v.valueFields;
+					$.each(values, function(index, value) {
+						str += "[" + index + ":" + value + "]";
+					});
+					str += "</td>";
+					str += "</tr>";
+					html += str;
+				});
+				$('#table1 tbody').html(html);
+			}
+		});
+		$('#my-popup').modal({
+			relatedTarget : this
+		});
+	}
+	
+	function queryIndex(indexName, pageNum, paramsValue)
+	{
+		$('#queryResult tbody').html("");
+		$("#detail").html("");
+		
+		$.ajax({
+			url : "${rc.contextPath}/tools/index/query/",
+			type : 'POST',
+			data : {
+				"indexName" : indexName,
+				"pageNum" : pageNum,
+				"paramsValue" : paramsValue
+			},
+			success : function(obj) {
+				var html = "";
+				var iSeq = 0;
+				$.each(obj, function(index) {
+					var v = obj[index];
+					var IP = v.IP;
+					var memberID = v.MemberID;
+					var entrySize = v.EntrySize;
+					
+					var pageSize = v.PageSize;
+					var pageNumber = v.PageNumber;
+					var dataList = v.EntryValue;
+					var size;
+					if (entrySize%pageSize==0)
+						size = entrySize/pageSize;
+					else
+						size = parseInt(entrySize/pageSize) +1;
+					
+					$.each(dataList, function(idx){
+						iSeq = iSeq +1;
+						var str = "<tr><td>" + IP + "</td>" ;
+						str += "<td>" + memberID + "</td>";
+						str += "<td>" + iSeq + "</td>";
+						str += "<td>" + dataList[idx] + "</td>";
+						str += "</tr>";
+						html += str;		
+					});
+					
+					var detail = "Total Entry Size: <span style='color: red'>" + iSeq + "</span>";
+					detail += " , Current Page No.: <span style='color: red'>" + pageNumber +"</span>";
+					detail += " , Total Pages: <span style='color: red'>" + size + "</span>";
+					if (pageNumber<size)
+						{
+							var currPage = parseInt(pageNum)+1;
+							detail += " , <a href=javascript:queryIndex('"+indexName+"','"+currPage + "','"+paramsValue + "') title='Next Page'>Next Page</a>";
+						}
+					if (pageNumber >1)
+						{
+							var currPage = parseInt(pageNum)-1;
+							detail += " , <a href=javascript:queryIndex('"+indexName+"','"+currPage + "','"+paramsValue + "') title='Last Page'>Last Page</a>";
+						}
+					$("#detail").html(detail);
+				
+			     });
+				$('#queryResult tbody').html(html);
+			},
+			failure : function(obj) {
+				alert('Query index failed. For further details, please check the log!');
+			}
+		});		
+	}
+
+	function openQueryForm(indexName) {
+		$.ajax({
+			url : "${rc.contextPath}/tools/index/openform/" + indexName,
+			type : 'GET',
+			data : {
+				"indexName" : indexName
+			},
+			success : function(obj) {
+				var html = "";
+				$.each(obj, function(index) {
+					var v = obj[index];
+					$('#indexName').val(v.indexName);
+					$('#pageNum').val(v.pageNum);
+					$('#pageSize').val(v.pageSize);
+					$('#paramsValue').val(v.paramsValue);
+					$('#paramsDatatype').val(v.paramsDatatype);
+					
+			     });
+			}
+		});
+		
+		$('#queryResult tbody').html("");
+		$("#detail").html("");
+		
+		$('#indexQuery').modal({
+			relatedTarget : this
+		});
+	}
+</script>

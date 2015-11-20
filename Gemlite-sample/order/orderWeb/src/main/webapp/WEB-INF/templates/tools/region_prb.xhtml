@@ -1,0 +1,20 @@
+#parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+  <div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg"><a href="${rc.contextPath}/tools/region">Region</a></strong> / <small>数据修改</small></div>
+  </div>
+   <div class="am-u-md-12">
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-info'}">Region $!{regionName} bucket分布信息<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-info">
+          $!{prb}
+          </div>
+        </div>
+   </div>
+</div>
+<script type="text/javascript">
+
+</script>
+<!-- content end -->
+  #parse("common/footer.xhtml")

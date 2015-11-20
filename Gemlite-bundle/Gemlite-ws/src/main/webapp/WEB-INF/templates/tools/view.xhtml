@@ -1,0 +1,217 @@
+ #parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+
+	<div class="am-cf am-padding">
+		<div class="am-fl am-cf">
+			<strong class="am-text-primary am-text-lg">Tools</strong> / <small>View Management</small>
+		</div>
+	</div>
+<!-- 	<div class="am-g">
+		<div class="am-u-sm-12 am-u-md-12">
+			<div class="am-btn-toolbar">
+				<div class="am-btn-group am-btn-group-xs am-padding">
+					<button type="button" name="create_btn"
+						class="am-btn am-btn-primary am-btn-xs">
+						<span class="am-icon-plus"></span> 创建索引
+					</button>
+				</div>
+				<div class="am-padding">
+					&nbsp;&nbsp;&nbsp;
+					<textarea rows="1" cols="120" maxlength="1024" id="clause"
+						name="clause" placeholder="输入索引创建语句qq"></textarea>
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+	<div class="am-g">
+		<div class="am-u-md-6">
+			#foreach($item in $left)
+			<div class="am-panel am-panel-default">
+				#foreach($key in ${item.keySet()})
+				<div class="am-panel-hd am-cf"
+					data-am-collapse="{target: '#collapse-panel-left-$!{velocityCount}'}">
+					Region $!{key} ViewList<span class="am-icon-chevron-down am-fr"></span>
+				</div>
+				<div class="am-panel-bd am-collapse am-in"
+					id="collapse-panel-left-$!{velocityCount}">
+					<ul class="am-list admin-content-file">
+						<li>
+							<p>
+								<strong>Size : $!{item.get($key).size()}</strong>
+							</p>
+						</li> #foreach($view in ${item.get($key)})
+						<li>
+							<p>
+								$!{view} &nbsp;&nbsp;&nbsp;<a
+									href="javascript:describe('$!{view}')" class="am-icon-search"
+									title="Query Detail"></a> &nbsp;&nbsp;&nbsp;<a
+									href="javascript:drop('$!{view}')" class="am-icon-trash"
+									title="Delete View">Delete View</a>
+							</p>
+						</li> #end
+					</ul>
+				</div>
+				#end
+			</div>
+			#end
+		</div>
+		<div class="am-u-md-6">
+			#foreach($item in $right)
+			<div class="am-panel am-panel-default">
+				#foreach($key in ${item.keySet()})
+				<div class="am-panel-hd am-cf"
+					data-am-collapse="{target: '#collapse-panel-left-$!{velocityCount}'}">
+					Region $!{key} ViewList<span class="am-icon-chevron-down am-fr"></span>
+				</div>
+				<div class="am-panel-bd am-collapse am-in"
+					id="collapse-panel-left-$!{velocityCount}">
+					<ul class="am-list admin-content-file">
+						<li>
+							<p>
+								<strong>Size : $!{item.get($key).size()}</strong>
+							</p>
+						</li> #foreach($view in ${item.get($key)})
+						<li>
+							<p>
+								$!{view} &nbsp;&nbsp;&nbsp;<a
+									href="javascript:describe('$!{view}')" class="am-icon-search"
+									title="Query Detail"></a> &nbsp;&nbsp;&nbsp;<a
+									href="javascript:drop('$!{view}')" class="am-icon-trash"
+									title="Delete View">Delete View</a>
+							</p>
+						</li> #end
+					</ul>
+				</div>
+				#end
+			</div>
+			#end
+		</div>
+	</div>
+</div>
+<div class="am-popup" id="my-popup" style="width: 900px">
+	<div class="am-popup-inner" style="width: 100%">
+		<div class="am-popup-hd">
+			<h4 class="am-popup-title">RecentHistory</h4>
+			<span data-am-modal-close class="am-close">&times;</span>
+		</div>
+		<div class="am-popup-bd">
+			<table id="table1"
+				class="am-table am-table-bordered am-table-striped am-table-hover table-main">
+				<thead>
+					<tr>
+						<th>IP</th>
+						<th>View Name</th>
+						<th>Target Name</th>
+						<th>Trigger On</th>
+						<th>View Type</th>
+						<th>Trigger Type</th>
+						<th>Entry Size</th>
+						<th>Entry Time To Live</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="am-modal am-modal-confirm" tabindex="-1" id="my-confirm">
+	<div class="am-modal-dialog">
+		<div class="am-modal-hd">Warning</div>
+		<div class="am-modal-bd">Are you sure to delete this view?</div>
+		<div class="am-modal-footer">
+			<span class="am-modal-btn" data-am-modal-cancel>Cancel</span> <span
+				class="am-modal-btn" data-am-modal-confirm>OK</span>
+		</div>
+	</div>
+</div>
+<!-- content end -->
+#parse("common/footer.xhtml")
+<script type="text/javascript">
+$(function () {
+	$(":button[name=create_btn]").click(function (){
+		var clause = $("#clause").val();
+		create(clause);
+   });
+});
+
+function create(clause)
+{
+	 $.ajax({  
+	        url: "${rc.contextPath}/tools/index/create/",  
+	        type: 'post',  
+	        data: {"clause":clause},  
+	        success: function (obj) {
+	        	alert(obj);
+	        	window.location.href=window.location.href;
+	        },
+	        failure:function(o)
+	        {
+	        	alert('Create view failed. For further details, please check the log!');
+	        }
+ });
+}
+
+function drop(viewName)
+{
+	$('#my-confirm').modal({
+        relatedTarget: this,
+        onConfirm: function(options) {
+        	doDrop(viewName);
+        },
+        onCancel: function() {
+          return;
+        }
+      });
+}
+
+function doDrop(viewName)
+{
+	 $.ajax({  
+	        url: "${rc.contextPath}/tools/view/drop/",  
+	        type: 'post',  
+	        data: {"viewName":viewName},  
+	        success: function (obj) {
+	        	alert(obj);
+	        	//最好是动态删除
+	        	window.location.href=window.location.href;
+	        },
+	        failure:function(o)
+	        {
+	        	alert('Delete view failed. For further details, please check the log!');
+	        }
+    });
+}
+
+function describe(viewName)
+{
+	  $.ajax({  
+        url: "${rc.contextPath}/tools/view/describe/"+viewName,  
+        type: 'GET',  
+        data: {"viewName":viewName},  
+        success: function (obj) {
+        	//清空所有行
+        	 var html = "";
+            $.each(obj, function (index) {
+            	var v = obj[index];
+            	//添加一行
+            	var str = "<tr><td>"+v.ipinfo+"</td>";
+            	str+="<td>"+v.viewName+"</td>";
+            	str+="<td>"+v.targetName+"</td>";
+            	str+="<td>"+v.triggerOn+"</td>";
+            	str+="<td>"+v.viewType+"</td>";
+            	str+="<td>"+v.triggerType+"</td>";
+            	str+="<td>"+v.entrySize+"</td>";
+            	str+="<td>"+v.EntryTimeToLive+"</td>";
+                html+=str;
+            });  
+            $('#table1 tbody').html(html);
+        }  
+    });
+	  $('#my-popup').modal({
+	        relatedTarget: this	        
+	      }); 
+}
+</script>

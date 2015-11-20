@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="off" name="gemlite">
+	<properties>
+		<property name="LOG_HOME">${sys:GS_HOME}/log</property>
+		<property name="BACKUP_HOME">${LOG_HOME}/backup</property>
+		<property name="LAYOUT_1">[%d %p %c{1}] %m%n</property>
+		<property name="LAYOUT_2">[%d %p %c{1}] %m%n</property>
+	</properties>
+	<Appenders>
+	<!-- gemfire log -->
+		<RollingRandomAccessFile name="gemfireFile" fileName="${LOG_HOME}/${sys:NODE_TYPE}-${sys:NODE_NAME}.log"
+			filePattern="${BACKUP_HOME}/${sys:NODE_TYPE}-${sys:NODE_NAME}-%d{MM-dd-yyyy}-%i.log.gz">
+			<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />
+			<PatternLayout pattern="${LAYOUT_2}" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10"/>
+		</RollingRandomAccessFile>
+		<!-- info log -->
+		<RollingRandomAccessFile name="infoFile" fileName="${LOG_HOME}/gemlite.log"
+			filePattern="${BACKUP_HOME}/gemlite-%d{MM-dd-yyyy}-%i.log.gz">
+
+			<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />
+			<PatternLayout pattern="${LAYOUT_1}" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy />
+		</RollingRandomAccessFile>
+
+		<!-- debug log -->
+		<RollingRandomAccessFile name="debugFile" fileName="${LOG_HOME}/gl-debug.log"
+			filePattern="${BACKUP_HOME}/datastore-debug-%d{MM-dd-yyyy}.log.gz">
+			<Filters>
+				<ThresholdFilter level="info" onMatch="DENY" onMismatch="NEUTRAL" />
+				<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+			</Filters>
+			<PatternLayout pattern="${LAYOUT_1}" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+			<DefaultRolloverStrategy fileIndex="min" min="1" max="1" />
+		</RollingRandomAccessFile>
+
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="${LAYOUT_1}" />
+			<ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="console" />
+		</Root>
+		<Logger name="com.gemstone" level="INFO" additivity="false">
+			<AppenderRef ref="gemfireFile" />
+			<filters>
+				<MarkerFilter marker="GEMFIRE_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
+			</filters>
+		</Logger>
+		<Logger name="gemlite.coreLog" level="trace" additivity="false">
+			<AppenderRef ref="debugFile" />
+			<AppenderRef ref="infoFile" />
+			<AppenderRef ref="console" />
+		</Logger>
+		<Logger name="gemlite.appLog" level="debug" additivity="false">
+			<AppenderRef ref="debugFile" />
+			<AppenderRef ref="infoFile" />
+			<AppenderRef ref="console" />
+		</Logger>
+		<Logger name="gemlite.mqSyncLog" level="debug" additivity="false">
+			<AppenderRef ref="debugFile" />
+			<AppenderRef ref="infoFile" />
+			<AppenderRef ref="console" />
+		</Logger>
+		<Logger name="gemlite.testLog" level="debug" additivity="false">
+			<AppenderRef ref="debugFile" />
+			<AppenderRef ref="infoFile" />
+			<AppenderRef ref="console" />
+		</Logger>
+		<Logger name="gemlite.jmxLog" level="debug" additivity="false">
+			<AppenderRef ref="debugFile" />
+			<AppenderRef ref="infoFile" />
+			<AppenderRef ref="console" />
+		</Logger>
+
+		<logger name="org.springframework" level="info" additivity="false" />
+		<logger name="org.hibernate" additivity="false" level="info" />
+	</Loggers>
+</Configuration>

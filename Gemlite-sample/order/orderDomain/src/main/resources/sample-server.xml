@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:gfe="http://www.springframework.org/schema/gemfire"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/gemfire http://www.springframework.org/schema/gemfire/spring-gemfire-1.4.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<context:property-placeholder location="server-${GS_ENV}.properties" ignore-unresolvable="true" />
+	<bean id="workPath" class="gemlite.core.internal.support.system.WorkPathHelper"></bean>	
+
+	<util:properties id="gemfireProperties" location="classpath:gemfire-7.0.1.properties"
+		local-override="true">
+		<prop key="bind-address">${BINDIP}</prop>
+		<prop key="locators">${LOCATORS}</prop>
+		<prop key="log-file">${GS_HOME}/log/server-${NODE_NAME}.log</prop>
+		<prop key="statistic-archive-file">${GS_HOME}/log/server-${NODE_NAME}.gfs</prop>
+		<prop key="deploy-working-dir">${GS_HOME}/deploy/</prop>
+	</util:properties>
+	
+	<gfe:disk-store id="basicDiskStore" 
+		allow-force-compaction="true" auto-compact="true"
+		compaction-threshold="90" max-oplog-size="1000" queue-size="10000"
+		time-interval="1000" write-buffer-size="32768">
+		<gfe:disk-dir location="#{workPath.diskStore('basic')}" />
+	</gfe:disk-store>
+
+	<bean id="domainResolver" class="gemlite.sample.order.common.DomainResolver" />
+	
+	<gfe:cache properties-ref="gemfireProperties" />
+	<gfe:cache-server auto-startup="true" port="0"	max-connections="${server.max-connections}" />
+
+	<gfe:replicated-region id="product" disk-store-ref="basicDiskStore" statistics="true" disk-synchronous="false" persistent="${persistent.enable}">
+	</gfe:replicated-region>
+	
+	<gfe:partitioned-region id="customer" disk-store-ref="basicDiskStore" 
+		statistics="true" disk-synchronous="false" persistent="${persistent.enable}"
+		total-buckets="${partition.totalNumBuckets}" startup-recovery-delay="${partition.recoveryDelay}"
+		recovery-delay="${partition.startupRecoveryDelay}" copies="${partition.redundantCopies}">
+		<gfe:partition-resolver ref="domainResolver" />
+	</gfe:partitioned-region>
+	
+	<gfe:partitioned-region id="ordermain" colocated-with="customer" disk-store-ref="basicDiskStore" 
+		statistics="true" disk-synchronous="false" persistent="${persistent.enable}"
+		total-buckets="${partition.totalNumBuckets}" startup-recovery-delay="${partition.recoveryDelay}"
+		recovery-delay="${partition.startupRecoveryDelay}" copies="${partition.redundantCopies}">
+		<gfe:partition-resolver ref="domainResolver" />
+	</gfe:partitioned-region>
+	
+	<gfe:partitioned-region id="detail" colocated-with="customer" disk-store-ref="basicDiskStore" 
+		statistics="true" disk-synchronous="false" persistent="${persistent.enable}"
+		total-buckets="${partition.totalNumBuckets}" startup-recovery-delay="${partition.recoveryDelay}"
+		recovery-delay="${partition.startupRecoveryDelay}" copies="${partition.redundantCopies}">
+		<gfe:partition-resolver ref="domainResolver" />
+	</gfe:partitioned-region>	
+</beans>

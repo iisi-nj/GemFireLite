@@ -1,0 +1,87 @@
+#parse("common/header.xhtml")
+  <!-- content start -->
+  <div class="admin-content">
+
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg"><a href="${rc.contextPath}/service">Logic Services</a></strong> / <small>Recent Query History</small></div><div style="float:right"><a href="${rc.contextPath}/service">Back</a></div>
+    </div>
+    <div class="am-g">
+      <div class="am-u-sm-12">
+        <form class="am-form">
+          <table id="table1" class="am-table am-table-bordered am-table-striped am-table-hover table-main">
+            <thead>
+              <tr>
+                <th>ModuleName</th>
+                <th>ServiceName</th>
+                <th>QueryCost</th>
+                <th>SendCost</th>
+                <th>TotalCost</th>
+                <th>CheckPoints</th>
+              </tr>
+          </thead>
+          <tbody>
+          #foreach($item in $list)
+          <tr id="recent_$!{velocityCount}">
+            <td>$!{item.moduleName}</td>
+            <td>$!{item.serviceName}</td>
+            <td>#set ($querycost = $item.send - $item.start) ${querycost}</td>
+            <td>#set ($sendcost = $item.end - $item.send) ${sendcost}</td>
+            <td>#set ($cost = $item.end - $item.start) ${cost}</td>
+            <td>
+             #set($str = "") 
+             #foreach($v in ${item.checkPoints})
+             #set($cost1 = $v.end - $v.start)
+              #set($str = "${str},${v.className}&${v.checkPoint}&$!dateTool.format('yyyy-MM-dd HH:mm:ss:SSS',$!{v.start})&$!dateTool.format('yyyy-MM-dd HH:mm:ss:SSS',$!{v.end})&${cost1}")
+             #end
+            <a name="opena" href="javascript:open('${str}','recent_$!{velocityCount}');" class="am-icon-toggle-right"/>
+           </td>
+          </tr>
+          #end
+          </tbody>
+        </table>
+          <hr />
+          <p style="color: red">$!{msg}</p>
+        </form>
+      </div>
+
+    </div>
+  </div>
+<script type="text/javascript">
+  function open(checkPoints,id)
+  {
+	//判断当前的css状态
+	var a = $("#"+id+" a");
+	var cls = a.attr('class');
+	//如果是已经打开的
+	if(cls == "am-icon-toggle-down")
+	{
+		a.attr("class","am-icon-toggle-right");  //将按钮css改变
+		//清掉打开的
+		$("#table1 tbody tr[name=open]").remove();
+	}
+	else
+    {
+		//清掉打开的
+		$("#table1 tbody tr[name=open]").remove();
+		//将按钮还原
+		$("#table1 tbody tr a").attr("class","am-icon-toggle-right");
+		//设置打开按钮
+		a.attr("class","am-icon-toggle-down");  //将按钮css改变
+		
+		//解析
+		var arr = checkPoints.split(",");
+		var tr = "<tr name=\"open\"><td colspan=7><table class=\"am-table am-table-bordered am-success\"><tr><th>className</th><th>checkPoint</th><th>start</th><th>end</th><th>cost</th></tr>"
+	    $.each(arr, function(index,c){
+	    	//对c进行解析
+	    	var c_arr = c.split("&");
+	    	if(c_arr.length == 5)
+	    	tr+="<tr class=am-success><td>"+c_arr[0]+"</td><td>"+c_arr[1]+"</td><td>"+c_arr[2]+"</td><td>"+c_arr[3]+"</td><td>"+c_arr[4]+"</td></tr>";
+		});
+		tr+="</table></td></tr>";
+	    //在选择行下面添加新行
+	    $(tr).insertAfter($("#"+id));
+    }
+  }
+  </script>
+  <!-- content end -->
+#parse("common/footer.xhtml")

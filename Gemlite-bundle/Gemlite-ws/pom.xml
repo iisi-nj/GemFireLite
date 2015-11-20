@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>gemlite</groupId>
+		<artifactId>Gemlite-bundle</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>Gemlite-ws</artifactId>
+	<packaging>war</packaging>
+	<properties>
+		<org.aspectj-version>1.6.10</org.aspectj-version>
+		<org.slf4j-version>1.5.10</org.slf4j-version>
+		<org.hibernate-version>3.6.0.Final</org.hibernate-version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>gemlite</groupId>
+			<artifactId>Gemlite-runtime</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gemlite</groupId>
+			<artifactId>Gemlite-shell</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+  		  <groupId>gemlite.sample</groupId>
+  		  <artifactId>orderDomain</artifactId>
+  		  <version>0.0.1-SNAPSHOT</version>
+     	</dependency>
+	</dependencies>
+</project>

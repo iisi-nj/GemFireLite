@@ -1,0 +1,188 @@
+#parse("common/header.xhtml")
+  <!-- content start -->
+  <div class="admin-content">
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">工具</strong> / <small>数据导入 batch</small></div>
+    </div>
+  <div class="am-g">
+     <div class="am-panel am-panel-default">
+     <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-1'}">创建 执行 Job<span class="am-icon-chevron-down am-fr" ></span></div>
+     <div class="am-panel-bd am-collapse am-in" id="collapse-panel-1">
+     <div class="am-btn-toolbar">
+          <div class="am-btn-group am-btn-group-xs am-padding">
+            <button type="button" class="am-btn am-btn-default" onclick="javascrtpt:window.location.href='${rc.contextPath}/batch/add'"><span class="am-icon-plus"></span> 创建Job</button>
+          </div>
+        </div>
+          <table class="am-table table-main am-text-left am-table-bordered ">
+          <thead>
+             <tr>
+             <th width="10%">RegionName</th>
+             <th width="10%">模板类型</th>
+             <th>脚本</th>
+             <th width="10%">操作</th>
+             </tr>
+           </thead>
+           <tbody>
+            #foreach($item in $list)
+              <tr>
+              <td>$!{item.region}</td>
+              <td>$!{item.template}</td>
+              <td>$!{item.cmd}
+<!--               <div class="doc-code demo-highlight"> -->
+<!--               <pre> -->
+<!--               <code class="css">${item.cmd}</code> -->
+<!--               </pre> -->
+<!--               </div> -->
+              </td>
+              <td><button id='$!{item.id}' name="execute_btn" class="am-btn am-btn-default"><span class="am-icon-check"></span> 执行脚本</button>
+              <button id='$!{item.id}' name="edit_execute_btn" class="am-btn am-btn-default"><span class="am-icon-check"></span> 修改并执行</button></td>
+              </tr>
+            #end
+            </tbody>
+         </table>
+      </div>
+      </div>
+      <div class="am-panel am-panel-default">
+     <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-2'}">查看Job运行情况<span class="am-icon-chevron-down am-fr" ></span></div>
+     <div class="am-panel-bd am-collapse am-in" id="collapse-panel-2">
+        <div class="am-btn-toolbar">
+          <div class="am-btn-group am-btn-group-xs am-padding">
+            <button type="button" id="button_start_id" class="am-btn am-btn-default"><span class="am-icon-refresh"></span> 启动刷新</button>
+            <button type="button" id="button_stop_id" class="am-btn am-btn-default"><span class="am-icon-remove"></span> 停止刷新</button>
+           <!--  <button type="button" class="am-btn am-btn-default"><span class="am-icon-archive"></span> 审核</button>
+            <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button> -->
+            <div id="running" style="margin-left: 10px" class="am-icon-spinner am-icon-spin"/>
+          </div>
+        </div>
+          <table id="jobexecution_tab" class="am-table table-main am-text-center am-table-bordered ">
+            <thead>
+             <tr>
+             <th width="5%">ID</th>
+             <th width="10%">JobName</th>
+             <th width="5%">状态</th>
+             <th width="10%">开始时间</th>
+             <th width="10%">最后更新时间</th>
+             <th width="10%">耗时</th>
+             <th>细节</th>
+             </tr>
+             </thead>
+             <tbody>
+             </tbody>
+         </table>
+      </div>
+      </div>
+   </div>
+</div>
+  <!-- content end -->
+#parse("common/footer.xhtml")
+<script type="text/javascript">
+
+//定时刷新数据
+var timer=null;
+var rgb=null;
+$(document).ready(function (){
+	  
+	  $("#button_start_id").click(function () {
+		  timer = setInterval("startRequest()", 3000);
+		  $("#running").attr("class","am-icon-spinner am-icon-spin");
+   });
+	  
+	  $("#button_stop_id").click(function () {
+		  clearInterval(timer);
+		  rgb = $("#serviceTable tbody tr").css("color");
+		  $("#serviceTable tbody tr").css("color","red");
+		  $("#running").attr("class","am-icon-spinner");
+   });
+	  startRequest();
+      timer = setInterval("startRequest()", 3000);
+      
+      $(":button[name=execute_btn]").click(function () {
+  		var id = $(this).attr("id");
+  		execute(id);
+      });
+      
+      $(":button[name=edit_execute_btn]").click(function () {
+    		var id = $(this).attr("id");
+    		edit_execute(id);
+        });
+      
+  });
+  
+  
+function startRequest() {  
+    $.ajax({  
+        url: "${rc.contextPath}/batch/list/api",  
+        type: 'GET',  
+        data: {},  
+        success: function (objson) {
+        	if(objson == '')
+        	{
+        	  clearInterval(timer);
+        	  $("#running").attr("class","am-icon-spinner");
+        	}
+        	//清空所有行
+        	 var obj = eval(objson);
+        	 var html = "";
+            $.each(objson, function (index) {
+            	var v = objson[index];
+            	//添加一行
+            	var str = "<tr><td>"+v.job_execution_id+"</td>"
+            	str+="<td>"+v.job_name+"</td>";
+            	str+="<td>"+v.status+"</td>";
+            	str+="<td>"+new Date(v.start_time).format("yyyy-MM-dd hh:mm:ss.S")+"</td>";
+            	str+="<td>"+new Date(v.last_updated).format("yyyy-MM-dd hh:mm:ss.S")+"</td>";
+            	str+="<td>"+v.duration+"</td>";
+            	str+="<td>";
+            	str+="<table class=\"am-table table-main am-text-center am-table-bordered\"><thead><tr>";
+            	str+="<th>StepName</th><th>Status</th><th>ReadCount</th><th>WriteCount</th><th>CommitCount</th><th>EXIT_MESSAGE</th>";
+            	str+="</tr></thead><tbody>";
+            	//解析steps
+            	var steps = v.steps;
+            	$.each(steps, function (no){
+            		var step = steps[no];
+            		str+="<tr><td>"+step.step_name+"</td>";
+            		str+="<td title=\""+step.exit_message+"\">"+step.status+"</td>";
+            		str+="<td>"+step.read_count+"</td>";
+            		str+="<td>"+step.write_count+"</td>";
+            		str+="<td>"+step.commit_count+"</td>";
+            		str+="<td style=\"word-break:break-all; word-wrap:break-word;\">"+step.exit_message+"</td></tr>";
+            	});
+            	str+="</tbody></table></td></tr>";
+                html+=str;
+            });  
+            $('#jobexecution_tab tbody').html(html);
+        }  
+    });  
+}
+
+function execute(id)
+{
+	$.ajax({  
+        url: "${rc.contextPath}/batch/execute",  
+        type: 'post',  
+        data: {"id":id},  
+        success: function (objson) {
+        	if(objson != '')
+        	{
+        		alert('执行发送成功!');
+        	}
+        	else
+        	{
+        		alert('执行失败,请检查错误日志!');
+        	}
+        },
+        failure:function(o)
+        {
+        	alert('执行失败,请检查错误日志!');
+        }
+    });  
+}
+
+/**
+ * 编辑并执行脚本
+ */
+function edit_execute(id)
+{
+	window.location.href='${rc.contextPath}/batch/edit?id='+id;
+}
+</script>

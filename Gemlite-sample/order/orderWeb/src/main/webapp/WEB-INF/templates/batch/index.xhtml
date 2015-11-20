@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!-- #include file = "../header.xhtml" --> 
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="${rc.contextPath}/js/jquery-1.7.2-min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/js/global.js"></script>
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/css/bootstrap-theme.min.css" />
+<script type="text/javascript" src="${rc.contextPath}/js/bootstrap.min.js"></script>
+<STYLE type="text/css">
+.copy-tips{position:fixed;z-index:999;bottom:50%;left:50%;margin:0 0 -20px -80px;background-color:rgba(0, 0, 0, 0.2);filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr=#30000000, endColorstr=#30000000);padding:6px;}
+.copy-tips-wrap{padding:10px 20px;text-align:center;border:1px solid #F4D9A6;background-color:#FFFDEE;font-size:14px;}
+</STYLE>
+</head>
+<a href="${rc.contextPath}">Home </a>
+<table class="table table-bordered">
+  <tr>
+    <td width="5%"><a href="javascript:void(0)" onclick="addjob();">添加Job</a></td>
+    <td width="5%"><a href="javascript:void(0)" onclick="importjob();">导入Job</a></td>
+    <td width="5%"><a href="batch/execution">执行列表</a></td>
+    <td width="70%"></td>
+    <td width="5%"><a href="${rc.contextPath}/batch/configtpl">模板配置</a></td>
+    <td width="10%"><a href="${rc.contextPath}/batch/configjob">运行Job配置</a></td>
+  </tr>
+</table>
+<P>JOB列表   </P>
+<P><INPUT type="button" value="执行勾选JOB" id="btn_execall" onclick="execall();"/> </P>
+<table class="table table-bordered">
+  <tr>
+    <th><input class="checkId" name="checkId" type="checkbox"></th>
+    <th>ID</th>
+    <th>名称</th>
+    <th>表名</th>
+    <th>region名</th>
+    <td>路径</td>
+    <th>字段</th>
+    <th>创建时间</th>
+    <th>更新时间</th>
+    <th>操作</th>
+  </tr>
+   #foreach ( $item in $list)
+  <tr>
+    <td><input name="ck_items" type="checkbox" value="$!{item.id}"></td>
+    <td>$!{item.id}</td>
+    <td>$!{item.jobname}</td>
+    <td>$!{item.tablename}</td>
+    <td>$!{item.regionname}</td>
+    <td>$!{item.files}</td>
+    <td title="$!{item.linenames}" description="description" len="30">$!{item.linenames}</td>
+    <td>$!{item.create_time}</td>
+    <td>$!{item.update_time}</td>
+    <td><a href="javascript:edit(${item.id})">修改</a>&nbsp;&nbsp;&nbsp;
+    <a href="javascript:del(${item.id})">删除</a>&nbsp;&nbsp;&nbsp;
+    <a href="javascript:submit(${item.id})">执行</a></td>
+  </tr>
+   #end
+</table>
+<script type="text/javascript">
+  function addjob()
+  {
+	  window.location ="${rc.contextPath}/batch/add";
+  }
+  
+  function importjob()
+  {
+	  window.location ="${rc.contextPath}/batch/import";
+  }
+  
+  function edit(id)
+  {
+	  window.location ="${rc.contextPath}/batch/edit/"+id; 
+  }
+  
+  function del(id)
+  {
+	  if (confirm('确定删除?')) {
+			$.ajax({
+				type : "POST",
+				dataType : "json",
+				url : "${rc.contextPath}/batch/del/",
+				data : "id="+id,
+				success : function(data) {
+					if (data.result) {
+						alert('删除成功!');
+					  window.location.reload();
+					} else {
+						alert(data.resultSmg);
+					}
+				}
+			});}
+  }
+  
+  function submit(id)
+  {
+	  if (confirm('确定执行?')) {
+			$.ajax({
+				type : "POST",
+				dataType : "json",
+				url : "${rc.contextPath}/batch/submit/"+id,
+				data : "",
+				success : function(data) {
+					if (data.result) {
+						var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>已提交执行,请至执行列表查看执行情况!</div></div>");
+						$("body").find(".copy-tips").remove().end().append($copysuc);
+						$(".copy-tips").fadeOut(5000);
+					} else {
+						alert(data.resultSmg);
+					}
+				}
+			});}
+  }
+  
+  function execall()
+  {
+	  //获取勾选项
+	  var arr =  [];
+	  $("[name='ck_items']:checked").each(function(){
+		arr.push($(this).val());
+	   });
+		if(arr.length<1)
+		{
+			alert('请至少选择一个执行!');
+			return;
+		}
+		submit(arr.join(","));
+  }
+</script>
+</html>

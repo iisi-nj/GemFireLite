@@ -1,0 +1,22 @@
+/* Write your styles */
+
+th{text-align: center}
+.admin-icon-red {
+  color: #ff0000;
+}
+
+.doc-code{position:relative}
+.doc-code:after{position:absolute;right:5px;bottom:5px;color:#ccc;display:inline-block;font:normal normal normal 1.6rem/1 FontAwesome,sans-serif;font-size:inherit;text-rendering:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transform:translate(0,0);content:"\f121"}
+.doc-code .am-pre-scrollable::-webkit-scrollbar{width:5px}
+.doc-code .am-pre-scrollable::-webkit-scrollbar-track-piece{background:0 0}
+.doc-code .am-pre-scrollable::-webkit-scrollbar-thumb{background-color:rgba(0,0,0,.15);border-radius:5px}
+.doc-code .am-pre-scrollable::-webkit-scrollbar-thumb:hover{background-color:rgba(0,0,0,.3)}
+
+.doc-actions{position:relative;z-index:999}
+.doc-act-inner{font-size:12px;position:absolute;right:0;top:11px;color:#555;border:1px solid #eee;border-width:0 0 1px 1px;border-radius:0 2px 0 2px;cursor:pointer;z-index:9999}
+.doc-act-inner span{padding:3px 8px}
+.doc-act-inner span+span{border-left:1px solid #eee}
+.doc-act-inner span:first-child{border-bottom-left-radius:2px}
+.doc-act-inner span:last-child{border-top-right-radius:2px}
+.ios .doc-act-clip{display:none}
+.doc-act-clip-hover,.doc-act-newwin:hover{background:#0e90d2;color:#fff}

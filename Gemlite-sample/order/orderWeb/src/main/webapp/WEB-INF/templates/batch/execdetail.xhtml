@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="${rc.contextPath}/js/jquery-1.7.2-min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/js/global.js"></script>
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/css/bootstrap-theme.min.css" />
+<script type="text/javascript" src="${rc.contextPath}/js/bootstrap.min.js"></script>
+</head>
+<h4 class="menu_path"><a href="${rc.contextPath}">Home</a>&gt;&gt;<a href="${rc.contextPath}/batch">Batch列表</a>&gt;&gt;Job执行明细</h4>
+<div id="body"><div id="job-execution">
+		<h2>Job执行明细</h2>
+		<table  class="table table-bordered">
+			<tr>
+				<th>属性</th>
+				<th>数值</th>
+			</tr>
+			<tr class="name-sublevel1-odd">
+				<td>ID</td>
+				<td>${jobExecution.job_execution_id}</td>
+			</tr>
+			<tr class="name-sublevel1-even">
+				<td>Job名称</td>
+				<td>${jobExecution.job_name}</td>
+			</tr>
+			<tr class="name-sublevel1-odd">
+				<td>Job实例ID</td>
+				<td>${jobExecution.job_instance_id}</td>
+			</tr>
+			<tr class="name-sublevel1-even">
+				<td>Job参数</td>
+				<td></td>
+			</tr>
+			<tr class="name-sublevel1-odd">
+				<td>开始时间</td>
+				<td>${jobExecution.start_time}</td>
+			</tr>
+			<tr class="name-sublevel1-even">
+				<td>结束时间</td>
+				<td>${jobExecution.end_time}</td>
+			</tr>
+			<tr class="name-sublevel1-odd">
+				<td>最后更新</td>
+				<td>${jobExecution.last_updated}</td>
+			</tr>
+			<tr class="name-sublevel1-even">
+				<td>状态</td>
+				<td>${jobExecution.status}</td>
+			</tr>
+			<tr class="name-sublevel1-odd">
+				<td>退出代码</td>
+				<td>${jobExecution.exit_code}</td>
+			</tr>
+			<tr class="name-sublevel1-even">
+				<td>退出消息</td>
+				<td>${jobExecution.exit_message}</td>
+			</tr>
+			<tr class="name-sublevel1-odd">
+				<td>Step执行次数</td>
+				<td>${jobExecution.step_count}</td>
+			</tr>
+		</table>
+	
+		<br/>
+		<table  class="table table-bordered">
+			<tr>
+				<th>Step名称</th>
+				<th>读数次数</th>
+				<th>写数次数</th>
+				<th>提交次数</th>
+				<th>回滚次数</th>
+				<th>开始时间</th>
+				<th>结束时间</th>
+				<th>状态</th>
+				<th>退出代码</th>
+				<th>失败消息</th>
+			</tr>
+			#foreach( $item in $steps)
+				<tr class="name-sublevel1-even">
+					<td>${item.step_name}</td>
+					<td>${item.read_count}</td>
+					<td>${item.write_count}</td>
+					<td>${item.commit_count}</td>
+					<td>${item.rollback_count}</td>
+					<td>${item.start_time}</td>
+					<td>${item.end_time}</td>
+					<td>${item.status}</td>
+					<td>${item.exit_code}</td>
+					<td>${item.exit_message}</td>
+				</tr>
+				#end
+		</table>
+
+	
+</div><!-- job-execution -->
+</div>
+</html>

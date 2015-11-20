@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration>
+	<!-- Console -->
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="INFO" />
+			<param name="LevelMin" value="INFO" />
+			<param name="acceptOnMatch" value="true"/>
+		</filter>
+	</appender>
+	
+	<!-- coreLog -->
+	<appender name="shellFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/gemlite-shell.log" />
+		<param name="Threshold" value="debug" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="0" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS}] %m%n" />
+		</layout>
+	</appender>
+	
+	
+	<!-- Logger -->
+	
+	<logger name="gemlite.coreLog" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="shellFile" />
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="org" additivity="false">
+		<level value="info" />
+		<appender-ref ref="shellFile" />
+	</logger>
+	
+	<!-- root -->
+	<root>
+		<priority value="info" />
+		<appender-ref ref="stdout" />
+	</root>
+
+</log4j:configuration>  

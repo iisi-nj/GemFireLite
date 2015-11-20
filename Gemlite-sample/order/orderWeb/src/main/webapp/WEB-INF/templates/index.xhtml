@@ -1,0 +1,62 @@
+ #parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+
+	<div class="am-cf am-padding">
+		<div class="am-fl am-cf">
+			<strong class="am-text-primary am-text-lg">Home</strong>
+		</div>
+	</div>
+
+	<!-- <ul
+		class="am-avg-sm-1 am-avg-md-4 am-margin am-padding am-text-center admin-content-list ">
+		<li><a href="javascript:checkconnect('#connectId',$!{connect})"
+			class="am-text-success"><span
+				class="am-icon-btn am-icon-file-text"></span><br>
+			<span id="connectId">#if($connect)Connection success #else Not
+					connect, click to connect #end</span><br /></a></li>
+	</ul> -->
+	<div class="am-g">
+		<div class="am-u-md-12">
+			<div class="am-panel am-panel-default">
+				<div class="am-panel-hd am-cf"
+					data-am-collapse="{target: '#collapse-panel-1'}">
+					<span class="am-icon-chevron-down am-fr"></span>
+				</div>
+				<div class="am-panel-bd am-collapse am-in" id="collapse-panel-1">
+					<ul class="am-list admin-content-file">
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- content end -->
+#parse("common/footer.xhtml")
+<script type="text/javascript">
+	function checkconnect(id, connect) {
+		if (connect) {
+			alert("Has been connected");
+		} else {
+			//connect
+			$.AMUI.progress.start();
+			$.ajax({
+				type : "POST",
+				dataType : "json",
+				url : "${rc.contextPath}/init",
+				data : "",
+				success : function(data) {
+					$.AMUI.progress.done();
+					if (data) {
+						$(id).text("Connection success");
+					} else {
+						alert(data);
+					}
+				},
+				failure : function(data) {
+					$.AMUI.progress.done();
+				}
+			});
+		}
+	}
+</script>

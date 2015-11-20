@@ -1,0 +1,128 @@
+
+#parse("common/header.xhtml")
+  <!-- content start -->
+  <div class="admin-content">
+
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">TOOLS</strong> / <small>Region Operation</small></div>
+    </div>
+  <div class="am-g">
+      <div class="am-u-md-6">
+      #foreach($item in $left)
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-left-$!{velocityCount}'}">$!{item.regionName}<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-left-$!{velocityCount}">
+            <ul class="am-list admin-content-file">
+              <li>
+               <p> <strong>regionType:</strong>$!{item.regionType}</p>
+              </li>
+              <li>
+                <p> <strong>size:</strong>$!{item.size}</p>
+              </li>
+              <li>
+                <p> <strong>keyClass:</strong>$!{item.keyClass}</p>
+              </li>
+              <li>
+                <p> <strong>keyFields:</strong>$!{item.keyFields}</p>
+              </li>
+              <li>
+                <p> <strong>valueClass:</strong>$!{item.valueClass}</p>
+              </li>
+              <li>
+                <p> <strong>valueFields:</strong>$!{item.valueFields}</p>
+              </li>
+              #if($item.asyncqueue !="")
+              <li>
+                <p> <strong>Async Queue:</strong>$!{item.asyncqueue}</p>
+              </li>
+              #end
+              <li>
+              #if($item.asyncqueue =="")
+              <button type="button" name="async_btn" data="$!{item.regionName}" class="am-btn am-btn-primary am-btn-xs"><span class="am-icon-plus"></span> Add Sync</button>
+              #end
+              <button type="button" name="edit_btn" data="$!{item.regionName}" class="am-btn am-btn-primary am-btn-xs"><span class="am-icon-edit"></span> Modify Data</button>
+              <button type="button" name="sizem_btn" data="$!{item.regionName}" class="am-btn am-btn-primary am-btn-xs"><span class="am-icon-eye"></span> View Data Distribution</button>
+              #if($item.regionType == 'partitioned-region')
+              <button type="button" name="prb_btn" data="$!{item.regionName}" class="am-btn am-btn-primary am-btn-xs"><span class="am-icon-eye"></span> View Bucket Distribution</button>
+              #end
+              </li>
+            </ul>
+          </div>
+        </div>
+      #end
+      </div>
+      <div class="am-u-md-6">
+      #foreach($item in $right)
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-left-$!{velocityCount}'}">$!{item.regionName}<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-left-$!{velocityCount}">
+            <ul class="am-list admin-content-file">
+              <li>
+               <p> <strong>regionType:</strong>$!{item.regionType}</p>
+              </li>
+              <li>
+                <p> <strong>size:</strong>$!{item.size}</p>
+              </li>
+              <li>
+                <p> <strong>keyClass:</strong>$!{item.keyClass}</p>
+              </li>
+              <li>
+                <p> <strong>keyFields:</strong>$!{item.keyFields}</p>
+              </li>
+              <li>
+                <p> <strong>valueClass:</strong>$!{item.valueClass}</p>
+              </li>
+              <li>
+                <p> <strong>valueFields:</strong>$!{item.valueFields}</p>
+              </li>
+              #if($item.asyncqueue !="")
+              <li>
+                <p> <strong>Async Queue:</strong>$!{item.asyncqueue}</p>
+              </li>
+              #end
+              <li>
+              #if($item.asyncqueue =="")
+              <button type="button" name="async_btn" data="$!{item.regionName}" class="am-btn am-btn-primary am-btn-xs"><span class="am-icon-plus"></span> Add Sync</button>
+              #end
+              <button type="button" name="edit_btn" data="$!{item.regionName}" class="am-btn am-btn-primary am-btn-xs"><span class="am-icon-edit"></span> Modify Data</button>
+              <button type="button" name="sizem_btn" data="$!{item.regionName}" class="am-btn am-btn-primary am-btn-xs"><span class="am-icon-eye"></span> View Data Distribution</button>
+              #if($item.regionType == 'partitioned-region')
+              <button type="button" name="prb_btn" data="$!{item.regionName}" class="am-btn am-btn-primary am-btn-xs"><span class="am-icon-eye"></span> View Bucket Distribution</button>
+              #end
+              </li>
+            </ul>
+          </div>
+        </div>
+      #end
+      </div>
+   </div>
+  </div>
+  <!-- content end -->
+#parse("common/footer.xhtml")
+<script type="text/javascript">
+$(function () {
+	$(":button[name=edit_btn]").click(function () {
+		var regionName = $(this).attr("data");
+		//跳转到编辑页面
+		window.location.href='${rc.contextPath}/tools/region/update/'+regionName;
+    });
+	
+	$(":button[name=sizem_btn]").click(function () {
+		var regionName = $(this).attr("data");
+		//跳转到编辑页面
+		window.location.href='${rc.contextPath}/tools/region/sizem/'+regionName;
+    });
+	
+	$(":button[name=prb_btn]").click(function () {
+		var regionName = $(this).attr("data");
+		//跳转到编辑页面
+		window.location.href='${rc.contextPath}/tools/region/prb/'+regionName;
+    });
+	
+	$(":button[name=async_btn]").click(function () {
+		var regionName = $(this).attr("data");
+		//跳转到编辑页面
+		window.location.href='${rc.contextPath}/tools/async/add?regionName='+regionName;
+    });
+});
+</script>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<description>Batch repository configuration</description>
+	<context:property-placeholder location="classpath:batch-job.properties"
+		system-properties-mode="OVERRIDE" ignore-unresolvable="true" />
+	<import resource="classpath*:batch/batch-data-source.xml" />
+	<batch:job-repository data-source="batchDataSource"
+		transaction-manager="batchTransactionManager" />
+	<bean id="jobLauncher"
+		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+		<property name="taskExecutor" ref="jobExecutor" />
+	</bean>
+
+	<bean id="jobExplorer"
+		class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean">
+		<property name="dataSource" ref="batchDataSource" />
+	</bean>
+	<bean id="jobRegistry"
+		class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
+	<bean id="jobRegistryBeanPostProcessor"
+		class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor">
+		<property name="jobRegistry" ref="jobRegistry" />
+	</bean>
+
+	<bean class="org.springframework.core.task.SimpleAsyncTaskExecutor"
+		id="jobExecutor">
+		<property name="concurrencyLimit" value="4" />
+		<property name="threadNamePrefix" value="job-" />
+	</bean>
+
+	<bean id="jobOperator"
+		class="org.springframework.batch.core.launch.support.SimpleJobOperator">
+		<property name="jobExplorer" ref="jobExplorer" />
+		<property name="jobRepository" ref="jobRepository" />
+		<property name="jobRegistry" ref="jobRegistry" />
+		<property name="jobLauncher" ref="jobLauncher" />
+	</bean>
+
+
+	<bean id="taskPool"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="${batch.taskPool.core}" />
+		<property name="maxPoolSize" value="${batch.taskPool.max}" />
+	</bean>
+
+	<bean class="org.springframework.batch.core.scope.JobScope" />
+	<bean id="gl_stepListener" class="gemlite.core.internal.batch.StepExecutionListener" />
+	<bean id="gl_jobListener" class="gemlite.core.internal.batch.JobExecutionListener" />
+
+	<batch:job id="gl_parentJob" abstract="true">
+		<batch:listeners>
+			<batch:listener ref="gl_jobListener" />
+		</batch:listeners>
+	</batch:job>
+	<batch:step id="gl_parentStep" abstract="true">
+		<batch:listeners>
+			<batch:listener ref="gl_stepListener" />
+		</batch:listeners>
+	</batch:step>
+</beans>
+ 

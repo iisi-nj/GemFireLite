@@ -1,0 +1,61 @@
+
+#parse("common/header.xhtml")
+  <!-- content start -->
+  <div class="admin-content">
+
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">HomePage</strong> / <small>Common module</small></div>
+    </div>
+
+    <ul class="am-avg-sm-1 am-avg-md-4 am-margin am-padding am-text-center admin-content-list ">
+      <li><a href="javascript:checkconnect('#connectId',$!{connect})" class="am-text-success"><span class="am-icon-btn am-icon-file-text"></span><br><span id="connectId">#if($connect)Connected#else <span style="color: red">Click to Connect</span> #end</span><br/></a></li>
+      <!-- <li><a href="#" class="am-text-warning"><span class="am-icon-btn am-icon-briefcase"></span><br/>待定<br/></a></li>
+      <li><a href="#" class="am-text-danger"><span class="am-icon-btn am-icon-recycle"></span><br/>待定<br/></a></li>
+      <li><a href="#" class="am-text-secondary"><span class="am-icon-btn am-icon-user-md"></span><br/>待定<br/></a></li> -->
+    </ul>
+    <div class="am-g">
+      <div class="am-u-md-12">
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-1'}"><span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-1">
+            <ul class="am-list admin-content-file">
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- content end -->
+#parse("common/footer.xhtml")
+<script type="text/javascript">
+function checkconnect(id,connect)
+{
+	   if(connect)
+	   {
+	   }
+	   else
+	   {
+		   //connect
+		   $.AMUI.progress.start();
+		   $.ajax({
+				type : "POST",
+				dataType : "json",
+				url : "${rc.contextPath}/init",
+				data : "",
+				success : function(data) 
+				{
+					$.AMUI.progress.done();
+					if (data) {
+						$(id).text("Connected");
+					} else {
+						alert(data);
+					}
+				},
+				failure:function (data)
+				{
+					$.AMUI.progress.done();
+				}
+			});
+	   }
+}
+</script>

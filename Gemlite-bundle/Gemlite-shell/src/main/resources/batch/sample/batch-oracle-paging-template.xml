@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<batch:job id="#jobName#Job">
+		<batch:step id="#jobName#Step2">
+			<batch:tasklet transaction-manager="batchTransactionManager">
+				<batch:chunk writer="#jobName#Writer" reader="#jobName#Reader"
+					commit-interval="10000" />
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	
+	<util:map id="x12"  map-class="java.util.HashMap">
+		<entry key="#sortKey#" >
+			<util:constant static-field="org.springframework.batch.item.database.Order.DESCENDING"/>
+		</entry>
+	</util:map>
+
+	<bean id="#jobName#Reader" class="org.springframework.batch.item.database.JdbcPagingItemReader">
+		<property name="dataSource" ref="jdbcDataSource" />
+		<property name="pageSize" value="500" />
+		<property name="queryProvider">
+			<bean
+				class="org.springframework.batch.item.database.support.OraclePagingQueryProvider">
+				<property name="sortKeys" ref="x12"/>
+				<property name="selectClause" value="#sql#" />
+				<property name="fromClause" value="from #tableName#" />
+				<property name="whereClause" value="#whereClause#" />
+			</bean>
+		</property>
+		<property name="fetchSize" value="200" />
+		<property name="rowMapper">
+			<bean class="gemlite.core.internal.support.batch.CommonDBMapper">
+				<property name="tableName" value="#tableName#" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="#jobName#Writer" class="gemlite.core.internal.support.batch.GFItemDataWriter">
+		<property name="tableName" value="#tableName#" />
+		<property name="regionName" value="#regionName#" />
+	</bean>
+</beans>

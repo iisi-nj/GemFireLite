@@ -1,0 +1,141 @@
+#parse("common/header.xhtml")
+  <!-- content start -->
+  <div class="admin-content">
+
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">TOOLS</strong> / <small>Cluster Install</small></div>
+    </div>
+    <div class="am-g">
+      <div class="am-u-sm-12 am-u-md-12">
+        <div class="am-btn-toolbar">
+          <div class="am-btn-group am-btn-group-xs am-padding">
+            <button type="button" id="deploy_btn" class="am-btn am-btn-primary am-btn-xs" data-am-loading="{spinner: 'circle-o-notch', loadingText: 'Runnig...', resetText: '<span class=am-icon-plus></span> Copy Jar And Script'}"><span class="am-icon-plus"></span> Copy Jar And Script</button>
+          </div>
+        </div>
+        <div class="am-btn-toolbar">
+          <div class="am-btn-group am-btn-group-xs am-padding">
+            <button type="button" id="start_locator_btn" class="am-btn am-btn-primary am-btn-xs" data-am-loading="{spinner: 'circle-o-notch', loadingText: 'Runnig...', resetText: '<span class=am-icon-plus></span> 启动Locator'}"><span class="am-icon-plus"></span> Start Locator</button>
+          </div>
+          <div class="am-btn-group am-btn-group-xs am-padding">
+            <button type="button" id="start_datastore_btn" class="am-btn am-btn-primary am-btn-xs" data-am-loading="{spinner: 'circle-o-notch', loadingText: 'Runnig...', resetText: '<span class=am-icon-plus></span> 启动DataStore'}"><span class="am-icon-plus"></span> Start DataStore</button>
+          </div>
+          <div class="am-btn-group am-btn-group-xs am-padding" style="display: none">
+            <button type="button" id="start_monitor_btn" class="am-btn am-btn-primary am-btn-xs" data-am-loading="{spinner: 'circle-o-notch', loadingText: 'Runnig...', resetText: '<span class=am-icon-plus></span> 启动GemliteMonitor'}"><span class="am-icon-plus"></span> 启动GemliteMonitor</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  <div class="am-g">
+      <div class="am-u-md-6">
+      #foreach($item in $list)
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-left-$!{velocityCount}'}">IP: $!{item.ip}<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-left-$!{velocityCount}">
+            <ul class="am-list admin-content-file">
+              <li>
+               <p> <strong>Parimary : $!{item.isP}</strong></p>
+              </li>
+              <li>
+              </li>
+            </ul>
+          </div>
+        </div>
+      #end
+      </div>
+      <div class="am-u-md-6">
+      #foreach($item in $right)
+        <div class="am-panel am-panel-default">
+          #foreach($key in ${item.keySet()}) 
+          <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-left-$!{velocityCount}'}">Region $!{key} 索引列表<span class="am-icon-chevron-down am-fr" ></span></div>
+          <div class="am-panel-bd am-collapse am-in" id="collapse-panel-left-$!{velocityCount}">
+            <ul class="am-list admin-content-file">
+              <li>
+               <p> <strong>RegionName:</strong>$!{key}</p>
+              </li>
+              #foreach($index in ${item.get($key)})
+              <li>
+                <p>$!{index}   &nbsp;&nbsp;&nbsp;<a href="javascript:describe('$!{index}')" class="am-icon-search"  title="查看详情"></a>
+                &nbsp;&nbsp;&nbsp;<a href="javascript:drop('$!{index}')" class="am-icon-trash" title="删除索引">删除索引</a>
+                </p>
+              </li>
+              #end
+            </ul>
+          </div>
+          #end
+        </div>
+      #end
+      </div>
+   </div>
+  </div>
+<!-- content end -->
+#parse("common/footer.xhtml")
+<script type="text/javascript">
+$(function () {
+	$("#deploy_btn").click(function (){
+		var $btn = $(this)
+		$btn.button('loading');
+		deploy($btn);
+   });
+	
+	$("#start_locator_btn").click(function (){
+		var $btn = $(this)
+		$btn.button('loading');
+		start('start_locator',$btn);
+   });
+	
+	$("#start_datastore_btn").click(function (){
+		var $btn = $(this)
+		$btn.button('loading');
+		start('start_datastore',$btn);
+   });
+	
+	$('#start_monitor_btn').click(function () {
+		var $btn = $(this)
+		$btn.button('loading');
+		start('start_monitor',$btn);
+	});
+});
+
+function deploy($btn)
+{
+	 $.ajax({  
+	        url: "${rc.contextPath}/tools/cluster/deploy",  
+	        type: 'post',  
+	        data: {},  
+	        success: function (obj) {
+	        	$btn.button('reset');
+	        	alert(obj);
+	        },
+	        failure:function(o)
+	        {
+	        	$btn.button('reset');	        	
+	        	alert('创建失败,详情检查日志文件!');
+	        }
+ });
+}
+
+function start($url,$btn)
+{
+	$.ajax({  
+        url: "${rc.contextPath}/tools/cluster/"+$url,  
+        type: 'post',  
+        data: {},  
+        success: function (obj) {
+        	$btn.button('reset');
+        	if(obj)
+        	alert("启动成功");
+        	else
+            alert('启动失败,详情检查日志文件!');
+        },
+        failure:function(o)
+        {
+        	$btn.button('reset');
+        	alert('执行失败,详情检查日志文件!');
+        }
+});
+}
+
+
+
+</script>

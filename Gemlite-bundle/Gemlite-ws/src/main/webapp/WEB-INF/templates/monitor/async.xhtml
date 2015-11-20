@@ -1,0 +1,118 @@
+#parse("common/header.xhtml")
+  <!-- content start -->
+  <div class="admin-content">
+
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">Async Queues</strong> / <small>async queue</small></div>
+    </div>
+    <div class="am-g">
+      <div class="am-u-sm-12 am-u-md-6">
+        <div class="am-btn-toolbar">
+          <div class="am-btn-group am-btn-group-xs am-padding">
+            <button type="button" id="button_add" class="am-btn am-btn-default"><span class="am-icon-plus"></span> Add Queue</button>
+            <button type="button" id="button_start_id" class="am-btn am-btn-default"><span class="am-icon-refresh"></span> Refresh</button>
+            <button type="button" id="button_stop_id" class="am-btn am-btn-default"><span class="am-icon-remove"></span> Stop</button>
+           <!--  <button type="button" class="am-btn am-btn-default"><span class="am-icon-archive"></span> 审核</button>
+            <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button> -->
+            <div id="running" style="margin-left: 10px" class="am-icon-spinner am-icon-spin"/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="am-g">
+      <div class="am-u-sm-12">
+        <form class="am-form">
+          <table id="asyncTable" class="am-table am-table-bordered am-table-striped am-table-hover table-main">
+            <thead>
+              <tr>
+                <th>queueid</th>
+                <th>ip</th>
+                <th>primary</th>
+                <th>persistent</th>
+                <th>diskstore</th>
+                <th>batchsize</th>
+                <th>batchtimeinterval</th>
+                <th>queueSize</th>
+                <th>listener</th>
+                <th>maxmemory</th>
+              </tr>
+          </thead>
+          <tbody>
+          #foreach ( $item in $list)
+            <tr>
+              <td>$!{item.queueid}</td>
+              <td>$!{item.ip}</td>
+              <td>$!{item.primary}</td>
+              <td>$!{item.persistent}</td>
+              <td>$!{item.diskstore}</td>
+              <td>$!{item.batchsize}</td>
+              <td>$!{item.batchtimeinterval}</td>
+              <td>$!{item.queueSize}</td>
+              <td>$!{item.listener}</td>
+              <td>$!{item.maxmemory}</td>
+            </tr>
+          #end
+          </tbody>
+        </table>
+          <p style="color: red">$!{msg}</p>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+<script type="text/javascript">
+  //定时刷新数据
+  var timer=null;
+  var rgb=null;
+  $(document).ready(function (){
+	  
+	  $("#button_start_id").click(function () {
+		  timer = setInterval("startRequest()", 3000);
+		  $("#running").attr("class","am-icon-spinner am-icon-spin");
+     });
+	  
+	  $("#button_stop_id").click(function () {
+		  clearInterval(timer);
+		  rgb = $("#serviceTable tbody tr").css("color");
+		  $("#serviceTable tbody tr").css("color","red");
+		  $("#running").attr("class","am-icon-spinner");
+     });
+	 
+	  $("#button_add").click(function () {
+		  window.location.href='${rc.contextPath}/tools/async/add';
+     });
+	  
+	  startRequest();
+      timer = setInterval("startRequest()", 3000);
+    });
+    function startRequest() {  
+        $.ajax({  
+            url: "${rc.contextPath}/tools/async/api",  
+            type: 'GET',  
+            data: {},  
+            success: function (obj) {
+            	//清空所有行
+            	var html = "";
+                $.each(obj, function (index) {
+                	var v = obj[index];
+                	//添加一行
+                	var str = "<tr><td>"+v.queueid+"</td>";
+                	str+="<td>"+v.ip+"</td>";
+                	str+="<td>"+v.primary+"</td>";
+                	str+="<td>"+v.persistent+"</td>";
+                	str+="<td>"+v.diskstore+"</td>";
+                	str+="<td>"+v.batchsize+"</td>";
+                	str+="<td>"+v.batchtimeinterval+"</td>";
+                	str+="<td>"+v.queueSize+"</td>";
+                	str+="<td>"+v.listener+"</td>";
+                	str+="<td>"+v.maxmemory+"</td>";
+                    html+=str;
+                });  
+                $('#asyncTable tbody').html(html);
+            }  
+        });  
+    } 
+  </script>
+  <!-- content end -->
+#parse("common/footer.xhtml")

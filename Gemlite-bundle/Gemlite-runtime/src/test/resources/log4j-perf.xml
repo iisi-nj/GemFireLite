@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration>
+	<!-- Console -->
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS} %p %t] %m%n" />
+		</layout>
+	</appender>
+	
+	<!-- coreLog -->
+	<appender name="coreFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="d:/gemlite-runtime.log" />
+		<param name="Threshold" value="INFO" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="0" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS}] %m%n" />
+		</layout>
+	</appender>
+
+	
+	
+	
+	<!-- root -->
+	<root>
+		<priority value="info" />
+		<appender-ref ref="coreFile" />
+	</root>
+
+</log4j:configuration>  

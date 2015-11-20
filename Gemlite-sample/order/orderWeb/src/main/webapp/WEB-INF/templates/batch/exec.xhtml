@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="${rc.contextPath}/js/jquery-1.7.2-min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/js/global.js"></script>
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/css/bootstrap-theme.min.css" />
+<script type="text/javascript" src="${rc.contextPath}/js/bootstrap.min.js"></script>
+</head>
+<h4 class="menu_path"><a href="${rc.contextPath}">Home</a>&gt;&gt;<a href="${rc.contextPath}/batch">Batch列表</a>&gt;&gt;Job执行</h4>
+<!-- <form action="${rc.contextPath}/jobs/executions" method="POST">
+			<input type="hidden" name="_method" value="DELETE"/>	
+			<input id="stop" type="submit" value="Stop&nbsp;All" name="stop" />
+		</form> -->
+		<table  class="table table-bordered">
+			<tr>
+				<th>ID</th>
+				<th>Instance</th>
+				<th>Name</th>
+				<th>Date</th>
+				<th>Start</th>
+				<th>Duration</th>
+				<th>Status</th>
+				<th>ExitCode</th>
+			</tr>
+			#foreach( $item in $list)
+				<tr>
+					<td><a href="${rc.contextPath}/batch/execution/$!{item.job_execution_id}">$!{item.job_execution_id}</a></td>
+					<td>$!{item.job_instance_id}</td>
+					<td>$!{item.job_name}</td>
+					<td>$!{item.create_time}</td>
+					<td>$!{item.start_time}</td>
+					<td>$!{item.duration}</td>
+					<td>$!{item.status}</td>
+					<td>$!{item.exit_code}</td>
+				</tr>
+			#end
+		</table>
+</html>

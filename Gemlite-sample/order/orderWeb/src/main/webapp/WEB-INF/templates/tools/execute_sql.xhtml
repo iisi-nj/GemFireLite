@@ -1,0 +1,47 @@
+#parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+  <div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">同步数据工具</strong> / <small>执行SQL</small></div>
+  </div>
+
+  <div class="am-tabs am-margin" data-am-tabs>
+    <ul class="am-tabs-nav am-nav am-nav-tabs">
+      <li class="am-active"><a href="#tab1">执行SQL语句同步数据[输入sql语句或者文件路径,只需要输入一个即可,若同时输入,只执行SQL语句]</a></li>
+    </ul>
+
+    <div class="am-tabs-bd">
+      <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+        <form class="am-form" id="sqlform" name="sqlform" method="POST">
+          <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-12 am-u-md-2 am-text-right admin-form-text">
+              SQL语句:
+            </div>
+            <div class="am-u-sm-12 am-u-md-10">
+              <textarea name="sql" rows="1" placeholder="请输入sql语句">$!{sql}</textarea>
+            </div>
+          </div>
+          <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-12 am-u-md-2 am-text-right admin-form-text">
+              文件路径:
+            </div>
+            <div class="am-u-sm-12 am-u-md-10">
+              <textarea name="file" rows="1" placeholder="请输入文件路径,如果有SQL语句的输入,优先执行SQL语句">$!{file}</textarea>
+            </div>
+          </div>
+          <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-12 am-u-md-6">
+        <p style="color: red">$!{msg}</p>
+      </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="am-margin">
+    <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交执行</button>
+  </div>
+  </form>
+</div>
+<!-- content end -->
+  #parse("common/footer.xhtml")

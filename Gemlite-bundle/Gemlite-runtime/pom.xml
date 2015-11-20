@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>gemlite</groupId>
+    <artifactId>Gemlite-bundle</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>Gemlite-runtime</artifactId>
+  <packaging>jar</packaging>
+  <dependencies>
+  	<dependency>
+  		<groupId>gemlite</groupId>
+  		<artifactId>Gemlite-launcher</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  		<exclusions>
+  			<exclusion>
+  				<artifactId>asm</artifactId>
+  				<groupId>asm</groupId>
+  			</exclusion>
+  		</exclusions>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.mysema.querydsl</groupId>
+  		<artifactId>querydsl-core</artifactId>
+  		<version>3.6.0</version>
+  	</dependency>
+  </dependencies>
+</project>

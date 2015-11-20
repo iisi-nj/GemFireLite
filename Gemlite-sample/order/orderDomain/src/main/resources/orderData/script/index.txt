@@ -1,0 +1,8 @@
+create index --clause "Create Index CustomerIndex01 on customer using name order by name" 
+create index --clause "Create Index CustomerIndex02 on customer using id_num order by id_num"
+create index --clause "Create Index CustomerIndex03 on customer using telephone order by telephone"
+create index --clause "Create HashIndex CustomerIndex04 on customer from telephone to name"
+create index --clause "Create RangeIndex CustomerIndex05 on customer using age order by age"
+create index --clause "Create RangeIndex CustomerIndex06 on customer using name order by name"
+create index --clause "Create Index OrderIndex01 on ordermain using name, id_num order by name, id_num"
+create index --clause "Create Index DetailIndex01 on detail using ord_sequence order by ord_sequence"

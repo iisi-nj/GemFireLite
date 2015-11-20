@@ -1,0 +1,54 @@
+#parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+  <div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">Sync Tool</strong> / <small>Execute SQL</small></div>
+  </div>
+
+  <div class="am-tabs am-margin" data-am-tabs>
+    <ul class="am-tabs-nav am-nav am-nav-tabs">
+      <li class="am-active"><a href="#tab1">SQL</a></li>
+      <li class="am-active"><a href="#tab2">File</a></li>
+    </ul>
+<form class="am-form" id="sqlform" name="sqlform" method="POST">
+    <div class="am-tabs-bd">
+      <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+          <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-12 am-u-md-2 am-text-right admin-form-text">
+              SQL:
+            </div>
+            <div class="am-u-sm-12 am-u-md-10">
+              <textarea name="sql" rows="1" placeholder="input sql">$!{sql}</textarea>
+            </div>
+          </div>
+          <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-12 am-u-md-6">
+        <p style="color: red">$!{msg}</p>
+      </div>
+          </div>
+      </div>
+      <div class="am-tab-panel am-fade am-in am-active" id="tab2">
+          <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-12 am-u-md-2 am-text-right admin-form-text">
+              SQL File Path:
+            </div>
+            <div class="am-u-sm-12 am-u-md-10">
+              <textarea name="file" rows="10" cols="100" placeholder="Input Sql File Path">$!{file}</textarea>
+            </div>
+          </div>
+          <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-12 am-u-md-6">
+        <p style="color: red">$!{msg}</p>
+      </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="am-margin">
+    <button type="submit" class="am-btn am-btn-primary am-btn-xs">Submit</button>
+  </div>
+  </form>
+</div>
+<!-- content end -->
+  #parse("common/footer.xhtml")

@@ -1,0 +1,39 @@
+/*                                                                         
+ * Copyright 2010-2013 the original author or authors.                     
+ *                                                                         
+ * Licensed under the Apache License, Version 2.0 (the "License");         
+ * you may not use this file except in compliance with the License.        
+ * You may obtain a copy of the License at                                 
+ *                                                                         
+ *      http://www.apache.org/licenses/LICENSE-2.0                         
+ *                                                                         
+ * Unless required by applicable law or agreed to in writing, software     
+ * distributed under the License is distributed on an "AS IS" BASIS,       
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and     
+ * limitations under the License.                                          
+ */                                                                        
+package gemlite.core.internal.admin;
+
+import gemlite.core.annotations.admin.AdminService;
+import gemlite.core.annotations.logic.RemoteService;
+import gemlite.core.internal.logic.IRemoteAdminService;
+import gemlite.core.internal.support.context.GemliteContext;
+import gemlite.core.internal.support.context.IGemliteRegistry;
+import gemlite.core.internal.support.context.IModuleContext;
+@SuppressWarnings("rawtypes")
+public class AdminServices
+{
+  
+  public final static IRemoteAdminService getService(String serviceName)
+  {
+    return getService(AdminSession.getSession().getModuleName() ,serviceName);
+  }
+  public final static IRemoteAdminService getService(String moduleName,String serviceName)
+  {
+    IModuleContext mc = GemliteContext.getModuleContext(moduleName);
+    IGemliteRegistry registry = mc.getRegistry(AdminService.class);
+    IRemoteAdminService service = (IRemoteAdminService) registry.getItem(serviceName);
+    return service;
+  }
+}

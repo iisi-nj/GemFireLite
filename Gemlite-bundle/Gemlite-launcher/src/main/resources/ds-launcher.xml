@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:gfe="http://www.springframework.org/schema/gemfire"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/gemfire http://www.springframework.org/schema/gemfire/spring-gemfire.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:property-placeholder location="env.properties" ignore-unresolvable="true" />
+	<context:property-placeholder location="server-${GS_ENV}.properties" ignore-unresolvable="true" />
+	<bean class="gemlite.core.internal.support.events.DataStoreLifeCycleListener" />
+	<context:annotation-config />
+
+	
+
+	<util:properties id="gemfireProperties" location="classpath:gemfire-${GF_VER}.properties"
+		local-override="true">
+		<prop key="bind-address">${BINDIP}</prop>
+		<prop key="locators">${LOCATORS}</prop>
+		<!-- <prop key="log-file">${GS_HOME}/log/server-${NODE_NAME}.log</prop> -->
+		<!-- <prop key="redundancy-zone">${BINDIP}</prop> -->
+		<prop key="statistic-archive-file">${GS_HOME}/log/gfs/server-${NODE_NAME}.gfs</prop>
+		<prop key="deploy-working-dir">${GS_HOME}/deploy/</prop>
+	</util:properties>
+
+	<gfe:cache properties-ref="gemfireProperties" />
+	<gfe:cache-server auto-startup="true" port="0" max-connections="${server.max-connections}" />
+</beans>

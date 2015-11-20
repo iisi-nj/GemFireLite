@@ -1,0 +1,136 @@
+#parse("common/header.xhtml")
+  <!-- content start -->
+  <div class="admin-content">
+
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">JAR LIST</strong> / <small>JAR</small></div>
+    </div>
+
+    <div class="am-g">
+      <div class="am-u-sm-12 am-u-md-6">
+        <div class="am-btn-toolbar">
+          <div class="am-btn-group am-btn-group-xs">
+            <button type="button" class="am-btn am-btn-default" onclick="javascrtpt:window.location.href='${rc.contextPath}/jars/page/jar_upload'"><span class="am-icon-plus"></span> Upload</button>
+            <!-- <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="am-g">
+      <div class="am-u-sm-12">
+        <!-- <form class="am-form"> -->
+          <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+              <tr>
+        <th>ID</th>
+		<th>Name</th>
+		<th>Version</th>
+		<th>Deploy Time</th>
+		<th>Type</th>
+		<th>active</th>
+		<th>Deploy Times</th>
+		<th>Desc</th>
+		<th></th>
+        </tr>
+          </thead>
+          <tbody>
+            #foreach ( $row in $jarFiles)
+         <tr>
+          <td> $!{row.id}</td>
+          <td> $!{row.name}</td>
+          <td> $!{row.version}</td>
+          <td> $!{row.upload_time}</td>
+          <td> $!{row.type}</td>
+          <td> 
+          #if($row.used)
+          <SPAN class="am-icon-bell admin-icon-red"></SPAN>
+          #else
+          <SPAN class="am-icon-bell-slash"></SPAN>
+          #end
+          </td>
+          <td> $!{row.update_count}</td>
+          <td> $!{row.desc}</td>
+              <td>
+                <div class="am-btn-toolbar">
+                  <div class="am-btn-group am-btn-group-xs">
+                    <button class="am-btn am-btn-default am-btn-xs am-text-secondary" onclick="doDeploy('$!{row.id}');"><span class="am-icon-cogs"></span> 发布</button>
+                    <button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only" onclick="del('$!{row.id}')"><span class="am-icon-trash-o"></span> 删除</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            #end
+          </tbody>
+        </table>
+          <div class="am-cf">
+  Total $!{jarFiles.size()} Items 
+  <div class="am-fr" style="display: none">
+    <ul class="am-pagination">
+      <li class="am-disabled"><a href="#">«</a></li>
+      <li class="am-active"><a href="#">1</a></li>
+      <li><a href="#">2</a></li>
+      <li><a href="#">3</a></li>
+      <li><a href="#">4</a></li>
+      <li><a href="#">5</a></li>
+      <li><a href="#">»</a></li>
+    </ul>
+  </div>
+</div>
+ </div>
+
+    </div>
+  </div>
+  <!-- content end -->
+  <script type="text/javascript">
+  function doDeploy(id)
+  {
+	  $.AMUI.progress.start();
+	  $.ajax({
+			type : "POST",
+			url : "${rc.contextPath}/jars/page/deploy",
+			data : {"deployId":id},
+			success : function(data) 
+			{
+				$.AMUI.progress.done();
+				if (data == "success") {
+					alert("发布成功!");
+				} else {
+					alert(data);
+				}
+			},
+			failure:function (data)
+			{
+				$.AMUI.progress.done();
+			}
+		});
+  }
+  
+  //删除数据
+  function del(id)
+  {
+	  if(confirm("确定要删除此条记录?"))
+	  {
+		  $.ajax({
+				type : "POST",
+				url : "${rc.contextPath}/jars/page/del",
+				data : {"id":id},
+				success : function(data) 
+				{
+					if (data == "success") {
+						alert("删除成功!");
+						window.location.reload();
+					} else {
+						alert(data);
+					}
+				},
+				failure:function (data)
+				{
+					$.AMUI.progress.done();
+				}
+			});
+	  }
+	  
+  }
+  </script>
+  #parse("common/footer.xhtml")

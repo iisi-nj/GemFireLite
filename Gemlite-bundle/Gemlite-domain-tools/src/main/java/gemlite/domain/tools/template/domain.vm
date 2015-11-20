@@ -1,0 +1,106 @@
+package ${packageName};
+
+import gemlite.core.annotations.domain.*;
+
+#if(!${keyClass})
+@Region("${table.regionName}")
+@Table("${table.tableName}")
+#if(${table.has_key_class})
+@Key(${table.className}${suffix}.class)
+#end
+#end
+@AutoSerialize
+public class ${table.className}
+{ 
+#foreach($column in ${columnList})
+#if(${table.single_filed_pk} && ${column.primary})
+  @Key
+#end
+  private ${column.javaType} ${column.name};
+#end
+
+#foreach($column in ${columnList})
+  public ${column.javaType} get${column.firstLetterUpper}() 
+  {
+    return ${column.name};
+  }
+ 
+  public void set${column.firstLetterUpper}(${column.javaType} ${column.name}) 
+  {
+    this.${column.name} = ${column.name};
+  }
+#end
+
+  @Override
+  public int hashCode()
+  {
+    final int prime = 31;
+    int result = 1;
+#foreach($column in ${columnList})
+#if(!${column.primitive})
+    result = prime * result + ((${column.name} == null) ? 0 : ${column.name}.hashCode());
+#elseif(${column.javaType} == "long")
+    result = prime * result + (int) (${column.name} ^ (${column.name} >>> 32));
+#elseif(${column.javaType} == "double")
+    result = prime * result + (int) (Double.doubleToLongBits(${column.name}) ^ (Double.doubleToLongBits(${column.name}) >>> 32));
+#elseif(${column.javaType} == "float")
+    result = prime * result + Float.floatToIntBits(${column.name});
+#else
+    result = prime * result + ${column.name};
+#end    
+#end
+    return result;
+  }
+  
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    ${table.className} other = (${table.className}) obj;
+#foreach($column in ${columnList})
+#if(!${column.primitive})
+    if (${column.name} == null)
+    {
+      if (other.${column.name} != null)
+        return false;
+    }
+    else if (!${column.name}.equals(other.${column.name}))
+      return false;
+#elseif(${column.javaType} == "double")
+    if (Double.doubleToLongBits(${column.name}) != Double.doubleToLongBits(other.${column.name}))
+      return false;
+#elseif(${column.javaType} == "float")
+    if (Float.floatToIntBits(${column.name}) != Float.floatToIntBits(other.${column.name}))
+      return false;
+#else
+    if (${column.name} != other.${column.name})
+      return false;
+#end    
+#end
+    return true;
+  }
+  
+  @Override
+  public String toString()
+  {
+    StringBuilder builder = new StringBuilder();
+    builder.append("${table.className} [");
+#set ($i=0)
+#foreach($column in ${columnList})
+#if($i==0)
+    builder.append("${column.name}=");
+#else
+    builder.append(", ${column.name}=");
+#end
+    builder.append(${column.name});
+#set($i=$i+1)
+#end
+    builder.append("]");
+    return builder.toString();
+  }
+}

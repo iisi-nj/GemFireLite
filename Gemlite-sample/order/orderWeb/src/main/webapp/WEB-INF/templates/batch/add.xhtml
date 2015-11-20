@@ -1,0 +1,133 @@
+#parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+
+  <div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg"><a href="${rc.contextPath}/batch">数据导入(batch)</a></strong> / <small>创建Job</small></div>
+  </div>
+
+  <div class="am-tabs am-margin" data-am-tabs>
+    <ul class="am-tabs-nav am-nav am-nav-tabs">
+      <li class="am-active"><a href="#tab1">创建Job</a></li>
+    </ul>
+
+    <div class="am-tabs-bd">
+      <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+            <form class="am-form" id="importform" method="POST">
+          <table class="am-table table-main am-text-right">
+          <tr>
+          <td><strong>regionName :</strong></td><td><input type="text" class="am-input-sm" name="region"></td>
+          <td><strong>tableName :</strong></td><td><input type="text" class="am-input-sm" name="table"></td>
+          </tr>
+          <tr>
+          <td><strong>字段(逗号分隔) :</strong></td><td colspan="3"><input type="text" class="am-input-sm" name="columns"></td>
+          </tr>
+          <tr>
+          <td><strong>模板 :</strong></td>
+          <td><select name="template" id="template_select">
+               <option value="file" selected="selected">file</option>
+               <option value="jdbc-paging">jdbc-paging</option>
+               <option value="jdbc-partition">jdbc-partition</option>
+              </select></td>
+              <td><strong>编码 :</strong></td><td><input type="text" class="am-input-sm" name="encoding" value="UTF-8"/></td>
+          </tr>
+          <tr name="file">
+          <td><strong>文件路径 :</strong></td><td colspan="3"><input type="text" class="am-input-sm" name="file"></td>
+          </tr>
+          <tr name="file">
+          <td><strong>定界符(delimiter) :</strong></td><td><input type="text" class="am-input-sm" name="delimiter" value=","/></td>
+          <td><strong>分隔符(quote) :</strong></td><td><input type="text" class="am-input-sm" name="quote" value='"'></td>
+          </tr>
+          <tr name="file">
+          <td><strong>跳过行数 :</strong></td><td><input type="text" class="am-input-sm" name="linesToSkip" value=""/></td>
+          <td></td><td></td>
+          </tr>
+          
+          <tr name="db" style="display: none">
+          <td><strong>dbdriver :</strong></td><td><input type="text" class="am-input-sm" name="dbdriver" value="$!{import-dbdriver}"/></td>
+          <td><strong>dburl:</strong></td><td><input type="text" class="am-input-sm" name="dburl" value="$!{import-dburl}"/></td>
+          </tr>
+          <tr name="db" style="display: none">
+          <td><strong>dbuser :</strong></td><td><input type="text" class="am-input-sm" name="dbuser" value="$!{import-dbuser}"/></td>
+          <td><strong>dbpsw:</strong></td><td><input type="text" class="am-input-sm" name="dbpsw" value="$!{import-dbpsw}"/></td>
+          </tr>
+          <tr name="db" style="display: none">
+          <td><strong>排序字段 :</strong></td><td><input type="text" class="am-input-sm" name="sortKey" value=""/></td>
+          <td><strong>where语句 :</strong></td><td><input type="text" class="am-input-sm" name="where" value=""/></td>
+          </tr>
+          <tr name="db" style="display: none">
+          <td><strong>每次读取数据量 :</strong></td><td><input type="text" class="am-input-sm" name="pageSize" value="1000"/></td>
+          <td><strong>读取数据总量 :</strong></td><td><input type="text" class="am-input-sm" name="fetchSize" value="-1"/></td>
+          </tr>
+          <tr>
+          <td><strong>是否强制更新  :</strong></td><td align="left"><input type="checkbox" name="forceUpdate" checked="checked"/></td>
+          <td><strong>跳过错误 :</strong></td><td align="left"><input type="checkbox" name="skipable" checked="checked"/></td>
+          </tr>
+          </table>
+          </form>
+      
+          <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-12 am-u-md-6">
+        <p style="color: red">$!{msg}</p>
+      </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="am-margin">
+    <button type="button" id="save_btn" class="am-btn am-btn-primary am-btn-xs" onclick="save()">创建Job</button>
+    <button type="button" id="back_btn" class="am-btn am-btn-primary am-btn-xs">放弃创建</button>
+  </div>
+  </form>
+</div>
+<script type="text/javascript">
+
+$(function () {
+	$("#template_select").change(function(){
+		var val = $(this).children('option:selected').val();
+		if('file' == val)
+		{
+			//将所有jdbc的隐藏,将file的显示
+			$('tr[name=db]').css('display','none');
+			$('tr[name=file]').css('display','');
+		}
+		else
+		{
+			//将所有jdbc的显示,将file的隐藏
+			$('tr[name=db]').css('display','');
+			$('tr[name=file]').css('display','none');
+		}
+	});
+	
+	$("#back_btn").click(function(){
+		window.location.href='${rc.contextPath}/batch';		
+	});
+});	
+
+function save()
+{
+	$("#importform").ajaxSubmit({
+		type:'post',
+		url:"${rc.contextPath}/batch/save",
+		beforeSubmit: function(data) {
+			//设置loading状态
+			$("#save_btn").html("<i class=\"am-icon-spinner am-icon-spin\"></i>创建中...");
+		},
+		success:function(rs){
+			$("#save_btn").html("创建Job");
+			if (rs) {
+				alert('创建成功!');
+				window.location.href='${rc.contextPath}/batch';
+			} else {
+				alert("error see log file");
+			}
+		},
+		error:function(XmlHttpRequest,textStatus,errorThrown){
+			$("#save_btn").html("创建Job");
+		}
+	});
+}
+</script>
+<!-- content end -->
+  #parse("common/footer.xhtml")

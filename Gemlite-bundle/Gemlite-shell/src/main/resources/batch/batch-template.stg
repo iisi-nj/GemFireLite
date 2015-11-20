@@ -1,0 +1,222 @@
+group batchTemplate;
+
+fileTemplate(param) ::= <<
+\<?xml version="1.0" encoding="UTF-8"?\>
+\<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd"\>
+
+	\<batch:job id="<param.name>Job" parent="gl_parentJob"\>
+		\<batch:step id="<param.name>Step0" parent="gl_parentStep"\>
+			\<batch:partition step="<param.name>Step1" partitioner="<param.name>Partitioner"\>
+				\<batch:handler grid-size="${batch.grid.size}"	task-executor="taskPool" /\>
+			\</batch:partition\>
+		\</batch:step\>
+		
+	\</batch:job\>
+
+	\<bean id="<param.name>Partitioner" class="org.springframework.batch.core.partition.support.MultiResourcePartitioner"\>
+		\<property name="resources" value="<param.file>" /\>
+	\</bean\>
+
+	\<batch:step id="<param.name>Step1"\>
+		\<batch:tasklet transaction-manager="batchTransactionManager" task-executor="taskPool"\>
+			\<batch:chunk reader="<param.name>Reader" writer="<param.name>Writer"	commit-interval="${batch.commitInterval}"\>
+				\<batch:skip-policy\>
+					\<bean class="gemlite.core.internal.batch.ParserErrorSkipPolicy"\>
+						\<property name="enable" value="<param.skipable>"/\>
+					\</bean\>
+				\</batch:skip-policy\>
+			\</batch:chunk\>
+		\</batch:tasklet\>
+	\</batch:step\>
+
+	\<bean id="<param.name>Writer" class="gemlite.core.internal.batch.GFItemDataWriter"\>
+		\<property name="regionName" value="<param.region>" /\>
+	\</bean\>
+	
+	\<bean id="<param.name>Reader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step"\>
+		\<property name="encoding" value="<param.encoding>"/\>
+		\<property name="resource" value="#{stepExecutionContext[fileName]}" /\>
+		\<property name="lineMapper"\>
+			\<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper"\>
+				\<property name="lineTokenizer"\>
+					\<bean	class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer"\>
+						\<property name="quoteCharacter"\>
+							\<value type="java.lang.Character"\><param.quote>\</value\>
+						\</property\>
+						\<property name="delimiter"\>
+							\<value type="java.lang.String"\><param.delimiter>\</value\>
+						\</property\>
+						\<property name="names" value="<param.columns>" /\>
+					\</bean\>
+				\</property\>
+				\<property name="fieldSetMapper"\>
+					\<bean class="gemlite.core.internal.batch.CommonFileMapper"\>
+						\<property name="regionName" value="<param.region>" /\>
+					\</bean\>
+				\</property\>
+			\</bean\>
+		\</property\>
+		\<property name="linesToSkip" value="<param.linesToSkip>"/\>
+	\</bean\>
+
+\</beans\>
+
+>>
+
+jdbc-pagingTemplate(param) ::= <<
+\<?xml version="1.0" encoding="UTF-8"?\>
+\<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd"\>
+
+	\<batch:job id="<param.name>Job"\>
+		\<batch:step id="<param.name>Step2"\>
+			\<batch:tasklet transaction-manager="batchTransactionManager"\>
+				\<batch:chunk writer="<param.name>Writer" reader="<param.name>Reader"	 commit-interval="${batch.commitInterval}" /\>
+			\</batch:tasklet\>
+		\</batch:step\>
+	\</batch:job\>
+	
+	\<util:map id="sortKeyList"  map-class="java.util.HashMap"\>
+		<param.sortKey : { sortKeyItem |
+		\<entry key="<sortKeyItem>"\>\<util:constant static-field="org.springframework.batch.item.database.Order.ASCENDING"/\>\</entry\>
+		}>
+	\</util:map\>
+
+	\<bean id="<param.name>Reader"	class="org.springframework.batch.item.database.JdbcPagingItemReader"\>
+		\<property name="dataSource" ref="jdbcDataSource" /\>
+		\<property name="pageSize" 
+			<if(param.pageSize)> value="<param.pageSize>"
+			<else> value="100"
+			<endif> 
+		/\>
+		\<property name="queryProvider"\>
+			\<bean class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean"\>
+				\<property name="dataSource" ref="jdbcDataSource" /\>
+				\<property name="sortKeys" ref="sortKeyList"/\>
+				\<property name="selectClause" value="select *" /\>
+				\<property name="fromClause" value="from <param.table>" /\>
+				<if(param.where)>\<property name="whereClause" value="<param.where>"/\>
+				<endif>
+			\</bean\>
+		\</property\>
+		\<property name="fetchSize" 
+			<if(param.fetchSize)> value="<param.fetchSize>"
+			<else> value="100" 
+			<endif>
+		/\>
+		\<property name="rowMapper"\>
+			\<bean class="gemlite.core.internal.batch.CommonDBMapper"\>
+				\<property name="regionName" value="<param.region>" /\>
+			\</bean\>
+		\</property\>
+	\</bean\>
+	
+	\<bean id="<param.name>Writer" class="gemlite.core.internal.batch.GFItemDataWriter"\>
+		\<property name="regionName" value="<param.region>"/\>
+	\</bean\>
+
+\</beans\>
+
+>>
+
+
+jdbc-partitionTemplate(param) ::= <<
+\<?xml version="1.0" encoding="UTF-8"?\>
+\<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd"\>
+
+	\<batch:job id="<param.name>Job"\>
+		\<batch:step id="<param.name>Step1"\>
+			\<batch:partition step="<param.name>Step2" partitioner="partitioner<param.name>"\>
+				\<batch:handler grid-size="30" task-executor="job<param.name>taskExecutor" /\>
+			\</batch:partition\>
+		\</batch:step\>
+	\</batch:job\>
+	
+	\<batch:step id="<param.name>Step2"\>
+			\<batch:tasklet transaction-manager="batchTransactionManager" task-executor="taskPool"\>
+				\<batch:chunk writer="<param.name>Writer" reader="<param.name>Reader"	 commit-interval="${batch.commitInterval}" /\>
+			\</batch:tasklet\>
+	\</batch:step\>
+	
+	\<bean id="partitioner<param.name>" class="gemlite.core.internal.batch.ColumnRangePartitioner"\>
+		\<property name="jdbcTemplate" ref="jdbcTemplate" /\>
+		\<property name="table" value="<param.table>">\</property\>
+		\<property name="column" value="gf_rowid">\</property\>
+	\</bean\>
+	
+	\<bean id="job<param.name>taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"\>
+		\<property name="corePoolSize" value="20" /\>
+		\<property name="maxPoolSize" value="100" /\>
+	\</bean\>
+	
+	\<util:map id="sortKeyList"  map-class="java.util.HashMap"\>
+		\<entry key="gf_rowid"\>\<util:constant static-field="org.springframework.batch.item.database.Order.ASCENDING"/\>\</entry\>
+	\</util:map\>
+
+	\<bean id="<param.name>Reader"	class="org.springframework.batch.item.database.JdbcPagingItemReader" scope="step"\>
+		\<property name="dataSource" ref="jdbcDataSource" /\>
+		\<property name="pageSize" 
+			<if(param.pageSize)> value="<param.pageSize>"
+			<else> value="10000"
+			<endif> 
+		/\>
+		\<property name="queryProvider"\>
+			\<bean class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean"\>
+				\<property name="dataSource" ref="jdbcDataSource" /\>
+				\<property name="sortKeys" ref="sortKeyList"/\>
+				\<property name="selectClause" value="select *" /\>
+				\<property name="fromClause" value="from (<param.table>) GF_table" /\>
+				\<property name="whereClause" value="GF_table.gf_rowid &gt;= :min and GF_table.gf_rowid &lt;= :max"/\>
+			\</bean\>
+		\</property\>
+		<if(param.fetchSize)>
+		\<property name="fetchSize" value="<param.fetchSize>"/\>
+		<endif>
+		\<property name="rowMapper"\>
+			\<bean class="gemlite.core.internal.batch.CommonDBMapper"\>
+				\<property name="regionName" value="<param.region>" /\>
+			\</bean\>
+		\</property\>
+		\<property name="parameterValues"\>
+			\<map\>
+				\<entry key="min" value="#{stepExecutionContext[min]}" /\>
+				\<entry key="max" value="#{stepExecutionContext[max]}" /\>
+			\</map\>
+		\</property\>
+	\</bean\>
+	
+	\<bean id="<param.name>Writer" class="gemlite.core.internal.batch.GFItemDataWriter"\>
+		\<property name="regionName" value="<param.region>"/\>
+	\</bean\>
+
+\</beans\>
+>>
+

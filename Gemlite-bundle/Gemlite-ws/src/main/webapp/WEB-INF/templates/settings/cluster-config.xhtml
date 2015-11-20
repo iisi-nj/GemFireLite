@@ -1,0 +1,85 @@
+#parse("common/header.xhtml")
+<!-- content start -->
+<div class="admin-content">
+
+  <div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg"><a href="${rc.contextPath}/batch">Cluster Hosts Config</a></strong> / <small></small></div>
+  </div>
+
+  <div class="am-tabs am-margin" data-am-tabs>
+    <ul class="am-tabs-nav am-nav am-nav-tabs">
+      <li class="am-active"><a href="#tab1">Cluster Hosts Config</a></li>
+    </ul>
+
+    <div class="am-tabs-bd">
+      <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+          <form class="am-form" id="importform">
+          <table class="am-table table-main am-text-left">
+          <tr>
+          <td colspan="2"><strong>root Psw :</strong><input type="text" class="am-input-sm" name="cluster-rootpsw" value="$!{cluster-rootpsw}"/></td>
+          </tr>
+          <tr>
+          <td><strong>UserName :</strong><input type="text" class="am-input-sm" name="cluster-username" value="$!{cluster-username}"/></td>
+          <td><strong>Psw:</strong><input type="text" class="am-input-sm" name="cluster-userpsw"  value="$!{cluster-userpsw}"/></td>
+          </tr>
+          <tr>
+          <td><strong>Parimary IP:</strong><input type="text" class="am-input-sm"  name="cluster-primaryip" value="$!{cluster-primaryip}"></td>
+          <td><strong>DataStore Start Param:</strong><input type="text" placeholder="exapmle : 2 2480m 512m 80 xinhua-server.xml" class="am-input-sm"  name="cluster-start-datastore" value="$!{cluster-start-datastore}"></td>
+          </tr>
+          <tr>
+          <td><strong>Locator Ip List(comma-separated):</strong><input type="text" class="am-input-sm"  name="cluster-locatorlist" value="$!{cluster-locatorlist}"></td>
+          <td><strong>Locator  Start Param:</strong><input type="text" placeholder="example : 1 512m 12345" class="am-input-sm"  name="cluster-start-locator" value="$!{cluster-start-locator}"></td>
+          </tr>
+          <tr>
+          <td colspan="2"><strong>Hosts List(comma-separated):</strong><textarea class="am-input-sm" name="cluster-hostlist" rows="5">$!{cluster-hostlist}</textarea></td>
+          </tr>
+          </table>
+          </form>
+      </div>
+      <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-12 am-u-md-6">
+            <p style="color: red">$!{msg}</p>   
+            </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="am-margin">
+    <button type="button" id="save_btn" class="am-btn am-btn-primary am-btn-xs" onclick="save()">Save</button>
+    <button type="button" id="back_btn" class="am-btn am-btn-primary am-btn-xs">Back</button>
+  </div>
+</div>
+<script type="text/javascript">
+
+$(function () {
+	$("#back_btn").click(function(){
+		window.location.href='${rc.contextPath}/';		
+	});
+});	
+
+function save()
+{
+	$("#importform").ajaxSubmit({
+		type:'post',
+		url:"${rc.contextPath}/settings/cluster-config-save",
+		beforeSubmit: function(data) {
+			//设置loading状态
+			$("#save_btn").html("<i class=\"am-icon-spinner am-icon-spin\"></i>Saveing...");
+		},
+		success:function(rs){
+			$("#save_btn").html("Save");
+			if (rs) {
+				alert('save sucess!');
+				window.location.reload();
+			} else {
+				alert("error see log file");
+			}
+		},
+		error:function(XmlHttpRequest,textStatus,errorThrown){
+			$("#save_btn").html("Save");
+		}
+	});
+}
+</script>
+<!-- content end -->
+  #parse("common/footer.xhtml")

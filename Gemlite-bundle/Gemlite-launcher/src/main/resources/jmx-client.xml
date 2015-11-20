@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:gfe="http://www.springframework.org/schema/gemfire"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:gfe-data="http://www.springframework.org/schema/data/gemfire"
+	xsi:schemaLocation="http://www.springframework.org/schema/gemfire http://www.springframework.org/schema/gemfire/spring-gemfire.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/data/gemfire http://www.springframework.org/schema/data/gemfire/spring-data-gemfire.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	<context:property-placeholder ignore-unresolvable="true" />
+	<util:properties location="gemfire-client.properties" local-override="true" id="kkk">
+		<prop key="bind-address">${BINDIP}</prop>
+	</util:properties>
+	<gfe:client-cache properties-ref="kkk"/>
+	<gfe:pool read-timeout="10000" ping-interval="600000" keep-alive="true" retry-attempts="3" subscription-enabled="true">
+		<gfe:locator host="${LOCATOR1}" port="${PORT1}" />
+	</gfe:pool>
+	<gfe:client-region id="_GEMLITE_MGM_" shortcut="CACHING_PROXY_OVERFLOW"/>
+	
+</beans>

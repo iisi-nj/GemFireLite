@@ -1,0 +1,154 @@
+#parse("common/header.xhtml")
+<link rel="stylesheet" href="${rc.contextPath}/css/zTreeStyle.css"
+	type="text/css">
+<script type="text/javascript"
+	src="${rc.contextPath}/js/jquery.ztree.core-3.5.min.js"></script>
+<script type="text/javascript"
+	src="${rc.contextPath}/js/jquery.ztree.excheck-3.5.min.js"></script>
+<!-- content start -->
+<div class="admin-content">
+
+	<div class="am-cf am-padding">
+		<div class="am-fl am-cf">
+			<strong class="am-text-primary am-text-lg">Order System</strong> / <small>Customer</small>
+		</div>
+	</div>
+	<form class="am-form am-form-inline am-form-horizontal" id="queryForm"
+		method="post">
+		<fieldset>
+			<legend>
+				<button type="submit" class="am-btn am-btn-primary">Query</button>
+			</legend>
+			<div class="am-form-group">
+				<label for="doc-name" class="am-u-sm-1 am-form-label">Name :
+				</label>
+				<div class="am-u-sm-1">
+					<input type="text" id="doc-name" class="am-form-field"
+						name="c_name" value="$!{c_name}">
+				</div>
+				<div class="am-u-sm-1 am-checkbox">
+					<label> <input type="checkbox" name="c_like">like</label>
+				</div>
+				<label for="doc-id" class="am-u-sm-1 am-form-label">ID : </label>
+				<div class="am-u-sm-2">
+					<input type="text" id="doc-id" class="am-form-field" name="c_id"
+						value="$!{c_id}">
+				</div>
+				<label for="doc-age-begin" class="am-u-sm-1 am-form-label">Age
+					: </label>
+				<div class="am-u-sm-1">
+					<input type="number" id="doc-age-begin" class="am-form-field"
+						name="c_age_begin" value="$!{c_age_begin}">
+				</div>
+				<label for="doc-age-end" class="am-u-sm-1 am-form-label">~</label>
+				<div class="am-u-sm-1">
+					<input type="number" id="doc-age-end" class="am-form-field"
+						name="c_age_end" value="$!{c_age_end}">
+				</div>
+				<label for="doc-tel" class="am-u-sm-1 am-form-label">Tel : </label>
+				<div class="am-u-sm-1">
+					<input type="text" id="doc-tel" class="am-form-field" name="c_tel"
+						value="$!{c_tel}">
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset>
+			<legend></legend>
+			<div class="am-g">
+				<div class="am-u-sm-12">
+					<form class="am-form">
+						<table id="resultTable" border="1"
+							class="am-table am-table-bordered am-table-striped am-table-hover table-main">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>ID</th>
+									<th>Tel</th>
+									<th>Age</th>
+									<th>Sex</th>
+									<th>Order</th>
+								</tr>
+							</thead>
+							<tbody>
+								#foreach ( $item in $list)
+								<tr>
+									<td>$!{item.name}</td>
+									<td>$!{item.id_num}</td>
+									<td>$!{item.telephone}</td>
+									<td>$!{item.age}</td>
+									<td>$!{item.sex}</td>
+									<td><a href="javascript:popUp('$!{item.name}');"
+										class="am-icon-search" /></td>
+								</tr>
+								#end
+							</tbody>
+						</table>
+						<hr />
+						<p style="color: red">$!{msg}</p>
+					</form>
+				</div>
+			</div>
+		</fieldset>
+	</form>
+</div>
+
+<div class="am-popup" id="my-popup" style="width: 900px">
+	<div class="am-popup-inner" style="width: 100%">
+		<div class="am-popup-hd">
+			<h4 class="am-popup-title">Order</h4>
+			<span data-am-modal-close class="am-close">&times;</span>
+		</div>
+		<div class="am-popup-bd">
+			<table id="table1" border="1"
+				class="am-table am-table-bordered am-table-striped am-table-hover table-main">
+				<thead>
+					<tr>
+						<th>Order Sequence</th>
+						<th>Order Date</th>
+						<th>Detail Sequence</th>
+						<th>Product ID</th>
+						<th>Product Name</th>
+						<th>Product Price</th>
+						<th>Product Quantity</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	function popUp(name) {
+		$.ajax({
+			url : "${rc.contextPath}/demo/order/",
+			type : 'GET',
+			data : {
+				"name" : name
+			},
+			success : function(obj) {
+				var html = "";
+				$.each(obj, function(index) {
+					var v = obj[index];
+					var str = "<tr><td>" + v.order_sequence + "</td>";
+					str += "<td>" + v.order_date + "</td>";
+					str += "<td>" + v.detail_sequence + "</td>";
+					str += "<td>" + v.product_id + "</td>";
+					str += "<td>" + v.product_name + "</td>";
+					str += "<td>" + v.product_price + "</td>";
+					str += "<td>" + v.product_quantity + "</td>";
+					str += "</tr>";
+					html += str;
+				});
+				$('#table1 tbody').html(html);
+			}
+		});
+		$('#my-popup').modal({
+			relatedTarget : this
+		});
+	}
+</script>
+<!-- content end -->
+#parse("common/footer.xhtml")

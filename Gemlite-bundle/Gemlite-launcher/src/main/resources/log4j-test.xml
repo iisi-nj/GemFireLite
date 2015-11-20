@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration>
+	<!-- Console -->
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS}]%C{1}: %m%n" />
+		</layout>
+	</appender>
+	
+	<!-- coreLog -->
+	<appender name="coreFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/gemlite-runtime.log" />
+		<param name="Threshold" value="debug" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="0" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS}] %m%n" />
+		</layout>
+	</appender>
+	
+	<!-- jmxLog -->
+	<appender name="jmxFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/gemlite-jmx.log" />
+		<param name="Threshold" value="debug" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="0" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS}] %m%n" />
+		</layout>
+	</appender>
+
+	<!-- appLog -->
+	<appender name="infoFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/app-info.log" />
+		<param name="Threshold" value="INFO" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="0" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS} %p] %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="INFO" />
+			<param name="LevelMin" value="INFO" />
+			<param name="acceptOnMatch" value="true"/>
+		</filter>
+	</appender>
+	
+	<appender name="debugFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/ap-debug.log" />
+		<param name="Threshold" value="DEBUG" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="2" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS}] %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="DEBUG" />
+			<param name="LevelMin" value="DEBUG" />
+			<param name="acceptOnMatch" value="true"/>
+		</filter>
+	</appender>
+	
+	<appender name="errorFile" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/app-error.log" />
+		<param name="Threshold" value="WARN" />
+		<!-- <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" /> -->
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS} %p] %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="ERROR" />
+			<param name="LevelMin" value="WARN" />
+			<param name="acceptOnMatch" value="true"/>
+		</filter>
+	</appender>
+	
+	<!-- mqSyncFile -->
+	<appender name="mqInfoFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/mq-info.log" />
+		<param name="Threshold" value="INFO" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="0" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS} %p] %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="INFO" />
+			<param name="LevelMin" value="INFO" />
+			<param name="acceptOnMatch" value="true"/>
+		</filter>
+	</appender>
+	
+	<appender name="mqDebugFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/mq-debug.log" />
+		<param name="Threshold" value="DEBUG" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="10" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS} %p] %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="DEBUG" />
+			<param name="LevelMin" value="DEBUG" />
+			<param name="acceptOnMatch" value="true"/>
+		</filter>
+	</appender>
+	
+	<appender name="mqErrorFile" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/mq-error.log" />
+		<param name="Threshold" value="WARN" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS} %p] %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="ERROR" />
+			<param name="LevelMin" value="WARN" />
+			<param name="acceptOnMatch" value="true"/>
+		</filter>
+	</appender>
+	
+		
+	<!-- testLog -->
+	<appender name="testFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${GS_HOME}/log/gemlite-test.log" />
+		<param name="Threshold" value="debug" />
+		<param name="MaxFileSize" value="5000KB" />
+		<param name="MaxBackupIndex" value="0" />
+		<param name="append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy/MM/dd HH:mm:ss.SSS}] %m%n" />
+		</layout>
+	</appender>
+	
+	<!-- Logger -->
+	<logger name="gemlite.testLog" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="testFile" />
+	</logger>
+	<logger name="gemlite.jmxLog" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="jmxFile" />
+	</logger>
+	
+	<logger name="gemlite.coreLog" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="coreFile" />
+	</logger>
+	<logger name="gemlite.appLog" additivity="false">
+		<level value="info" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="debugFile" />
+		<appender-ref ref="infoFile" />
+		<appender-ref ref="errorFile" />
+	</logger>
+	<logger name="gemlite.mqSyncLog" additivity="false">
+		<level value="info" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="mqDebugFile" />
+		<appender-ref ref="mqInfoFile" />
+		<appender-ref ref="mqErrorFile" />
+	</logger>
+	
+	<logger name="gemlite.rabbitLog" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="org.springframework" additivity="false">
+		<level value="info" />
+		<appender-ref ref="infoFile" />
+	</logger>
+	<logger name="org.hibernate" additivity="false">
+		<level value="info" />
+		<appender-ref ref="infoFile" />
+	</logger>
+	<!-- root -->
+	<root>
+		<priority value="debug" />
+		<appender-ref ref="stdout" />
+	</root>
+
+</log4j:configuration>  

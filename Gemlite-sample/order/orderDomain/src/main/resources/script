@@ -1,0 +1,7 @@
+import --T file --f "D:/tmp/ordertest/customer.csv" --c "name,id_num,telephone,sex,age" --region "customer" --table "customer"
+
+
+create index --clause "Create Index CustomerIndex03 on customer using telephone order by telephone"
+
+
+create index --clause "Create HashIndex CustomerIndex04 on customer from telephone to name"
