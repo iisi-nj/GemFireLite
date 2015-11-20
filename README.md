@@ -25,6 +25,6 @@ Simplify the service interface using spring data;
 
 
 Wiki:
-DataModel https://github.com/iisi-nj/GemFireLite/wiki/Data-Model
-Gemlite domain https://github.com/iisi-nj/GemFireLite/wiki/Gemlite-domain
-Secondary Index https://github.com/iisi-nj/GemFireLite/wiki/Secondary-Index
+DataModel https://github.com/iisi-nj/GemFireLite/wiki/Data-Model<br>
+Gemlite domain https://github.com/iisi-nj/GemFireLite/wiki/Gemlite-domain<br>
+Secondary Index https://github.com/iisi-nj/GemFireLite/wiki/Secondary-Index<br>
