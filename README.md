@@ -22,3 +22,7 @@ Enhance security;
 Make the hot deploy functionility better ;
 Easy config and management with enhanced UI;
 Simplify the service interface using spring data;
+
+
+Wiki:
+https://github.com/iisi-nj/GemFireLite/wiki/Data-Model
