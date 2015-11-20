@@ -6,22 +6,22 @@ At the beginning, we use the gemfire directly. Then we realize that gemfire is a
 
 The features :
 
-Gemlite is a handy toolkit, which provides a well-defined framework to facilitate the developers to use Gemfire efficiently and correctly.
-Gemlite’s framework clearly define the coding rules. It guides the developers step by step, and shortens the developer learning curve.
-Gemlite is able to generate the auxiliary codes automatically to minimize the repeating tasks, and increase developer productivity.
-Gemlite provides a more advanced secondary indexing mechanism which is similar to SQL syntax. This indexing mechanism provides much better performance than OQL indexing.
-Gemlite provides a better way for the “Hot Deployment”, and is transparent to developers. Within the Gemlite framework, the business application developed by users can guarantee a hot deployment automatically.
-Gemlite provides a better way to monitor, collect the performance data, and analyzing bottlenecks of the business application in Gemfire servers.
-Gemlite provides an easy-to-use approach to enable legacy systems to migrate to cloud platforms with the Cache layer, to increase system performance.
+Gemlite is a handy toolkit, which provides a well-defined framework to facilitate the developers to use Gemfire efficiently and correctly.<br>
+Gemlite’s framework clearly define the coding rules. It guides the developers step by step, and shortens the developer learning curve.<br>
+Gemlite is able to generate the auxiliary codes automatically to minimize the repeating tasks, and increase developer productivity.<br>
+Gemlite provides a more advanced secondary indexing mechanism which is similar to SQL syntax. This indexing mechanism provides much better performance than OQL indexing.<br>
+Gemlite provides a better way for the “Hot Deployment”, and is transparent to developers. Within the Gemlite framework, the business application developed by users can guarantee a hot deployment automatically.<br>
+Gemlite provides a better way to monitor, collect the performance data, and analyzing bottlenecks of the business application in Gemfire servers.<br>
+Gemlite provides an easy-to-use approach to enable legacy systems to migrate to cloud platforms with the Cache layer, to increase system performance.<br>
 
 
 What is the next ?
 
-Add lucene index;
-Enhance security;
-Make the hot deploy functionility better ;
-Easy config and management with enhanced UI;
-Simplify the service interface using spring data;
+Add lucene index;<br>
+Enhance security;<br>
+Make the hot deploy functionility better ;<br>
+Easy config and management with enhanced UI;<br>
+Simplify the service interface using spring data;<br>
 
 
 Wiki:<br>
