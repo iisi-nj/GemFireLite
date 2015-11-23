@@ -24,7 +24,7 @@ import com.gemstone.gemfire.cache.util.CacheListenerAdapter;
 @SuppressWarnings({ "rawtypes" })
 public class EntryChangeListener extends CacheListenerAdapter
 {
-	public static boolean SYNC_FLAG = true;// ::e�
+	public static boolean SYNC_FLAG = true;// 缺省为同步方式
 
 	@Override
 	public void afterCreate(EntryEvent event)

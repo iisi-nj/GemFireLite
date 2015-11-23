@@ -169,7 +169,7 @@ public class GemliteIndexContext
   //
   // GemliteSibingsLoader loader = new GemliteSibingsLoader();
   // GemliteClassScannerPro scanner = new GemliteClassScannerPro();
-  // // kÏvú°„Module
+  // // æ‰«æå¹¶åˆ›å»ºæ–°çš„Module
   // // RegistryMatchedContext matchedRegistry = scanner.scan(loader);
   //
   //

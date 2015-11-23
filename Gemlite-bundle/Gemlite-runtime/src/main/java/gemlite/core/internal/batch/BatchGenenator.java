@@ -33,9 +33,9 @@ import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang.StringUtils;
 
 /***
- * 1.��Mn�o
- * 2.��!H
- * 3.9na�kE!H
+ * 1.读取配置信息
+ * 2.读取模版
+ * 3.根据条件填充模版
  * 
  * @author ynd
  * 

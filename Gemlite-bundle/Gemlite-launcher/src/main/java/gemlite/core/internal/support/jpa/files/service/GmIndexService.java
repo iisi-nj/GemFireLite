@@ -34,7 +34,7 @@ public class GmIndexService
 	private GmIndexDao dao;
 
 	/**
-	 * �X"
+	 * 保存索引
 	 * 
 	 * @param indexFile
 	 */
@@ -69,7 +69,7 @@ public class GmIndexService
 	}
 
 	/**
-	 * �X"
+	 * 保存索引
 	 * 
 	 * @param indexFile
 	 */
@@ -94,7 +94,7 @@ public class GmIndexService
 	}
 
 	/**
-	 * �X"
+	 * 保存索引
 	 * 
 	 * @param indexFile
 	 */
@@ -111,7 +111,7 @@ public class GmIndexService
 	}
 
 	/**
-	 *  d6�"
+	 * 删除制定索引
 	 * 
 	 * @param indexName
 	 */
@@ -128,7 +128,7 @@ public class GmIndexService
 	}
 
 	/**
-	 * zh
+	 * 清空表
 	 */
 	public void deleteAllIndex()
 	{
@@ -136,7 +136,7 @@ public class GmIndexService
 	}
 
 	/**
-	 * ��@	index"��h
+	 * 获取所有index索引文件列表
 	 * 
 	 * @param indexName
 	 * @return

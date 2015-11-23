@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /***
- * @DeployConfigure,@AutoSerialize^�H
- *                                       :�n
+ * @DeployConfigure,@AutoSerialize属于优先处理
+ *                                       缺省设置
  * @author ynd
  * 
  */

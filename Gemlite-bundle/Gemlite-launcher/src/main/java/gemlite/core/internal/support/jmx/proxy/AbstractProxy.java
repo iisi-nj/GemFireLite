@@ -39,7 +39,7 @@ public abstract class AbstractProxy implements InvocationHandler
   private AttributeList attrList;
   
   /**
-   * (���pn��a
+   * 用于返回数据的对象
    */
   private Map<String, Object> returnvalues;
   private AttributeList returnattrList;
@@ -58,7 +58,7 @@ public abstract class AbstractProxy implements InvocationHandler
   public void resetValues()
   {
     values.clear();
-    // ^'{z
+    // 属性轻易不清空
     // attrList.clear();
   }
   
@@ -71,7 +71,7 @@ public abstract class AbstractProxy implements InvocationHandler
   {
     values.put(name, value);
     Attribute attr = new Attribute(name, value);
-    // $�/&	<,� d
+    // 判断是否有值,再删除
     int index = attrList.indexOf(attr);
     if (index > 0)
     {
@@ -103,7 +103,7 @@ public abstract class AbstractProxy implements InvocationHandler
   }
   
   /**
-   * S��AttributeList�1%�,�nvalues
+   * 当获取AttributeList部分失败时,设置values
    * 
    * @param list
    */
@@ -151,7 +151,7 @@ public abstract class AbstractProxy implements InvocationHandler
     this.returnattrList = returnattrList;
   }
   
-  // ^'{z,z$�,�values,����pn
+  // 属性轻易不清空,空判断,只处理values,方便计算数据
   public boolean isEmpty()
   {
     // return attrList.size() == 0 || values.size() == 0;

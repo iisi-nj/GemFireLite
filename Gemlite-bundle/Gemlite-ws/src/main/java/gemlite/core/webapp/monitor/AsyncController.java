@@ -53,7 +53,7 @@ public class AsyncController
       modelAndView = new ModelAndView("monitor/async");
 //      async.listSync();
 //      List<HashMap<String,Object>> list = (List<HashMap<String,Object>>)async.get(CommandMeta.LIST_ASYNCQUEUE);
-//      //	queueid’
+//      //æŒ‰queueidæ’åº
 //      if(list!=null)
 //      Collections.sort(list,new Comparator<HashMap<String,Object>>()
 //      {
@@ -72,7 +72,7 @@ public class AsyncController
     {
       async.listSync();
       List<HashMap<String,Object>> list = (List<HashMap<String,Object>>)async.get(CommandMeta.LIST_ASYNCQUEUE);
-      //	queueid’
+      //æŒ‰queueidæ’åº
       if(list!=null)
       Collections.sort(list,new Comparator<HashMap<String,Object>>()
       {

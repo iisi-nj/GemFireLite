@@ -165,7 +165,7 @@ public class DateUtil
   }
   
   /**
-   * �)
+   * 今天
    * @return
    */
   public static long today()
@@ -181,7 +181,7 @@ public class DateUtil
   
   
   /**
-   * ��)p
+   * 添加天数
    * 
    * @param date
    * @param difference
@@ -202,7 +202,7 @@ public class DateUtil
   }
   
   /**
-   * yyyyMMddllong
+   * yyyyMMdd转成long
    * @param dateStr
    * @return
    */

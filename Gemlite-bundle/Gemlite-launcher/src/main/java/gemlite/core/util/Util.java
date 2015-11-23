@@ -52,7 +52,7 @@ public class Util
     }
     catch (NoSuchAlgorithmException e)
     {
-      LogUtil.getCoreLog().error("MD 5FileUtil messageDigest �1%", e);
+      LogUtil.getCoreLog().error("MD 5FileUtil messageDigest 初始化失败", e);
     }
   }
   public final static synchronized String makeMD5String(byte[] bytes)
@@ -112,7 +112,7 @@ public class Util
   }
   /**
    * gemlite/core/util/Util
-   * (���(
+   * 用于方法调用
    * @param cls
    * @return
    */
@@ -136,7 +136,7 @@ public class Util
   }
   
   /**
-   * �SM�ID
+   * 取当前进程ID
    * 
    * @return
    */
@@ -168,7 +168,7 @@ public class Util
     return bu.toString();
   }
   /***
-   * >:SMclasspath
+   * 显示当前classpath
    */
   public final static String printClasspath()
   {
@@ -207,7 +207,7 @@ public class Util
   }
   
   /***
-   *  base64�byte[] �L�0base64�W&2
+   * 将 base64的byte[] 进行编码，得到base64编码的字符串
    * 
    * @param byteArray
    * @return
@@ -220,7 +220,7 @@ public class Util
   }
   
   /**
-   *  BASE64 �W&2 s �L�
+   * 将 BASE64 编码的字符串 s 进行解码
    * 
    * @param s
    * @param charSet

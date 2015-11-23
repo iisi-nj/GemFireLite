@@ -110,7 +110,7 @@ public class MBeanHelper
   }
   
   /**
-   * �;�service{ MbeanName �:;���
+   * 创建逻辑service类 MbeanName 只为逻辑架包服务
    * @param name
    * @return
    */
@@ -124,7 +124,7 @@ public class MBeanHelper
   }
   
   /**
-   * ��{MbeanName {�/ manager
+   * 创建管理类MbeanName 类型是 manager
    * @param name
    * @return
    */
@@ -138,7 +138,7 @@ public class MBeanHelper
   }
   
   /**
-   * ({MbeanName �
+   * 通用类MbeanName 创建
    * @param type
    * @param name
    * @return

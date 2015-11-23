@@ -122,7 +122,7 @@ public class ViewDeployStat implements Serializable
 				.name());
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		// dip�o:U:���(
+		// 此ip信息为展示时排序使用
 		map.put(Views.ip.name(), ServerConfigHelper.getConfig(ITEMS.BINDIP)
 				+ ServerConfigHelper.getProperty(ITEMS.NODE_NAME.name()));
 		map.put(Views.ipinfo.name(), msg);

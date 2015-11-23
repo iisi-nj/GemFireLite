@@ -48,7 +48,7 @@ public class Async extends AbstractAdminCommand
     }
     
     /**
-     * �@	e
+     * 列出所有同步队
      * @param name
      * @return
      */
@@ -81,7 +81,7 @@ public class Async extends AbstractAdminCommand
            allQueues.addAll(set);
            result+=print(set,queues);
         }
-        //:ws pn
+        //为ws传递数据
         put(CommandMeta.LIST_ASYNCQUEUE,allQueues);
         for(String s:queues)
         {
@@ -118,7 +118,7 @@ public class Async extends AbstractAdminCommand
     
     
     /**
-     * ��e:6
+     * 添加同步机制
      * @param region
      * @param queuename
      * @param confFile
@@ -128,7 +128,7 @@ public class Async extends AbstractAdminCommand
     public String addAsync(@CliOption(key="region",mandatory=true,optionContext="disable-string-converter param.context.region") String region,
             @CliOption(key="queueId",mandatory=true) String queueId,
             @CliOption(key="persistent",unspecifiedDefaultValue="false") boolean persistent,
-            //@CliOption(key="parallel",unspecifiedDefaultValue="false") boolean parallel,  dy:true���H
+            //@CliOption(key="parallel",unspecifiedDefaultValue="false") boolean parallel,  此项为true时创建队列无效
             @CliOption(key="diskstorename",unspecifiedDefaultValue="async") String diskStoreName,
             @CliOption(key="driver",mandatory=true) String driver,
             @CliOption(key="url",mandatory=true) String url,
@@ -148,7 +148,7 @@ public class Async extends AbstractAdminCommand
     }
     
     /**
-     *  de:6
+     * 删除同步机制
      * @param region
      * @param queuename
      * @return

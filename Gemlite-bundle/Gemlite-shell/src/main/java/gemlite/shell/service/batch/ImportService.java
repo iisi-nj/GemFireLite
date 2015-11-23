@@ -191,7 +191,7 @@ public class ImportService
   
   private void setDbParameter(String dbdriver, String dburl, String dbuser, String dbpsw)
   {
-    // pn_���-Ó-��
+    // 数据也可以从中心库中读取
     if (StringUtils.isNotEmpty(dbdriver))
       ServerConfigHelper.setProperty("db.jdbc.driver", dbdriver);
     if (StringUtils.isNotEmpty(dburl))
@@ -203,7 +203,7 @@ public class ImportService
   }
   
   /**
-   * �X�pn��p�pn�Mn,�� >
+   * 保存从数据库导数的数据库配置,对外部开放
    * 
    * @param dbdriver
    * @param dburl
@@ -223,7 +223,7 @@ public class ImportService
       for (int i = 0; i < 4; i++)
       {
         String key = keys[i].getValue();
-        // �pn,�����X�,��pn
+        // 取数据,如果已经保存过,则更新数据
         GmConfig conf = service.findConfigByKey(key);
         
         if (conf == null)
@@ -234,11 +234,11 @@ public class ImportService
         }
         else
         {
-          // ����	9�,��
+          // 如果密码没有改变,则加密
           if (StringUtils.equals(ConfigKeys.import_dbpsw.getValue(), key))
           {
             values[i] = DESUtil.encrypt(values[i]);
-            // ��	�,�X
+            // 密码没有变化,则不保存
             if (StringUtils.equals(conf.getValue(), values[i]))
               return;
           }
@@ -262,7 +262,7 @@ public class ImportService
    * @param encoding
    * @param linesToSkip
    * @param dbdriver
-   *          //b�/�pe��pn��Mn
+   *          //下面的是导数来源于数据库的配置
    * @param dburl
    * @param dbuser
    * @param dbpsw
@@ -283,21 +283,21 @@ public class ImportService
     String cacheKey = region + template;
     try
     {
-      // ��/pn�!,db��
+      // 如果是数据库模板,则处理db变量
       if (StringUtils.equals(BatchTemplateTypes.jdbcPartition.getValue(), param.getTemplate())
           || StringUtils.equals(BatchTemplateTypes.jdbcpaging.getValue(), param.getTemplate()))
       {
-        // �n����
+        // 设置环境变量
         setDbParameter(dbdriver, dburl, dbuser, dbpsw);
         saveDbConfig(dbdriver, dburl, dbuser, dbpsw);
       }
       
-      // ��/partition�,table
+      // 如果是partition的,则处理table
       if (StringUtils.equals(BatchTemplateTypes.jdbcPartition.getValue(), param.getTemplate()))
       {
         DataSource dataSource = null;
         DatabaseType type = null;
-        // 2b!ޥpn�
+        // 防止多次连接数据源
         if (jobItems.containsKey(cacheKey))
         {
           dataSource = (DataSource) (jobItems.get(cacheKey).jobContext.getBean("jdbcDataSource"));
@@ -305,7 +305,7 @@ public class ImportService
         }
         else
         {
-          // �*�,��pn�
+          // 这个时候,获取数据源
           ClassPathXmlApplicationContext jdbc = Util.initContext(true, "batch/job-context.xml",
               "batch/import-db-jdbc.xml");
           dataSource = (DataSource) jdbc.getBean("jdbcDataSource");
@@ -324,7 +324,7 @@ public class ImportService
       }
       else
       {
-        //  ��}��pn�pn�dbMn
+        // 需要加载读取数据库数据的db配置
         jobContext = Util.initContext(false, "batch/job-context.xml", "batch/import-db-jdbc.xml", jobXMLFile);
       }
       jobContext.setParent(batchContext);
@@ -356,7 +356,7 @@ public class ImportService
   @SuppressWarnings({ "rawtypes", "unchecked" })
   private boolean validParameters(BatchParameter param)
   {
-    // ��{���!���
+    // 文件类型的要校验文件
     if (StringUtils.equals("file", param.getTemplate()))
     {
       if (StringUtils.isEmpty(param.getFile()))
@@ -366,7 +366,7 @@ public class ImportService
       }
       else
       {
-        // 1.file://classpath:// 4���(
+        // 1.file://或者classpath://开头的，直接使用
         String str = param.getFile();
         if (!str.startsWith("file") && !str.startsWith("classpath"))
         {

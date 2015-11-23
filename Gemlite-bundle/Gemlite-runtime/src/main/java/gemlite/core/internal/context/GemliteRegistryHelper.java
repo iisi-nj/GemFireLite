@@ -49,8 +49,8 @@ package gemlite.core.internal.context;
 //  public final static String NONE = "NONE";
 //  //public final static String INDEX_DEF = "INDEX_DEF";
 //  public final static String REMOTE_SERVICE = "LOGIC_BEAN";
-//  public final static String REMOTE_ADMIN_SERVICE = "ADMIN_BEAN"; // �bean
-//  public final static String MODEL_MBEAN = "MODEL_MBEAN"; // �bean
+//  public final static String REMOTE_ADMIN_SERVICE = "ADMIN_BEAN"; // 管理娄bean
+//  public final static String MODEL_MBEAN = "MODEL_MBEAN"; // 管理娄bean
 //  
 //  public final static String VIEW = "VIEW"; // INDEX CACHE 
 //  

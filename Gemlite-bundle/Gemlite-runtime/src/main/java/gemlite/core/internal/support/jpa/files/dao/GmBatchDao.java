@@ -20,7 +20,7 @@ import gemlite.core.internal.support.jpa.files.domain.GmBatch;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * (��\�@h gm_batch
+ * 用于操作基础表 gm_batch
  * @author gsong
  *
  */

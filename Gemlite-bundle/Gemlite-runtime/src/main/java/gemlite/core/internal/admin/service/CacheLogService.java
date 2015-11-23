@@ -25,7 +25,7 @@ import java.util.logging.Level;
 import com.gemstone.gemfire.cache.Cache;
 import com.gemstone.gemfire.cache.CacheFactory;
 /**
- * (�9��9log4jMnH
+ * 使用修改的修改log4j配置生效
  * @author gsong
  */
 @AdminService(name = "CacheLogService")
@@ -38,7 +38,7 @@ public class CacheLogService extends AbstractRemoteAdminService<Map<String, Obje
     Cache cache = CacheFactory.getAnyInstance();    
     String level = (String)args.get("CACHE_LOGLEVEL");
     boolean sucess = true;
-    //s�
+    //关闭
     if (Level.OFF.getName().equals(level))
     {
       cache.getLogger().getHandler().setLevel(Level.OFF);

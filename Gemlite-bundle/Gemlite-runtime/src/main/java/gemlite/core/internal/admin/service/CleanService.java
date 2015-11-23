@@ -44,7 +44,7 @@ public class CleanService extends AbstractRemoteAdminService<Map<String, Object>
       Region<?, ?> region = cache.getRegion(regionName);
       if (cmd != null)
       {
-        //$�p�/:0,��p�:0�,�b�
+        //判断数量是为0,如果数量为0了,再恢复过期
         int wait_times = 1;
         while(region.size()>0)
         {

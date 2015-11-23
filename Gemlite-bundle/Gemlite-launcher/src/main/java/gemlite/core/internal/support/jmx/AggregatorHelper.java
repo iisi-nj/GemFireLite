@@ -43,7 +43,7 @@ public class AggregatorHelper
         {
           case AVG:
             v3 = sum(v1, v2);
-            //Ï!ý¡—sG<,&åG0‰¹,	ïýÀH¡—0
+            //æ¯æ¬¡éƒ½è®¡ç®—å¹³å‡å€¼,å¦åˆ™è‹¥é‡åˆ°æŽ‰ç‚¹,åˆ™æœ‰å¯èƒ½ä»€ä¹ˆè®¡ç®—ä¸åˆ°
             v3 = avg(v3, 2);
             break;
           case SUM:
@@ -117,7 +117,7 @@ public class AggregatorHelper
   
   private Object min(Object o1, Object o2)
   {
-    //ùŽöô{‹„$­
+    //å¯¹äºŽæ—¶é—´ç±»åž‹çš„åˆ¤æ–­
     if(o1 instanceof Long && o2 instanceof Long)
     {
         if((Long)o1==0 || (Long)o2==0)

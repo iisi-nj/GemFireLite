@@ -18,15 +18,15 @@ package gemlite.core.internal.support.jpa.files.domain;
 public enum ConfigTypes
 {
      /**
-      * �,Mn
+      * 基本配置
       */
       basicconfig("basic-config"),
       /**
-       * �p-pn�:pn��pn�Mn
+       * 导数-数据源为数据库的数据库配置
        */
       importdbconfig("import-db-config"),
       /**
-       * Ƥ�o,�;:h,,�
+       * 集群信息,包括主机列表,名,密码
        */
       clusterconfig("cluster-config");
       

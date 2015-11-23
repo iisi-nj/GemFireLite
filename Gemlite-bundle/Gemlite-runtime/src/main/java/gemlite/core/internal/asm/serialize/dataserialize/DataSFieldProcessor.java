@@ -97,16 +97,16 @@ public class DataSFieldProcessor implements Opcodes
       LabelNode elseLabel = new LabelNode();
       LabelNode endLabel = new LabelNode();
       
-      // if $�
+      // if 判断
       inst.add(new VarInsnNode(ALOAD, 0));
       inst.add(new FieldInsnNode(GETFIELD, owner, fn.name, fn.desc));
       inst.add(new JumpInsnNode(IFNULL, elseLabel));
-      // ^z
+      // 非空
       initToMethodStack(owner, fn, inst);
       writeValue(fn, inst, dsi);
-      // ^z��l
+      // 非空处理完成，跳转
       inst.add(new JumpInsnNode(GOTO, endLabel));
-      // z<
+      // 空值处理
       inst.add(elseLabel);
       fieldValueIsNull(fn, inst);
       inst.add(new VarInsnNode(ALOAD, 1));

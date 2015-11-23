@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 public @interface DeployConfigure
 {
   /***
-   * !W�
+   * 模块名称
    * 
    * @return
    */

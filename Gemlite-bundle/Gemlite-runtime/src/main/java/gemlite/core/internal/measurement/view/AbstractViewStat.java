@@ -134,7 +134,7 @@ public abstract class AbstractViewStat
 	}
 
 	/***
-	 * ��h
+	 * 线程安全
 	 * 
 	 * @param item
 	 */

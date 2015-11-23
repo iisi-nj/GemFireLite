@@ -73,13 +73,13 @@ public class GmBatchDaoImpl implements GmBatchExtDao
     {
       LogUtil.getCoreLog().warn("SQL {} Error {}",getjobs,e.getMessage());
     }
-    //�Ӝ��L
+    //对结果集进行处理
     List<Map> newlist = new ArrayList<Map>();
     if(list!=null)
     {
       for(Map map :list)
       {
-        //��duration
+        //计算duration
         Timestamp t1 = (Timestamp)map.get("START_TIME");
         Timestamp t2 = (Timestamp)map.get("END_TIME");
         String duration = "";

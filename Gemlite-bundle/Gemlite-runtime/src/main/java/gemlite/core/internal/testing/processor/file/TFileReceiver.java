@@ -137,7 +137,7 @@ public class TFileReceiver extends HAMqReceiver
 	{
 		if (!StringUtils.isBlank(msg))
 		{
-			// �o
+			// 处理消息
 			processor.parserOneMessage(msg);
 			processor.remoteProcess();
 			doCommit();

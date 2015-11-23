@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 
 
 /**
- * (�9��9log4jMnH
+ * 使用修改的修改log4j配置生效
  * @author gsong
  */
 @AdminService(name = "Log4jService")
@@ -39,7 +39,7 @@ public class Log4jService extends AbstractRemoteAdminService<Map<String, Object>
   public Object doExecute(Map<String, Object> args)
   {
     ServerConfigHelper.initLog4j("classpath:log4j-server.xml");
-    //��@	log4j�SM�log�+
+    //读取所有log4j的当前的log级别
     StringBuilder sb = new StringBuilder();
     sb.append(LogUtil.getAppLog().getName()).append(":");
     sb.append(getLogLevel(LogUtil.getAppLog())).append("\n");

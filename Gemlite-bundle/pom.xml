@@ -14,7 +14,7 @@
 		<maven.test.skip>true</maven.test.skip>
 	</properties>
 
-	
+
 
 	<build>
 		<plugins>
@@ -41,95 +41,34 @@
 
 		</plugins>
 	</build>
-	<!-- <pluginRepositories>
-		<pluginRepository>
-			<id>local</id>
-			<name>re</name>
-			<url>http://192.168.120.40:8181/nexus/content/groups/public/</url>
-		</pluginRepository>
-		<pluginRepository>
-				<id>nexus</id>
-				<name>local private nexus</name>
-				<url>http://maven.oschina.net/content/groups/public/</url>
-				<releases>
-					<enabled>true</enabled>
-				</releases>
-				<snapshots>
-					<enabled>false</enabled>
-				</snapshots>
-        </pluginRepository>
-		
-	</pluginRepositories> -->
+	<!-- <pluginRepositories> <pluginRepository> <id>local</id> <name>re</name> 
+		<url>http://192.168.120.40:8181/nexus/content/groups/public/</url> </pluginRepository> 
+		<pluginRepository> <id>nexus</id> <name>local private nexus</name> <url>http://maven.oschina.net/content/groups/public/</url> 
+		<releases> <enabled>true</enabled> </releases> <snapshots> <enabled>false</enabled> 
+		</snapshots> </pluginRepository> </pluginRepositories> -->
 	<repositories>
-		<repository>
-			<id>local</id>
-			<name>re</name>
-			<url>http://192.168.120.40:8181/nexus/content/groups/public/</url>
-		</repository>
 		<repository>
 			<id>spring-release</id>
 			<name>Spring Maven RELEASE Repository</name>
 			<url>http://repo.spring.io/release</url>
 		</repository>
 		<repository>
-				<id>nexus</id>
-				<name>local private nexus</name>
-				<url>http://maven.oschina.net/content/groups/public/</url>
-				<releases>
-					<enabled>true</enabled>
-				</releases>
-				<snapshots>
-					<enabled>false</enabled>
-				</snapshots>
- 	   </repository>
-
-		<!-- libs-release for JLine fork, artifacts may not be in maven central -->
-	<!-- 	<repository>
-			<id>libs-release</id>
-			<name>Spring Maven libs-release Repository</name>
-			<url>http://repo.springframework.org/libs-release</url>
+			<id>gemfire-repository</id>
+			<name>Gemfire Repository</name>
+			<url>http://dist.gemstone.com/maven/release</url>
 		</repository>
 		<repository>
-			<id>repo.springsource.org.milestone</id>
-			<name>Spring Framework Milestone Repository</name>
-			<url>https://repo.springsource.org/milestone</url>
-		</repository>
-		<repository>
-			<id>repo.springsource.org.release</id>
-			<name>Spring Framework Release Repository</name>
-			<url>https://repo.springsource.org/release</url>
-		</repository>
-		<repository>
-			<id>repo.springsource.org.plugins.release</id>
-			<name>Spring Framework Dependencies Repository</name>
-			<url>http://repo.springsource.org/plugins-release</url>
+			<id>nexus</id>
+			<name>local private nexus</name>
+			<url>http://maven.oschina.net/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 
-		<repository>
-			<id>java.net-Public</id>
-			<name>Maven Java Net Snapshots and Releases</name>
-			<url>https://maven.java.net/content/groups/public/</url>
-		</repository>
-
-		<repository>
-			<id>cloudera</id>
-			<name>Cloudera Maven repository</name>
-			<url>https://repository.cloudera.com/content/repositories/releases/</url>
-			<layout>default</layout>
-		</repository>
-
-		<repository>
-			<id>repomaven2</id>
-			<name>repomaven2 repository</name>
-			<url>http://repo.maven.apache.org/maven2</url>
-			<layout>default</layout>
-		</repository>
-
-		<repository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</repository> -->
 
 	</repositories>
 
@@ -137,23 +76,10 @@
 		<module>Gemlite-libs</module>
 		<module>Gemlite-launcher</module>
 		<module>Gemlite-runtime</module>
-		<module>Gemlite-ws</module>
-
 		<module>Gemlite-maven-plugin</module>
 		<module>Gemlite-shell</module>
 		<module>Gemlite-domain-tools</module>
-		
+		<module>Gemlite-ws</module>
+
 	</modules>
-	<!-- <distributionManagement>
-		<repository>
-			<id>iisi-releases</id>
-			<name>nexus Releases</name>
-			<url>http://192.168.120.40:8181/nexus/content/repositories/iisi-releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>iisi-snapshots</id>
-			<name>nexus Snapshots</name>
-			<url>http://192.168.120.40:8181/nexus/content/repositories/iisi-snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement> -->
 </project>

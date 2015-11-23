@@ -23,7 +23,7 @@ public interface MqConstant
   public final static String TIMESTAMP = "timestamp";
   
   
-  //�6}�RouteKey
+  //控制命令RouteKey
   public final static String CONTROL_STOP_CONNECTION = "StopConnection";
   public final static String LBC_BATCH_MODE = "batch";
   public final static String UPDATE="UPDATE";

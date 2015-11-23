@@ -46,12 +46,12 @@ public interface IMapperTool<K, V>
   public Class<K> getKeyClass();
   public Class<V> getValueClass();
   /***
-   * ArrayList	�a-^'�Iz�
+   * ArrayList，按对象中属性定义顺序
    * @return
    */
   public List<String> getValueFieldNames();
   /***
-   * ArrayList	�a-^'�Iz�
+   * ArrayList，按对象中属性定义顺序
    * @return
    */
   public List<String> getKeyFieldNames();

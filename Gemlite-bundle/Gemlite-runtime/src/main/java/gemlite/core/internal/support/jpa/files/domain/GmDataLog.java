@@ -27,10 +27,10 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 /**
- * (��Upn��
+ * 用于记录数据日志
  * 
  * @author GSONG
- *         2015t720�
+ *         2015年7月20日
  */
 @Entity
 @Table(name = "gm_data_log")

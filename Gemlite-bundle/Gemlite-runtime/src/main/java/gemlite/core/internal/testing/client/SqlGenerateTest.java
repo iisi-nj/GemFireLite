@@ -41,11 +41,11 @@ import org.kohsuke.args4j.Option;
 
 
 /**
- * K��w{
+ * 测试工具类
  * 
- * 9n�p eh�K�pnp� K�{+�w����sqlpn
- * v�mq�w{�sqlv�e���local�region-
- * ��RegionCompare�w{��e�local�regionpn�L!�
+ * 根据参数传入表名称、测试数据数量 、测试类别，工具自动生成相应的sql数据，
+ * 并通过mq工具类解析sql并写入节点的local和region中
+ * 再通过RegionCompare工具类对写入的local和region数据进行校对
  * 
  *
  */
@@ -70,7 +70,7 @@ public class SqlGenerateTest
 		String result = scd.sqlGenerator();
 		System.out.println(result);
 
-		System.out.println("Table[" + scd.name + "]�KՌ�.");
+		System.out.println("Table[" + scd.name + "]已测试完毕.");
 		SimpleClient.disconnect();
 		System.exit(0);
 	}

@@ -24,10 +24,5 @@
 			<artifactId>Gemlite-shell</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-  		  <groupId>gemlite.sample</groupId>
-  		  <artifactId>orderDomain</artifactId>
-  		  <version>0.0.1-SNAPSHOT</version>
-     	</dependency>
 	</dependencies>
 </project>

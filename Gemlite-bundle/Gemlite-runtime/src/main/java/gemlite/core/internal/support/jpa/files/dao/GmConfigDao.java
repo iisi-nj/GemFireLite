@@ -22,7 +22,7 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * (��\�@h gm_config
+ * 用于操作基础表 gm_config
  * @author gsong
  *
  */

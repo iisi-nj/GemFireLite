@@ -51,7 +51,7 @@ public class RegionCommand extends AbstractAdminCommand
     {
       List<HashMap<String,Object>> rs = service.sizeM(name);
       put(CommandMeta.SIZEM,rs);
-      //�Ӝ�L�
+      //对结果进行解析
       StringBuilder sb = new StringBuilder();
       sb.append("Member Id\tRegion Size  ").append("\n");
       sb.append("----------\t-----------\t-----------  ").append("\n");
@@ -68,7 +68,7 @@ public class RegionCommand extends AbstractAdminCommand
       return service.prB(name);
     }
     
-    //�@	region��
+    //列出所有region详情
     @SuppressWarnings("unchecked")
     @CliCommand(value = "list regions", help = "list regions details")
     public String listRegionDetails()
@@ -77,10 +77,10 @@ public class RegionCommand extends AbstractAdminCommand
         Object obj = jmxSrv.invokeOperation(oname, "listRegionDetails");
         List<HashMap<String,Object>> set = (List<HashMap<String,Object>>)obj;
         
-        //�Xpn,�ws(
+        //储存数据,供ws调用
         put(CommandMeta.LIST_REGIONS,set);
         
-        //�
+        //解析
         StringBuilder sb = new StringBuilder();
         if(set != null)
         for(HashMap<String,Object> map:set)
@@ -97,7 +97,7 @@ public class RegionCommand extends AbstractAdminCommand
     }
     
     
-  //�@	region��
+  //列出所有region详情
     @SuppressWarnings("unchecked")
     @CliCommand(value = "describe region", help = "describe region")
     public String describeRegion(@CliOption(key="region",mandatory=true,optionContext="disable-string-converter param.context.region",help="Name/Path of the region to be described.") String name)
@@ -114,10 +114,10 @@ public class RegionCommand extends AbstractAdminCommand
             map = (HashMap<String,Object>)obj;
         if(map == null)
             return "";
-        //�Xpn,�ws(
+        //储存数据,供ws调用
         put(CommandMeta.DESCRIBE_REGION,map);
         
-        //�
+        //解析
         StringBuilder sb = new StringBuilder();
         sb.append("RegionName:").append(map.get(Regions.regionName.name())).append("\n");
         sb.append("KeyClass:").append(map.get(Regions.keyClass.name())).append("\n");
@@ -129,7 +129,7 @@ public class RegionCommand extends AbstractAdminCommand
         sb.append("CloningEnabled:").append(map.get(Regions.cloningEnabled.name())).append("\n");
         sb.append("CacheListeners:").append(map.get(Regions.cacheListeners.name())).append("\n");
         sb.append("--------------------------------------------").append("\n");
-        //$�/&X(partion^'
+        //判断是否存在partion属性
         if(map.get(Regions.partitionResolver.name())!=null)
         {
             sb.append("PartitionResolver:").append(map.get(Regions.partitionResolver.name())).append("\n");

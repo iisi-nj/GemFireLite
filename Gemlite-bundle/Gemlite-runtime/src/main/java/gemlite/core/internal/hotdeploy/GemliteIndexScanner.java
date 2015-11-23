@@ -48,7 +48,7 @@ package gemlite.core.internal.hotdeploy;
 //			LogUtil.getCoreLog().debug("Index Defition: " + def);
 //		}
 //
-//		// �index�I��IndexClass
+//		// 解析index定义文件生成IndexClass
 //		IDefLoader defLoader = new IndexDefLoader();
 //		Map<String, byte[]> clazzMap = defLoader.parseDefs(def);
 //		String indexName = defLoader.getName();

@@ -37,7 +37,7 @@ public class ConfService extends AbstractRemoteAdminService<Map<String, Object>,
   public Object doExecute(Map<String, Object> args)
   {
     Cache cache = CacheFactory.getAnyInstance();
-    // ��Mn�p
+    // 获取配置参数
     String msg = getSystemInfo(cache);
     return msg;
   }
@@ -49,7 +49,7 @@ public class ConfService extends AbstractRemoteAdminService<Map<String, Object>,
     
   }
   /**
-   * ��,:sever�o
+   * 获取本机sever信息
    * 
    * @param cache
    * @return
@@ -58,7 +58,7 @@ public class ConfService extends AbstractRemoteAdminService<Map<String, Object>,
   {
     StringBuilder sb = new StringBuilder();
     String ip = System.getProperty(ITEMS.BINDIP.name());
-    // 1.֗SMlog�+
+    // 1.取得当前log级别
     sb.append("\n===================================================================\n");
     DistributedMember member = cache.getDistributedSystem().getDistributedMember();
     sb.append("IP:" + ip + " host:" + member.getHost() + "\n");
@@ -80,7 +80,7 @@ public class ConfService extends AbstractRemoteAdminService<Map<String, Object>,
         LogUtil.getAppLog().error("env:" + e.getMessage());
       }
     }
-    // ֗SMwork�U
+    // 取得当前work目录
     sb.append("disk:" + location + "\n");
     return sb.toString();
   }

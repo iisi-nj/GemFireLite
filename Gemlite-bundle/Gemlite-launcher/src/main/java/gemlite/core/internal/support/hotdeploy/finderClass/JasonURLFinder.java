@@ -42,7 +42,7 @@ public class JasonURLFinder implements JarURLFinder
   private URL[] others;
   
   /***
-   * 1.֗�;�jar0@
+   * 1.取得激活的jar包地址
    */
   public void doFind()
   {

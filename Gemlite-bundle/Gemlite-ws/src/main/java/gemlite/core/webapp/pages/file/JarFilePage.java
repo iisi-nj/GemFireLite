@@ -46,7 +46,7 @@ public class JarFilePage
         ModelAndView model = new ModelAndView("tools/jar_list");
         List<ReleasedJarFile> list = service.findAll();
         List<JarFileVo> rs = new ArrayList<JarFileVo>();
-        //M�
+        //遍历
         for(ReleasedJarFile jar:list)
         {
             JarFileVo vo = new JarFileVo(jar);
@@ -84,7 +84,7 @@ public class JarFilePage
     DeployParameter param = new DeployParameter(jarFile.getModuleName(),jarFile.getModuleType(),jarFile.getContent());
     Object result = FunctionUtil.deploy(param);
     LogUtil.getCoreLog().info("deploy->" + result);
-    //�result
+    //解析result
     if(StringUtils.contains(result.toString(), "success"))
     {
         jarFile.setUpdate_count(jarFile.getUpdate_count()+1);
@@ -105,7 +105,7 @@ public class JarFilePage
     ActiveFileId activeFile = service.findActiveByName(jarFile.getModuleName());
     if (activeFile != null)
     {
-        //�;��A� d
+        //激活状态的不允许删除
         if(activeFile.getFileId() == jarFile.getFileId())
         {
             return "active file del fail!";
@@ -115,7 +115,7 @@ public class JarFilePage
     service.delete(jarFile);
     
     LogUtil.getCoreLog().info("delete jarFile->" + jarFile.toString());
-    //�result
+    //解析result
     return "success";
   }
   

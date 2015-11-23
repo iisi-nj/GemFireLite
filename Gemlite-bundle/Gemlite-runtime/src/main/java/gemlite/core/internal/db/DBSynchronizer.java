@@ -50,7 +50,7 @@ import com.gemstone.gemfire.cache.asyncqueue.AsyncEvent;
 import com.gemstone.gemfire.cache.asyncqueue.AsyncEventListener;
 
 /**
- * X�region�pn�0�sMn}�pn� n�Mn�pn�pnh���} /�W�
+ * 存储region的数据变化到相关配置好的数据库 确保配置的数据库数据表已经创建好 不支持自增长字段
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class DBSynchronizer implements AsyncEventListener
@@ -65,17 +65,17 @@ public class DBSynchronizer implements AsyncEventListener
     protected String errorFile;
 
     /**
-     * �pnX>0��KM,�!p
+     * 将错误数据存放到文件之前,尝试次数
      */
     protected int numErrorTries = 0;
 
     /**
-     * ؤ�!p
+     * 默认尝试次数
      */
     protected static final int DEFAULT_ERROR_TRIES = 3;
 
     /**
-     * pn�q�
+     * 数据库驱动名
      */
     protected String driverClass;
 
@@ -1143,7 +1143,7 @@ public class DBSynchronizer implements AsyncEventListener
             ps.addBatch();
         }
         
-        //$�key/&: *W�
+        //判断key是否为一个字段
         if(pkEvent.getKey() instanceof DataSerializable)
         setKeysInPrepStatement(pkEvent.getKey(), keyFields, tool.getValueClass(), ps, 1);
         else
@@ -1232,8 +1232,8 @@ public class DBSynchronizer implements AsyncEventListener
                 {
                     sb.append(',');
                 }
-                // (���pn
-                // W�W
+                // 使用反射获取数据
+                // 字段名字
                 String field = keyFields.get(col);
                 try
                 {
@@ -1268,7 +1268,7 @@ public class DBSynchronizer implements AsyncEventListener
     }
     
     /**
-     * �nU keyW�
+     * 设置单一key字段
      * @param keyValue
      * @param keyClass
      * @param ps
@@ -1392,7 +1392,7 @@ public class DBSynchronizer implements AsyncEventListener
                     if (this.conn == null || this.conn.isClosed())
                     {
                         //return SqlExceptionHandler.REFRESH;
-                        //�����e,2bpn���,�� ���??TODO  �����
+                        //这里返回忽略,防止数据无法通过,导致一直循环??TODO 需要仔细研读代码
                         return SqlExceptionHandler.IGNORE;
                     }
                 }

@@ -15,11 +15,10 @@
  */                                                                        
 package gemlite.shell.service.admin;
 
-import java.io.IOException;
+import gemlite.shell.admin.dao.AdminDao;
+
 import java.util.HashMap;
 import java.util.List;
-
-import gemlite.shell.admin.dao.AdminDao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

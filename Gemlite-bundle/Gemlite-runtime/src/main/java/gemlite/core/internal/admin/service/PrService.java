@@ -78,7 +78,7 @@ public class PrService extends AbstractRemoteAdminService<Map<String, Object>, A
   }
   
   /**
-   * �,:�ip
+   * 取本机的ip
    * @return
    */
   private String getHost()

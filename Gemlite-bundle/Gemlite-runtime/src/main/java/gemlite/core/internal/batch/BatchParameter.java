@@ -62,7 +62,7 @@ public class BatchParameter
   private int linesToSkip;
   
   
-  //pn��p�s
+  //数据库导数相关
   private String sortKey;
   private String where;
   private int pageSize;

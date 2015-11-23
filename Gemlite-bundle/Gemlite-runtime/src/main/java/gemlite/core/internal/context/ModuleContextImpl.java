@@ -44,7 +44,7 @@ public class ModuleContextImpl extends DeployableContext
   //private IGemliteClassScanner scanner;
  // private IGemliteBuilder builder;
   
-  protected Set<String> classNames;// �U@	�{
+  protected Set<String> classNames;// 记录所有的类名
   
   public void register()
   {

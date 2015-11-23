@@ -16,11 +16,11 @@
 public interface ApiConstant
 {
   public final static String REMOTE_SERVICE_FUNCTION="REMOTE_SERVICE_FUNCTION";
-  public final static String REMOTE_ADMIN_FUNCTION="REMOTE_ADMIN_FUNCTION";  //:¡øsZ„¥ã
+  public final static String REMOTE_ADMIN_FUNCTION="REMOTE_ADMIN_FUNCTION";  //ä¸ºç®¡ç†ç›¸å…³åšçš„æ¥å£
   public final static String PARAM_MODULE_NAME="moduleName";
   public final static String PARAM_BEAN_NAME="beanName";
   public final static String PARAM_URSER_ARGS="userArgs";
   
-  //adminøs
+  //adminç›¸å…³
   public final static String REGIONPATH = "REGIONPATH";
 }

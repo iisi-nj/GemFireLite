@@ -59,18 +59,18 @@ import com.gemstone.gemfire.cache.asyncqueue.AsyncEventQueueFactory;
 import com.gemstone.gemfire.cache.partition.PartitionRegionHelper;
 
 /**
- * shell�region
+ * shell取region名
  * @author GSONG
- * 2015t119�
+ * 2015年1月19日
  */
 @SuppressWarnings("rawtypes")
 @GemliteMBean(name="RegionManager", config=true)
 @ManagedResource
 public class RegionStat
 {
-    private Map<String,String> queuesMap = new HashMap<String, String>();//�USMregion}�
-    private Set<String> diskStores = new HashSet<String>();  //X>����diskStore�
-    private Set<String> queueStores = new HashSet<String>();   //Xe@	�����
+    private Map<String,String> queuesMap = new HashMap<String, String>();//记录当前region挂载的队列
+    private Set<String> diskStores = new HashSet<String>();  //存放已经创建的diskStore名称
+    private Set<String> queueStores = new HashSet<String>();   //存入所有已经创建的队列名称
     
     @ManagedOperation
     @AggregateOperation(value=AggregateType.OPONLYONE)
@@ -124,7 +124,7 @@ public class RegionStat
             }         
         }
         
-        //�*�
+        //排个序
         Collections.sort(list, new Comparator<HashMap<String,Object>>()
         {
             public int compare(HashMap<String,Object> o1,HashMap<String,Object> o2)
@@ -171,7 +171,7 @@ public class RegionStat
             lis = lis.substring(1);
             map.put(Regions.cacheListeners.name(), lis);
             
-            //$�/&:partiotion region
+            //判断是否为partiotion region
             if(isP)
             {
                 PartitionAttributes pa = atts.getPartitionAttributes();
@@ -193,8 +193,8 @@ public class RegionStat
     @AggregateOperation
     public String addSync(String regionName,String queueId,boolean persistent,String diskStoreName,String driver,String url,String user,String password)
     {
-        //$�/&����queuueId�,����,��
-        //TODO ��{�dd?
+        //判断是否已经创建过queuueId的队列,如果创建了,则不能重名
+        //TODO 如果彻底清除此队?
         if(queueStores.contains(queueId))
         {
             String s = queueId+" repeat,please choose another queueId!";
@@ -207,7 +207,7 @@ public class RegionStat
         Cache cache = CacheFactory.getAnyInstance();
         Region r = cache.getRegion(regionName);
         AttributesMutator mutator = r.getAttributesMutator();
-        //$�SMregion/&	e
+        //判断当前region是否有同步队列
         if(queuesMap.containsKey(regionName))
         {
             mutator.removeAsyncEventQueueId(queueId);
@@ -220,9 +220,9 @@ public class RegionStat
         }
         
         
-        //�
+        //创建队列
         AsyncEventQueueFactory factory = cache.createAsyncEventQueueFactory();
-        //E
+        //持久化
         factory.setPersistent(persistent);
         DiskStoreFactory disFac = cache.createDiskStoreFactory();
         WorkPathHelper helper = new WorkPathHelper();
@@ -241,7 +241,7 @@ public class RegionStat
             diskStores.add(diskStoreName);
         }
         factory.setDiskStoreName(diskStoreName);
-//        factory.setParallel(parallel); 	dy���H
+//        factory.setParallel(parallel); 有此项时队列创建无效
         factory.setBatchSize(1000);
         factory.setBatchTimeInterval(1000);
         factory.setMaximumQueueMemory(102400);
@@ -250,11 +250,11 @@ public class RegionStat
         AsyncEventQueue asyncQueue = factory.create(queueId, listener);
         if(LogUtil.getCoreLog().isInfoEnabled())
             LogUtil.getCoreLog().info("create asyncQueue:"+asyncQueue.toString());
-        //�U
+        //记录列名
         queueStores.add(queueId);
-        //��region
+        //将队列指定给region
         mutator.addAsyncEventQueueId(queueId);
-        //pnXe
+        //数据存入
         queuesMap.put(regionName, queueId);
         return "server:"+ServerConfigHelper.getConfig(ITEMS.BINDIP)+" node:"+ServerConfigHelper.getConfig(ITEMS.NODE_NAME)+" add async queue "+ queueId +" successfully!";
     }
@@ -290,7 +290,7 @@ public class RegionStat
             HashMap<String,Object> map = new HashMap<String,Object>();
             map.put("queueid", queue.getId());
             map.put("ip",ServerConfigHelper.getConfig(ITEMS.BINDIP)+":"+ServerConfigHelper.getConfig(ITEMS.NODE_NAME));
-            //���o�,�o
+            //添加队列信息基本信息
             map.put("primary",queue.isPrimary());
 //            map.put("parallel",queue.isParallel());
             map.put("persistent",queue.isPersistent());
@@ -316,13 +316,13 @@ public class RegionStat
         StringBuilder sb = new StringBuilder();
         for(AsyncEventQueue queue:queues)
         {
-            //��X(, d
+            //如果存在,则删除
             if(StringUtils.equals(queue.getId(),queueId))
             {
-                //�H�����o
+                //首先添加节点信息
                 sb.append("-----------------\n");
                 sb.append(ServerConfigHelper.getConfig(ITEMS.BINDIP)).append(ServerConfigHelper.getConfig(ITEMS.NODE_NAME)).append("\n");
-                //���o�,�o
+                //添加队列信息基本信息
                 sb.append("QueueId:").append(queue.getId()).append("\n");
                 sb.append("Primary:").append(queue.isPrimary()).append("\n");
 //                sb.append("Parallel:").append(queue.isParallel()).append("\n");

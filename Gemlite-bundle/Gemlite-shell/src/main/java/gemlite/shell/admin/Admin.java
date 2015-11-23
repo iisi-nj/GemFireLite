@@ -100,7 +100,7 @@ public class Admin
     ClassPathXmlApplicationContext mainContext = new ClassPathXmlApplicationContext(new String[] { resource }, false);
     mainContext.setValidating(true);
     mainContext.refresh();
-    //	(Set<String> keys= mainContext.getBeansOfType(Region.class).keySet();
+    //有用Set<String> keys= mainContext.getBeansOfType(Region.class).keySet();
     
     ClientCache clientCache = ClientCacheFactory.getAnyInstance();
     dao = new AdminDao();
@@ -172,7 +172,7 @@ public class Admin
     }
     else if(conf)
     {
-      //�Mn�o
+      //查看配置信息
       dao.lookConf();
     }
     else if(refreshlog)

@@ -32,11 +32,11 @@ public interface CommandMeta
    public static final String DESCRIBE_INDEX = "describe index";
    public static final String QUERY_INDEX = "queryIndex";
    
-   //�check points
+   //列出check points
    public static final String LIST_CHECKPOINTS = "list checkpoints";
    public static final String RELOAD_CHECKPOINTS = "reload checkpoints";
    
-   //U!��
+   //单次查询
    public static final String QUERY = "query";
    
       //view

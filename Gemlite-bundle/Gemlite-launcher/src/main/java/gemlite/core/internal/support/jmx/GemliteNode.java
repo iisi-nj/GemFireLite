@@ -41,7 +41,7 @@ public class GemliteNode
   }
   
   /**
-   * �Uip���nclassloader
+   * 记录ip，端口，设置classloader
    */
   public void afterDeploy()
   {

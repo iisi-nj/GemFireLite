@@ -202,10 +202,10 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
   {
     boolean skipCallbacks = true;
 //    EntryEventImpl event = new EntryEventImpl(local, Operation.PUTALL_CREATE, null, null, null, true, local.getCache().getMyId(), !skipCallbacks);
-    //gemfire663H,��
+    //gemfire663版本的代码
 //    DistributedPutAllOperation putAllOp = new DistributedPutAllOperation(event, copy.size(), false);
     //local.basicPutAll(copy, putAllOp);
-    //7.0H,�(b�
+    //7.0版本的使用下面的
     local.basicImportPutAll(copy, skipCallbacks);
   }
   

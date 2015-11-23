@@ -163,7 +163,7 @@ public class CheckPointService
   
   private void analyzeMethod(CheckPointContext ctx, ClassNode cn, MethodNode mn, ScannedMethodItem caller)
   {
-    // �����p
+    // 过滤掉重名的函数
     Set<ScannedMethodItem> methods = new HashSet<ScannedMethodItem>();
     GemliteSibingsLoader loader = ctx.loader;
     InsnList insnList = mn.instructions;
@@ -184,13 +184,13 @@ public class CheckPointService
           LogUtil.getCoreLog().trace("I={} owner={} name={} op={}", j, methodInsn.owner, methodInsn.name,
               methodInsn.getOpcode());
           
-          // $�/&/���p
+          // 判断是否是重复的函数
           if (methods.contains(item))
             continue;
           
           caller.children.add(item);
           
-          // �Umethods
+          // 记录methods
           methods.add(item);
           
           if (!methodInsn.owner.equals(cn.name))

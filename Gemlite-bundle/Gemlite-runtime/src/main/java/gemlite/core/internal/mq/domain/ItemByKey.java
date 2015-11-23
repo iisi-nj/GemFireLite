@@ -26,7 +26,7 @@ import com.gemstone.gemfire.DataSerializable;
 import com.gemstone.gemfire.DataSerializer;
 
 /***
- * key�
+ * key相同
  * @author ynd
  *
  */

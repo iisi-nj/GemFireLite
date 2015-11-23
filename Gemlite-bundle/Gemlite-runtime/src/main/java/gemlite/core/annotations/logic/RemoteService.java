@@ -21,8 +21,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /***
- * �(�
- * 1�7��w(
+ * 远程调用服务名
+ * 由客户端发起调用，或者
  * @author ynd
  *
  */

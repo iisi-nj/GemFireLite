@@ -18,12 +18,12 @@ package gemlite.core.internal.support.jpa.files.domain;
 public enum ConfigKeys
 {
     /**
-     * �p-pn�:pn��pn�Mn
+     * 导数-数据源为数据库的数据库配置
      */
     import_dbdriver("import-dbdriver"),import_dburl("import-dburl"),import_dbuser("import-dbuser"),import_dbpsw("import-dbpsw"),
     
     /**
-     * :hh,root�,(7,(7�
+     * 机器列表,root密码,用户名,用户密码
      */
     cluster_locatorlist("cluster-locatorlist"),cluster_list("cluster-hostlist"),cluster_rootpsw("cluster-rootpsw"),cluster_username("cluster-username"),cluster_userpsw("cluster-userpsw"),cluster_primaryip("cluster-primaryip"),
     cluster_start_datastore("cluster-start-datastore"),cluster_start_locator("cluster-start-locator");

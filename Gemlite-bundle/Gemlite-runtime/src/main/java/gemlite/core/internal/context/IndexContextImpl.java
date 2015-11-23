@@ -172,7 +172,7 @@ public class IndexContextImpl extends IIndexContext
 //			        }
 //			      }
 //			    }
-//				else //��?{
+//				else //内部匿名类
 //				{
 //		          	loader.loadClass(className);
 //				}

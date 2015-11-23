@@ -54,7 +54,7 @@ public class ExportDataFunction implements Function
         LogUtil logUtil = LogUtil.newInstance();
         RegionSnapshotService snapshotService = new RegionSnapshotServiceImpl(region);
         File exportFile = new File(filePath);
-        // ��X(d��, dK
+        // 如果存在此文件,则删除之
         if (exportFile.exists())
         {
           fc.getResultSender().sendResult("File " + filePath + " exists,start delete it....");

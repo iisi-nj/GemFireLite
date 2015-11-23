@@ -15,9 +15,10 @@
  */                                                                        
 package gemlite.shell.codegen.util;
 
+import gemlite.shell.codegen.tools.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
-import gemlite.shell.codegen.tools.StringUtils;
 
 public class DefaultGeneratorStrategy extends AbstractGeneratorStrategy
 {

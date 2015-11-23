@@ -25,7 +25,7 @@ public class DeployParameter implements Serializable
   
   private static final long serialVersionUID = -4041915614183911793L;
   /***
-   * jarurl
+   * jar包url
    */
   private URL url;
   
@@ -53,7 +53,7 @@ public class DeployParameter implements Serializable
   
   
   /***
-   * !W{�runtime modulelogic module
+   * 模块类型：runtime module，logic module
    */
   public URL getUrl()
   {

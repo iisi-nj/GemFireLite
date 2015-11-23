@@ -205,7 +205,7 @@ public abstract class AbstractIndexStat
 	}
 	  
 	  /***
-	   * ��h
+	   * 线程安全
 	   * 
 	   * @param item
 	   */
@@ -259,28 +259,28 @@ public abstract class AbstractIndexStat
 	  }
 	  
 	  @AggregateAttribute(AggregateType.SUM)
-	  @ManagedAttribute(description = ";!p")
+	  @ManagedAttribute(description = "总次数")
 	  public long getTotalCount()
 	  {
 	    return totalCount.get();
 	  }
 	  
 	  @AggregateAttribute(AggregateType.SUM)
-	  @ManagedAttribute(description = ";�")
+	  @ManagedAttribute(description = "总耗时")
 	  public long getTotalCost()
 	  {
 	    return totalCost.get();
 	  }
 	
 	  @AggregateAttribute(AggregateType.SAME)
-	  @ManagedAttribute(description = ";� ���U�Xp�")
+	  @ManagedAttribute(description = "总耗时最长的历史记录保存数量")
 	  public int getMaxHistorySize()
 	  {
 	    return maxHistorySize;
 	  }
 	  
 	  @AggregateAttribute(AggregateType.SAME)
-	  @ManagedAttribute(description = " �(���U�Xp�")
+	  @ManagedAttribute(description = "最近调用的历史记录保存数量")
 	  public int getRecentHistorySize()
 	  {
 	    return recentHistorySize;
@@ -300,7 +300,7 @@ public abstract class AbstractIndexStat
 	    return firstAt;
 	  }
 	  @AggregateAttribute(AggregateType.SAME)
-	  @ManagedAttribute(description="��TPS����")
+	  @ManagedAttribute(description="计算TPS间隔时间")
 	  public int getTpsRange()
 	  {
 	    return tpsRange;
@@ -314,19 +314,19 @@ public abstract class AbstractIndexStat
 	  }
 	  
 	  @AggregateAttribute(AggregateType.MAX)
-	  @ManagedAttribute(description = " � !(��")
+	  @ManagedAttribute(description = "最近一次调用的耗时")
 	  public long getLastCost()
 	  {
 	    return lastCost;
 	  }
 	  @AggregateAttribute(AggregateType.MAX)
-	  @ManagedAttribute(description = " '�")
+	  @ManagedAttribute(description = "最大耗时")
 	  public long getMaxCost()
 	  {
 	    return maxCost;
 	  }
 	  @AggregateAttribute(AggregateType.AVG)
-	  @ManagedAttribute(description = "sG�")  
+	  @ManagedAttribute(description = "平均耗时")  
 	  public long getAvgCost()
 	  {
 		return avgCost;

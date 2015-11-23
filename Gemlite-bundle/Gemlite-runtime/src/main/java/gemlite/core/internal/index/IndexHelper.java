@@ -201,7 +201,7 @@ public class IndexHelper
 
 		LogUtil.getCoreLog().trace("Create index use defition: {}" ,def);
 
-		// ãindexšI‡öIndexClass
+		// è§£æindexå®šä¹‰æ–‡ä»¶ç”ŸæˆIndexClass
 		IDefLoader defLoader = new IndexDefLoader();
 		Map<String, byte[]> clazzMap = defLoader.parseDefs(def);
 		
@@ -229,7 +229,7 @@ public class IndexHelper
 			loader.addDynamicClasses(clazzMap);
 			
 			GemliteClassScannerPro scanner = new GemliteIndexClassScanner();
-			// kÏvú°„Module
+			// æ‰«æå¹¶åˆ›å»ºæ–°çš„Module
 			ScannerIterator scannerIterator = null;
 			try
 			{

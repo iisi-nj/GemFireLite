@@ -58,7 +58,7 @@ public class DataProcesser extends AbstractAdminCommand
     }
 
     /**
-     * üú‡öpn
+     * å¯¼å‡ºæ–‡ä»¶æ•°æ®
      */
     @CliCommand(value = "exportEach", help = "export from region")
     public void exportDataExch(

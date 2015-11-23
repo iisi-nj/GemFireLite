@@ -42,9 +42,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Mn�epn��pn
+ * 配置导入数据库的数据
  * @author GSONG
- * 2015t62�
+ * 2015年6月2日
  */
 @Controller
 @RequestMapping(value = "/settings")
@@ -65,7 +65,7 @@ public class ImportDbConfigController
       Map<String,String> map  = service.getConfig(ConfigTypes.importdbconfig.getValue());
       if(map!=null)
       {
-         //psw��
+         //将psw解密
          String psw = map.get(ConfigKeys.import_dbpsw.getValue());
          map.put(ConfigKeys.import_dbpsw.getValue(),DESUtil.decrypt(psw));
          modelAndView.addAllObjects(map);
@@ -79,7 +79,7 @@ public class ImportDbConfigController
     {
         try
         {
-            //�npn
+            //设置数据
             String dbdriver = (String)request.getParameter("dbdriver");
             String dburl = (String)request.getParameter("dburl");
             String dbuser = (String)request.getParameter("dbuser");

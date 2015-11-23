@@ -29,9 +29,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /**
- * Shell��w���B
+ * Shell端发起查询请求
  * @author GSONG
- * 2015t716�
+ * 2015年7月16日
  */
 @Component
 public class Query extends AbstractAdminCommand
@@ -48,7 +48,7 @@ public class Query extends AbstractAdminCommand
             @CliOption(key = { "t", "type" }, mandatory = true) String type,
             @CliOption(key = { "v", "values" }, mandatory = true) String values)
     {
-        //{��L�
+        //类型进行解析
         RemoteResult rr = LogicServices.createRequest(module, service, revert(type,values)); 
         Object rs = rr.getResult();
         put(CommandMeta.QUERY,rs);
@@ -62,9 +62,9 @@ public class Query extends AbstractAdminCommand
         type = StringUtils.lowerCase(type);
         switch(type)
         {
-          //W&p�
+          //字符数组
            case "string[]":
-               //�values
+               //解析values
           String[] arr = values.split(",");
           return arr;
           

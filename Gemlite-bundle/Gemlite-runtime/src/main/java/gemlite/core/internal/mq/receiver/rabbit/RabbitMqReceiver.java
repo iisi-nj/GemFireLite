@@ -146,7 +146,7 @@ public class RabbitMqReceiver extends HAMqReceiver
   }
   
   /***
-   * getParam().getWaitTime() ��o`:z��5^��
+   * getParam().getWaitTime() 指定消息池为空时的堵塞超时
    * 
    */
   @Override
@@ -200,14 +200,14 @@ public class RabbitMqReceiver extends HAMqReceiver
       msgBuf.append("\n" + MqConstant.TIMESTAMP + ":::" + timestamp + "\n");
     String message = getConent(delivery);
     msgBuf.append(message);
-    // �Usql
+    // 记录sql
     if (LogUtil.getSqllog().isInfoEnabled())
       LogUtil.getSqllog().info(msgBuf.toString());
     return msgBuf.toString();
   }
   
   /***
-   * ֈo��
+   * 取消息内容
    * 
    * @getParam() delivery
    * @return
@@ -244,8 +244,8 @@ public class RabbitMqReceiver extends HAMqReceiver
   }
   
   /***
-   * � timestamp
-   * ��oheader:,֗timestamp<
+   * 解析 timestamp
+   * 查看消息header区,取得timestamp值
    * 
    * @getParam() delivery
    * @return

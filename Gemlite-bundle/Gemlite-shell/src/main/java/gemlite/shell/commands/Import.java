@@ -82,7 +82,7 @@ public class Import extends AbstractAdminCommand
     {
         try
         {
-            //�bpn
+            //替换数据
             if(quote!=null && quote.contains("\\t"))
                 quote = "\t";
             if (list)
@@ -104,12 +104,12 @@ public class Import extends AbstractAdminCommand
                 if (success)
                 {
                     BatchService batchService = JpaContext.getService(BatchService.class);
-                    //�Xjob�pn�
+                    //保存job至数据库
                     batchService.saveJob(template, file, delimiter, quote, skipable, columns, region, table, encoding, linesToSkip,dbdriver,dburl,dbuser,dbpsw, sortKey, where, pageSize, fetchSize,forceUpdate);
                     LogUtil.getCheckLog().info("job " + region + " defined");
                     importService.executeJob(region,template);
                     
-                    //gL��	�8��,pn��Mn�epn�
+                    //执行成功没有抛异常的话,将数据源的配置写入数据库
                     importService.saveDbConfig(dbdriver, dburl, dbuser, dbpsw);
                 }
             }
@@ -141,7 +141,7 @@ public class Import extends AbstractAdminCommand
         try
         {
           jobs = batchService.listJobExecutions(status);
-           //:ws pn
+           //为ws传递数据
           put(CommandMeta.LIST_JOBS,jobs);
           
           StringBuilder sb = new StringBuilder();
@@ -170,7 +170,7 @@ public class Import extends AbstractAdminCommand
     {
         BatchService batchService = JpaContext.getService(BatchService.class);
         Map jobExecution = batchService.getJobExecution(NumberUtils.createLong(jobExecutionId));
-        //��duration
+        //计算duration
         Timestamp t1 = (Timestamp)jobExecution.get("start_time");
         Timestamp t2 = (Timestamp)jobExecution.get("last_updated");
         String duration = "";
@@ -180,10 +180,10 @@ public class Import extends AbstractAdminCommand
         List<Map> steps = batchService.getStepExecutions(NumberUtils.createLong(jobExecutionId));
         jobExecution.put("steps", steps);
         
-        //pn �ws
+        //将数据传递给ws
         put(CommandMeta.DESCRIBE_JOB,jobExecution);
         
-        //pnU:
+        //数据展示处理
         StringBuilder sb = new StringBuilder();
         sb.append("JobName:").append(jobExecution.get("job_name")).append("\n");
         sb.append("Status:").append(jobExecution.get("status")).append("\n");

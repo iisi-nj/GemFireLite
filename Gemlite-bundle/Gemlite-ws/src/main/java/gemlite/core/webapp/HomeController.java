@@ -64,11 +64,11 @@ public class HomeController {
 //        if (mn.isConnect() && client.isConnect())
 //            return true;
 	    
-        //�envpn,��
+        //取env数据,输出
         ServerConfigHelper.initConfig();
         ServerConfigHelper.initLog4j("classpath:log4j2-server.xml");
         
-        //(���domain
+        //在这里注册domain
         DomainMapperHelper.scanMapperRegistryClass();
         
         try
@@ -77,7 +77,7 @@ public class HomeController {
             String ip = ServerConfigHelper.getProperty("config.jmx.ip");
             if(StringUtils.isEmpty(ip))
                 throw new Exception("please config config.jmx.ip property~");
-            //ؤ(Mnconfig.jmx.port
+            //默认使用配置config.jmx.port
             mn.execute(ip, -1);
         }
         catch(Exception e)

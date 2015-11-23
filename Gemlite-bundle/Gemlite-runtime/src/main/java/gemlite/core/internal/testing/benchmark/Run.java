@@ -57,7 +57,7 @@ public class Run
       this.queryCount = queryCount;
       this.testDataFile = testDataFile;
       this.show = show;
-      //9nclass�dao
+      //根据class名称实例化dao
       try
       {
           Class<?> dao = Class.forName(queryClass);
@@ -76,7 +76,7 @@ public class Run
     ExecutorService executor = Executors.newFixedThreadPool(threadsNum);
     List<Future<Long>> futureList = new ArrayList<Future<Long>>(threadsNum);
     
-    //9n�����p��
+    //根据文件读取参数内容
     List<String[]> argsList = prepareTestData(this.testDataFile);
     
     try

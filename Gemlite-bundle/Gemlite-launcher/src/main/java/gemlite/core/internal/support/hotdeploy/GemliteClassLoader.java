@@ -32,9 +32,9 @@ import java.util.Iterator;
 import org.springframework.util.ResourceUtils;
 
 /***
- * 1.GemliteJarLoaderK�:sLs�
- * 2.GemliteJarLoader#}e{���r�jar
- * 3.GemliteJarLoader�6G:GemliteClassLoader
+ * 1.GemliteJarLoader之间为平行关系
+ * 2.GemliteJarLoader负责载入各类可热部署的jar包
+ * 3.GemliteJarLoader的父均为GemliteClassLoader
  * 4.
  * 
  * @author ynd

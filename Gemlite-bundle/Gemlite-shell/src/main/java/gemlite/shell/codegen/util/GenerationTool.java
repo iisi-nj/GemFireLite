@@ -162,7 +162,8 @@ public class GenerationTool
           .getStrategy().getName())) : DefaultGeneratorStrategy.class);
       strategy = strategyClass.newInstance();
       generator.setStrategy(strategy);
-      gemlite.shell.codegen.util.jaxb.Database d = defaultIfNull(g.getDatabase(), new gemlite.shell.codegen.util.jaxb.Database());
+      gemlite.shell.codegen.util.jaxb.Database d = defaultIfNull(g.getDatabase(),
+          new gemlite.shell.codegen.util.jaxb.Database());
       String databaseName = trim(d.getName());
       Class<? extends Database> databaseClass = !isBlank(databaseName) ? (Class<? extends Database>) loadClass(databaseName)
           : null;

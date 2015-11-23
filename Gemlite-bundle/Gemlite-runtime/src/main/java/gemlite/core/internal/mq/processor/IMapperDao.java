@@ -22,7 +22,7 @@ import gemlite.core.internal.mq.domain.ParseredValue;
 public interface IMapperDao
 {
   /***
-   * parseredValue  :MqSyncDomain
+   * parseredValue 映射为MqSyncDomain
    * @param pv
    * @return
    */

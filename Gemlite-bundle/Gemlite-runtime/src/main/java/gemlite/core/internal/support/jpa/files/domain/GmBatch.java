@@ -40,13 +40,13 @@ public class GmBatch implements Serializable
     private String region;
     
     /**
-     * !,file,jdbc-paging,jdbc-partitiion
+     * 模板,file,jdbc-paging,jdbc-partitiion
      */
     @Column(length=32)
     private String template;
 
     /**
-     * gL}�
+     * 执行命令
      */
     @Lob
     private String cmd;

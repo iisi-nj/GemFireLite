@@ -130,7 +130,7 @@ public class SybaseSQLParser extends Parser
     return "D:\\MOR\\CrorderMain\\CrorderMq\\src\\main\\resources\\SQL.g";
   }
   
-  // TODO:grammar file��Մh
+  // TODO:grammar file以及合法的表名
   public boolean isValidTableName(String tableName)
   {
 	  String regionName = DomainRegistry.tableToRegion(tableName);

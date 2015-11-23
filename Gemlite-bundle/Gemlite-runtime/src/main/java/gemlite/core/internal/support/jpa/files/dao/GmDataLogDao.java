@@ -20,7 +20,7 @@ import gemlite.core.internal.support.jpa.files.domain.GmDataLog;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
- * (��\pn��h
+ * 用于操作数据日志表
  * @author gsong
  *
  */

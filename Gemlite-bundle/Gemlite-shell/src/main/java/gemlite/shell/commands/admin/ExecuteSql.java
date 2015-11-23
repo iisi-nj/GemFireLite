@@ -34,9 +34,9 @@ import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Component;
 
 /**
- * gLsql��epn
+ * 执行sql语句同步数据
  * @author GSONG
- * 2015t327�
+ * 2015年3月27日
  */
 @Component
 public class ExecuteSql extends AbstractAdminCommand

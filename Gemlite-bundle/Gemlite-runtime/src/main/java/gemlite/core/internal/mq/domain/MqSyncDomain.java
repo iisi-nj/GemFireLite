@@ -29,17 +29,17 @@ public class MqSyncDomain implements DataSerializable,Comparable<MqSyncDomain>
 {
   private static final long serialVersionUID = -3437296083789102960L;
 
-  // ��3 (�ԃ e�����
+  // 时间戳 用于比较 同步更新的时序
   private long timestamp;
   
-  //�/insert/update�/delete
+  //标记，是insert/update还是delete
   private String op;
   
   private Object key;
   
   private Object oldKey;
   
-  // �Ӝ<insert/update�/valueMap,detele�:z
+  //传递的结果值，insert/update时是valueMap,detele时为空
   private HashMap<String, String> value;
   
   private String tableName;

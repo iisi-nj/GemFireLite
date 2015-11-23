@@ -29,10 +29,10 @@ import sun.misc.BASE64Encoder;
  
 /**
  * <p>
- * BASE64��w
+ * BASE64编码解码工具包
  * </p>
  * <p>
- * �Vjavabase64-1.3.1.jar
+ * 依赖javabase64-1.3.1.jar
  * </p>
  * 
  * @author gsong
@@ -43,13 +43,13 @@ import sun.misc.BASE64Encoder;
 public class Base64Utils {
  
     /**
-     * �����:'
+     * 文件读取缓冲区大小
      */
     private static final int CACHE_SIZE = 1024;
      
     /**
      * <p>
-     * BASE64W&2�:��6pn
+     * BASE64字符串解码为二进制数据
      * </p>
      * 
      * @param base64
@@ -62,7 +62,7 @@ public class Base64Utils {
      
     /**
      * <p>
-     * ��6pn:BASE64W&2
+     * 二进制数据编码为BASE64字符串
      * </p>
      * 
      * @param bytes
@@ -75,13 +75,13 @@ public class Base64Utils {
      
     /**
      * <p>
-     * ��:BASE64W&2
+     * 将文件编码为BASE64字符串
      * </p>
      * <p>
-     * '��N(����X��
+     * 大文件慎用，可能会导致内存溢出
      * </p>
      * 
-     * @param filePath �����
+     * @param filePath 文件绝对路径
      * @return
      * @throws Exception
      */
@@ -92,11 +92,11 @@ public class Base64Utils {
      
     /**
      * <p>
-     * BASE64W&2lއ�
+     * BASE64字符串转回文件
      * </p>
      * 
-     * @param filePath �����
-     * @param base64 W&2
+     * @param filePath 文件绝对路径
+     * @param base64 编码字符串
      * @throws Exception
      */
     public static void decodeToFile(String filePath, String base64) throws Exception {
@@ -106,10 +106,10 @@ public class Base64Utils {
      
     /**
      * <p>
-     * ��lb:��6p�
+     * 文件转换为二进制数组
      * </p>
      * 
-     * @param filePath ���
+     * @param filePath 文件路径
      * @return
      * @throws Exception
      */
@@ -134,11 +134,11 @@ public class Base64Utils {
      
     /**
      * <p>
-     * ��6pn���
+     * 二进制数据写文件
      * </p>
      * 
-     * @param bytes ��6pn
-     * @param filePath ���U
+     * @param bytes 二进制数据
+     * @param filePath 文件生成目录
      */
     public static void byteArrayToFile(byte[] bytes, String filePath) throws Exception {
         InputStream in = new ByteArrayInputStream(bytes);   
@@ -160,7 +160,7 @@ public class Base64Utils {
      
     
     /**
-     * base64��
+     * base64加密
      * 
      * @param bytes
      * @return
@@ -171,7 +171,7 @@ public class Base64Utils {
     }
     
     /**
-     * base64��
+     * base64解密
      * 
      * @param str
      * @return

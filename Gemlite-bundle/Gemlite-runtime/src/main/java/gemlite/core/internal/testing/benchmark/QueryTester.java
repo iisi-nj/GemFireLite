@@ -57,7 +57,7 @@ public class QueryTester implements Callable<Long>
     {
       try
       {
-        //�:�p
+        //随机参数
         int n = argsList.size();
         int no = (int) (Math.random() * n);
         String[] args = argsList.get(no);

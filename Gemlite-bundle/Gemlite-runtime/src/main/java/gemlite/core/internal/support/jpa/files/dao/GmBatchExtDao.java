@@ -22,27 +22,27 @@ import java.util.Map;
 interface GmBatchExtDao
 {
   /**
-   * ��	�*job
+   * 计算有几个job
    * 
    * @return
    */
   public int countJobExecutions();
   
   /**
-   * ��gL�job
+   * 取出执行的job
    * 
    * @return
    */
   public List<Map> queryJobExecutions(String status);
   
   /**
-   * ����c(gL�job*p
+   * 查询取出正在执行的job个数
    * @return
    */
   public int countRunningJob();
   
   /**
-   * �jobgL�
+   * 取job执行明细
    * 
    * @param executionId
    * @return
@@ -50,7 +50,7 @@ interface GmBatchExtDao
   public Map queryJobExecutionById(Long executionId);
   
   /**
-   * 9njob�step
+   * 根据job名取step
    * 
    * @param jobName
    * @return
@@ -58,7 +58,7 @@ interface GmBatchExtDao
   public List<Map> queryStepNamesForJob(String jobName);
   
   /**
-   * 9ngLid�step
+   * 根据执行id取step
    * 
    * @param jobExecutionId
    * @return

@@ -60,7 +60,7 @@ public class BatchController
   public ModelAndView batch(ModelAndView modelAndView)
   {
     modelAndView = new ModelAndView(PAGE_PREFIX + "import");
-    //�pn
+    //取数据
     BatchService batchService = JpaContext.getService(BatchService.class);
     List<GmBatch> list = batchService.findAll();
     modelAndView.addObject("list",list);
@@ -71,12 +71,12 @@ public class BatchController
   public ModelAndView add(ModelAndView modelAndView)
   {
     modelAndView = new ModelAndView(PAGE_PREFIX + "add");
-    //��pn��Mn�o
+    //读取数据库的配置信息
     ConfigService service = JpaContext.getService(ConfigService.class);
     Map<String,String> map  = service.getConfig(ConfigTypes.importdbconfig.getValue());
     if(map!=null)
     {
-      //psw��
+      //将psw解密
       String psw = map.get(ConfigKeys.import_dbpsw.getValue());
       map.put(ConfigKeys.import_dbpsw.getValue(),DESUtil.decrypt(psw));
       modelAndView.addAllObjects(map);
@@ -90,7 +90,7 @@ public class BatchController
   {
       try
       {
-          //�npn
+          //设置数据
           String region = StringUtils.trim(request.getParameter("region"));
           String template = StringUtils.trim(request.getParameter("template"));
           boolean forceUpdate = StringUtils.equals(request.getParameter("forceUpdate"),"on");
@@ -125,13 +125,13 @@ public class BatchController
   {
     ModelAndView modelAndView = new ModelAndView(PAGE_PREFIX + "edit");
     Long id   = NumberUtils.toLong(request.getParameter("id"));
-    //��pn��Mn�o
+    //读取数据库的配置信息
     BatchService service = JpaContext.getService(BatchService.class);
     GmBatch batch  = service.findOne(id);
     
     if(batch!=null)
     {
-       //�batchW�
+       //分解batch字段
        String cmd = batch.getCmd();
        Map<String,String> map = splitCmd(cmd);
        modelAndView.addAllObjects(map);
@@ -166,7 +166,7 @@ public class BatchController
   }
   
   /**
-   *  d
+   * 删除
    * @param request
    * @return
    * @throws IOException
@@ -176,12 +176,12 @@ public class BatchController
   public boolean del(HttpServletRequest request) throws IOException
   {
       String id = request.getParameter("id");
-      //$z
+      //判空
       if(StringUtils.isEmpty(id))
           return true;
       try
       {
-          //9nid�<
+          //根据id取值
           BatchService s = JpaContext.getService(BatchService.class);
           GmBatch batch = s.findOne(NumberUtils.toLong(id));
           if(batch != null)
@@ -202,19 +202,19 @@ public class BatchController
       try
       {
           String id = request.getParameter("id");
-          //$z
+          //判空
           if(StringUtils.isEmpty(id))
               return true;
-          //9nid�<
+          //根据id取值
           BatchService s = JpaContext.getService(BatchService.class);
           GmBatch batch = s.findOne(NumberUtils.toLong(id));
           if(batch == null || StringUtils.isEmpty(batch.getCmd()))
               return true;
           String cmd = batch.getCmd();
           
-          //�
+          //解析
           Map<String,String> map = splitCmd(cmd);
-          //�npn
+          //设置数据
           String region = (String)map.get("region");
           String template = (String)map.get("template");
           boolean forceUpdate = StringUtils.equals(map.get("update"),"true");
@@ -250,14 +250,14 @@ public class BatchController
       HashMap<String,String> map = new HashMap<String,String>();
       for(String str:arr)
       {
-          //~0, *z<,��~0,��dpn
+          //找到第一个空格,如果找不到,则去掉此数据
           String c = StringUtils.trim(str);
           int index = c.indexOf(" ");
-          //<pn
+          //不合格数据
           if(index<=0)
               continue;
           
-          //��k,v
+          //分析出k,v
           String key = StringUtils.trim(StringUtils.substring(c, 0, index));
           String value = StringUtils.trim(StringUtils.substring(c, index));
           map.put(key, value);
@@ -293,7 +293,7 @@ public class BatchController
     GmBatch batch = batchService.findOne(id);
     if (batch == null)
     {
-      view.addObject("errMsg", "jobX(");
+      view.addObject("errMsg", "job不存在");
     }
     view.addObject("batch", batch);
     return view;
@@ -331,7 +331,7 @@ public class BatchController
   {
     ModelAndView view = new ModelAndView();
     view.setViewName(PAGE_PREFIX + "import");
-    //��@	�cmdh
+    //查询所有的cmd列表
     BatchService bs = JpaContext.getService(BatchService.class);
     List<GmBatch> list = bs.findAll();
     view.addObject("list", list);

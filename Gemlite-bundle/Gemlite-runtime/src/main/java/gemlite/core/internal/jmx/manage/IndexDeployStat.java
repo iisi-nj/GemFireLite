@@ -96,7 +96,7 @@ public class IndexDeployStat implements Serializable
 		Map<String,String> valueFields = (Map<String, String>) indexInfoMap.get(Indexs.valueFields.name());
 		
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		//dip�o:U:���(
+		//此ip信息为展示时排序使用
 		map.put(Indexs.ip.name(), ServerConfigHelper.getConfig(ITEMS.BINDIP)+ServerConfigHelper.getProperty(ITEMS.NODE_NAME.name()));
 		map.put(Indexs.ipinfo.name(), msg);
 		map.put(Indexs.indexName.name(), idxName);
