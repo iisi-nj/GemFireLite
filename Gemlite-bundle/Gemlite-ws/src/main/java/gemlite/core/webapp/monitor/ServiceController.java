@@ -15,20 +15,7 @@
  */                                                                        
 package gemlite.core.webapp.monitor;
 
-import gemlite.core.common.DateUtil;
-import gemlite.core.internal.admin.measurement.ScannedMethodItem;
-import gemlite.core.internal.measurement.RemoteServiceStatItem;
-import gemlite.core.internal.support.context.JpaContext;
-import gemlite.core.internal.support.jpa.files.domain.GmCheckPoints;
-import gemlite.core.internal.support.jpa.files.service.CheckPointsService;
-import gemlite.core.util.LogUtil;
-import gemlite.shell.commands.CommandMeta;
-import gemlite.shell.commands.admin.Monitor;
-import gemlite.shell.commands.Query;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,13 +31,25 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import gemlite.core.common.DateUtil;
+import gemlite.core.internal.admin.measurement.ScannedMethodItem;
+import gemlite.core.internal.measurement.RemoteServiceStatItem;
+import gemlite.core.internal.support.context.JpaContext;
+import gemlite.core.internal.support.jpa.files.domain.GmCheckPoints;
+import gemlite.core.internal.support.jpa.files.service.CheckPointsService;
+import gemlite.core.util.LogUtil;
+import gemlite.shell.commands.CommandMeta;
+import gemlite.shell.commands.Query;
+import gemlite.shell.commands.admin.Monitor;
 
 @SuppressWarnings({"unchecked"})
 @Controller

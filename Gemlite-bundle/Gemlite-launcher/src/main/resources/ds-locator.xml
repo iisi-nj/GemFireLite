@@ -21,7 +21,7 @@
 		<prop key="load-cluster-configuration-from-dir">false</prop>
 		<prop key="cluster-configuration-dir">${GS_WORK}/locator/config/${NODE_NAME}</prop>
 		<prop key="jmx-manager-start">false</prop>
-		<prop key="jmx-manager">false</prop>
+		<prop key="jmx-manager">true</prop>
 	</util:properties>
 
 	<bean id="locator" class="gemlite.core.internal.support.system.LocatorBean${GF6}"

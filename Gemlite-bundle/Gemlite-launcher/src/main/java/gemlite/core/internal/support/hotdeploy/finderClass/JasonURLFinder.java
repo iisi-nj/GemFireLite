@@ -15,6 +15,14 @@
  */                                                                        
 package gemlite.core.internal.support.hotdeploy.finderClass;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import gemlite.core.internal.support.GemliteException;
 import gemlite.core.internal.support.annotations.ModuleType;
 import gemlite.core.internal.support.hotdeploy.DeployParameter;
@@ -22,14 +30,6 @@ import gemlite.core.internal.support.hotdeploy.JarURLFinder;
 import gemlite.core.internal.support.system.ServerConfigHelper;
 import gemlite.core.util.LogUtil;
 import gemlite.core.util.Util;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 
 
 public class JasonURLFinder implements JarURLFinder

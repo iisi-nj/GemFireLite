@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<properties>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
-		<spring.framework.version>4.0.9.RELEASE</spring.framework.version>
+		<spring.framework.version>4.1.8.RELEASE</spring.framework.version>
 		<project.build.sourceEncoding>
 			UTF-8
 		</project.build.sourceEncoding>
@@ -23,8 +23,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
@@ -78,8 +78,8 @@
 		<module>Gemlite-runtime</module>
 		<module>Gemlite-maven-plugin</module>
 		<module>Gemlite-shell</module>
-		<module>Gemlite-domain-tools</module>
-		<module>Gemlite-ws</module>
+		<!-- <module>Gemlite-domain-tools</module>
+		<module>Gemlite-ws</module> -->
 
 	</modules>
 </project>

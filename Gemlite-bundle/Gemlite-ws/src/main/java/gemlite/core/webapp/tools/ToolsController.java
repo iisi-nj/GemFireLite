@@ -15,17 +15,6 @@
  */                                                                        
 package gemlite.core.webapp.tools;
 
-import gemlite.core.common.DateUtil;
-import gemlite.core.internal.common.JavaTypes;
-import gemlite.core.internal.domain.DomainRegistry;
-import gemlite.core.internal.domain.IMapperTool;
-import gemlite.core.internal.jmx.manage.KeyConstants.Regions;
-import gemlite.core.util.LogUtil;
-import gemlite.core.webapp.MsgStore;
-import gemlite.shell.commands.CommandMeta;
-import gemlite.shell.commands.admin.ExecuteSql;
-import gemlite.shell.commands.admin.RegionCommand;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -42,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,8 +39,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gemstone.gemfire.cache.Region;
 import com.gemstone.gemfire.cache.client.ClientCacheFactory;
+
+import gemlite.core.common.DateUtil;
+import gemlite.core.internal.common.JavaTypes;
+import gemlite.core.internal.domain.DomainRegistry;
+import gemlite.core.internal.domain.IMapperTool;
+import gemlite.core.internal.jmx.manage.KeyConstants.Regions;
+import gemlite.core.util.LogUtil;
+import gemlite.core.webapp.MsgStore;
+import gemlite.shell.commands.CommandMeta;
+import gemlite.shell.commands.admin.ExecuteSql;
+import gemlite.shell.commands.admin.RegionCommand;
 
 @SuppressWarnings({"unchecked","rawtypes"})
 @Controller

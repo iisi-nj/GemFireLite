@@ -236,7 +236,7 @@ class DomainClassFileVistor extends SimpleFileVisitor<Path>
       DomainMojoExecutor.usedProcessorSet.add(cp);
       if (DomainMojoHelper.log().isDebugEnabled())
         DomainMojoHelper.log().debug("Annotation:" + desc + " processor:" + cp);
-      // *�
+      // 未处理过
       if (cp != null && !used.contains(cp))
       {
         if (DomainMojoHelper.log().isDebugEnabled())
