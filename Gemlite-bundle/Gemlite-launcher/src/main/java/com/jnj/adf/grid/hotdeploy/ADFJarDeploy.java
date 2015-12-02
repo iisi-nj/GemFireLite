@@ -12,29 +12,53 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and     
  * limitations under the License.                                          
- */                                                                        
-package gemlite.core.annotations;
+ */
+package com.jnj.adf.grid.hotdeploy;
 
-import gemlite.core.internal.support.annotations.ModuleType;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.io.ResourceLoader;
 
 /**
- * @author ynd
- * 
+ * @author dyang39
+ *
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface DeployConfigure
-{
-  /***
-   * 模块名称
-   * 
-   * @return
-   */
-  String value();
-  ModuleType type() default ModuleType.LOGIC;
+public class ADFJarDeploy {
+	
+	private final static ADFJarDeploy instance=new ADFJarDeploy();
+	private SingleClassLoader loader;
+	private AnnotationConfigApplicationContext context;
+	private Map<String, URL> localURLMap=new HashMap<>();
+	private ADFJarDeploy() {
+	}
+	
+	public final static ADFJarDeploy getInstance()
+	{
+		return instance;
+	}
+
+
+	/***
+	 * simple hotdeploy
+	 * 
+	 * @param localUrl
+	 */
+	public void deploy(URL[] urls) {
+		loader = new SingleClassLoader(urls);
+		context = new AnnotationConfigApplicationContext();
+		ResourceLoader res = new ClassLoaderResourceResolver(loader);
+		context.setClassLoader(loader);
+		context.setResourceLoader(res);
+		context.register(GemfireContainer.class);
+		context.scan("*");
+		context.refresh();
+	}
+	
+	private void clean()
+	{
+		
+	}
 }

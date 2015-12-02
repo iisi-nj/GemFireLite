@@ -15,16 +15,6 @@
  */                                                                        
 package gemlite.core.internal.support.context;
 
-import gemlite.core.internal.support.GemliteException;
-import gemlite.core.internal.support.hotdeploy.GemliteDeployer;
-import gemlite.core.internal.support.hotdeploy.GemliteDeployerFunction;
-import gemlite.core.internal.support.hotdeploy.GemliteSibingsLoader;
-import gemlite.core.internal.support.hotdeploy.JarURLFinder;
-import gemlite.core.internal.support.hotdeploy.JarURLFinderFactory;
-import gemlite.core.internal.support.jmx.GemliteNode;
-import gemlite.core.internal.support.jmx.GetJmxConfigsFunction;
-import gemlite.core.util.LogUtil;
-
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,6 +23,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.StringUtils;
 
 import com.gemstone.gemfire.cache.execute.FunctionService;
+
+import gemlite.core.internal.support.GemliteException;
+import gemlite.core.internal.support.hotdeploy.GemliteDeployer;
+import gemlite.core.internal.support.hotdeploy.GemliteSibingsLoader;
+import gemlite.core.internal.support.hotdeploy.JarURLFinder;
+import gemlite.core.internal.support.hotdeploy.JarURLFinderFactory;
+import gemlite.core.internal.support.jmx.GetJmxConfigsFunction;
+import gemlite.core.util.LogUtil;
 
 public class GemliteContext
 {
@@ -98,6 +96,12 @@ public class GemliteContext
     return contextMap.get(name);
   }
   
+ 
+  /***
+   * 
+   * @param url
+   * @return
+   */
   public IModuleContext onDeployed(URL url)
   {
     IModuleContext ctx = GemliteDeployer.getInstance().deploy(url);
@@ -162,7 +166,6 @@ public class GemliteContext
   }
   public static void registerStaticFunction()
   {
-    FunctionService.registerFunction(new GemliteDeployerFunction());
     FunctionService.registerFunction(new GetJmxConfigsFunction());
   }
   public void onStopped()

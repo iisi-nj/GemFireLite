@@ -76,7 +76,7 @@
 		<module>Gemlite-libs</module>
 		<module>Gemlite-launcher</module>
 		<module>Gemlite-runtime</module>
-		<module>Gemlite-maven-plugin</module>
+		
 		<module>Gemlite-shell</module>
 		<!-- <module>Gemlite-domain-tools</module>
 		<module>Gemlite-ws</module> -->

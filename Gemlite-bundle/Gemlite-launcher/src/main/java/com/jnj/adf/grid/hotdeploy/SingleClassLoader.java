@@ -30,5 +30,10 @@ public class SingleClassLoader extends URLClassLoader {
 	public SingleClassLoader(URL[] urls) {
 		super(urls);
 	}
+	
+	public void addURL(URL url)
+	{
+		super.addURL(url);
+	}
 
 }

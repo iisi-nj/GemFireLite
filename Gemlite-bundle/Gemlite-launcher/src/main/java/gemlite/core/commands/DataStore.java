@@ -15,13 +15,27 @@
  */
 package gemlite.core.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.spi.StringArrayOptionHandler;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.gemstone.gemfire.cache.Cache;
+import com.gemstone.gemfire.cache.CacheFactory;
+import com.gemstone.gemfire.distributed.DistributedMember;
+
 import gemlite.core.internal.support.context.DomainMapperHelper;
 import gemlite.core.internal.support.events.GemliteEvent;
 import gemlite.core.internal.support.events.IEventDispatcher;
-import gemlite.core.internal.support.hotdeploy.GemliteClassLoader;
 import gemlite.core.internal.support.hotdeploy.JarURLFinderFactory;
 import gemlite.core.internal.support.hotdeploy.finderClass.ClasspathURLFinder;
-import gemlite.core.internal.support.jpa.EmbedServer;
 import gemlite.core.internal.support.system.GemliteAgent;
 import gemlite.core.internal.support.system.ServerConfigHelper;
 import gemlite.core.internal.support.system.ServerConfigHelper.ITEMS;
@@ -30,22 +44,11 @@ import gemlite.core.internal.support.system.WorkPathHelper;
 import gemlite.core.util.LogUtil;
 import gemlite.core.util.Util;
 
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.gemstone.gemfire.cache.Cache;
-import com.gemstone.gemfire.cache.CacheFactory;
-import com.gemstone.gemfire.distributed.DistributedMember;
-
 public class DataStore implements IEventDispatcher {
 	@Option(name = "-name", usage = "work path")
 	private String serverName;
 	@Option(name = "-configXml", usage = "work path")
-	private String configXml = "";
+	private String[] configXml = null;
 
 	@Option(name = "-developMode", usage = "")
 	private boolean developMode;
@@ -95,7 +98,9 @@ public class DataStore implements IEventDispatcher {
 
 		System.out.println("=======   Gemlite initialize environment & log4j     =======");
 		ServerConfigHelper.initConfig(TYPES.DATASTORE);
+		CmdLineParser.registerHandler(String[].class, StringArrayOptionHandler.class);
 		CmdLineParser cp = new CmdLineParser(dsInstance);
+		
 		try {
 			cp.parseArgument(args);
 		} catch (CmdLineException e) {
@@ -115,10 +120,17 @@ public class DataStore implements IEventDispatcher {
 		ServerConfigHelper.initLog4j("classpath:log4j2-server.xml");
 		LogUtil.getCoreLog().info("NODE_NAME:" + serverName);
 		System.out.println("=======     Initialize environment & log4j done    =======");
-		if (StringUtils.isEmpty(configXml))
+		if (configXml==null)
 			mainContext = Util.initContext("ds-launcher.xml");
 		else
-			mainContext = Util.initContext("ds-launcher.xml", configXml);
+		{
+			List<String> list = new ArrayList<>();
+			list.add("ds-launcher.xml");
+			list.addAll(Arrays.asList(configXml));
+			String[] configs = new String[list.size()];
+			list.toArray(configs);
+			mainContext = Util.initContext(configs);
+		}
 //		mainContext.setClassLoader(GemliteClassLoader.getInstance());
 		Cache c = CacheFactory.getAnyInstance();
 		DistributedMember m = c.getDistributedSystem().getDistributedMember();
@@ -151,34 +163,5 @@ public class DataStore implements IEventDispatcher {
 			mainContext.publishEvent(e);
 	}
 
-	// private Region createMgmRegionOnServer()
-	// {
-	// GemFireCacheImpl cc = (GemFireCacheImpl) CacheFactory.getAnyInstance();
-	// Region r = cc.getRegion("_jar_files");
-	//
-	// Object af =
-	// Class.forName("com.gemstone.gemfire.cache.AttributesFactory").newInstance();
-	// PropertyUtils.setProperty(af, "", DataPolicy.REPLICATE);
-	// // af.setScope(Scope.DISTRIBUTED_NO_ACK);
-	// // af.setConcurrencyChecksEnabled(false);
-	// //
-	// af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1));
-	// InternalRegionArguments internalArgs = new InternalRegionArguments();
-	// internalArgs.setIsUsedForMetaRegion(true);
-	// try
-	// {
-	// mgmRegion = cc.createVMRegion(MGM_REGION_NAME, af.create(),
-	// internalArgs);
-	// }
-	// catch (TimeoutException | RegionExistsException | ClassNotFoundException
-	// | IOException e)
-	// {
-	// LogUtil.getCoreLog().error("Management region cretae error.", e);
-	// }
-	//
-	// LogUtil.getCoreLog().debug("Management region " + MGM_REGION_NAME + "
-	// created.");
-	// return mgmRegion;
-	// }
 
 }

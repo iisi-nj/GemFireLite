@@ -15,25 +15,15 @@
  */ 
 package com.jnj.adf.grid.hotdeploy;
 
-import java.net.URL;
-
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.gemfire.function.config.EnableGemfireFunctions;
 
 /**
  * @author dyang39
  *
  */
-public class HotDeploy {
-	/***
-	 * simple hotdeploy
-	 * @param localUrl
-	 */
-	public void deploy(URL localUrl)
-	{
-		//TODO: load all jars
-		SingleClassLoader loader = new SingleClassLoader(new URL[]{localUrl});
-		ClassPathXmlApplicationContext ctx= new ClassPathXmlApplicationContext();
-		ctx.setClassLoader(loader);
-		ctx.refresh();
-	}
+@Configuration
+@EnableGemfireFunctions
+public class GemfireContainer {
+
 }
